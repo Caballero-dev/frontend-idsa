@@ -28,6 +28,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {}
 
   login(): void {
+    this.router.navigate(['./panel']);
     // if (this.loginForm.valid) {
     //   console.log('Credenciales', this.loginForm.value);
     // } else {
