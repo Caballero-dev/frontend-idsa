@@ -1,1 +1,114 @@
-<p>students-list works!</p>
+<p-toolbar styleClass="mb-6">
+  <ng-template #start>
+    <p-button
+      label="Crear"
+      icon="pi pi-plus"
+      severity="secondary"
+      class="mr-2"
+      (onClick)="openNew()"
+    />
+    <p-button
+      severity="secondary"
+      label="Eliminar"
+      icon="pi pi-trash"
+      outlined
+      (onClick)="deleteSelectedStudents()"
+      [disabled]="!selectedStudents || !selectedStudents.length"
+    />
+  </ng-template>
+</p-toolbar>
+
+<p-table
+  #dt
+  [value]="students"
+  [rows]="15"
+  [columns]="cols"
+  [paginator]="true"
+  [globalFilterFields]="['studentId', 'name', 'lastname', 'secondLastName', 'consumptionState']"
+  [tableStyle]="{ 'min-width': '75rem' }"
+  [(selection)]="selectedStudents"
+  [rowHover]="true"
+  dataKey="studentId"
+  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
+  [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="[15, 30, 45]"
+>
+  <ng-template #caption>
+    <div class="flex items-center justify-between">
+      <h5 class="m-0">Administrar estudiantes</h5>
+      <p-iconfield>
+        <p-inputicon styleClass="pi pi-search" />
+        <input
+          pInputText
+          type="text"
+          (input)="onGlobalFilter(dt, $event)"
+          placeholder="Search..."
+        />
+      </p-iconfield>
+    </div>
+  </ng-template>
+  <ng-template
+    #header
+    let-columns
+  >
+    <tr>
+      <th style="width: 3rem">
+        <p-tableHeaderCheckbox />
+      </th>
+      @for (col of columns; track $index) {
+        <th
+          [pSortableColumn]="col.sortable ? col.field : null"
+          style="min-width: 16rem"
+        >
+          {{ col.header }}
+          @if (col.sortable) {
+            <p-sortIcon field="{{ col.field }}" />
+          }
+        </th>
+      }
+      <th style="min-width: 12rem"></th>
+    </tr>
+  </ng-template>
+  <ng-template
+    #body
+    let-student
+    let-columns="columns"
+  >
+    <tr>
+      <td style="width: 3rem">
+        <p-tableCheckbox [value]="student" />
+      </td>
+      @for (col of columns; track $index) {
+        @if (col.field !== 'consumptionState') {
+          <td style="min-width: 12rem">{{ student[col.field] }}</td>
+        } @else {
+          <td>
+            <p-tag
+              [value]="student[col.field]"
+              [severity]="getSeverity(student[col.field])"
+            />
+          </td>
+        }
+      }
+      <td>
+        <p-button
+          icon="pi pi-pencil"
+          class="mr-2"
+          [rounded]="true"
+          [outlined]="true"
+          (click)="editStudent(student)"
+        />
+        <p-button
+          icon="pi pi-trash"
+          severity="danger"
+          [rounded]="true"
+          [outlined]="true"
+          (click)="deleteStudent(student)"
+        />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-toast />
+<p-confirmdialog [style]="{ width: '450px' }" />
