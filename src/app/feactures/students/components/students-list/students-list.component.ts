@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { Table, TableModule } from 'primeng/table';
@@ -11,19 +11,21 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
+import { StudentsFormComponent } from '../students-form/students-form.component';
 
 interface Column {
   field: string;
   header: string;
-  customExportHeader?: string;
   sortable: boolean;
 }
 
 interface Student {
   studentId: string;
   name: string;
-  lastName: string;
-  secondLastName: string;
+  paternalSurname: string;
+  maternalSurname: string;
+  phoneNumber: string;
+  email: string;
   consumptionState: string;
 }
 
@@ -42,6 +44,7 @@ interface Student {
     DialogModule,
     TagModule,
     ConfirmDialogModule,
+    StudentsFormComponent,
   ],
   templateUrl: './students-list.component.html',
   styleUrl: './students-list.component.css',
@@ -49,9 +52,18 @@ interface Student {
 })
 export class StudentsListComponent implements OnInit {
   student!: Student;
-  cols!: Column[];
+  cols: Column[] = [
+    { field: 'studentId', header: 'Matricula', sortable: true },
+    { field: 'name', header: 'Nombre', sortable: true },
+    { field: 'paternalSurname', header: 'Apellido Paterno', sortable: true },
+    { field: 'maternalSurname', header: 'Apellido Materno', sortable: true },
+    { field: 'phoneNumber', header: 'Telefono', sortable: true },
+    { field: 'email', header: 'Correo', sortable: true },
+    { field: 'consumptionState', header: 'Estado de consumo', sortable: true },
+  ];
   students!: Student[];
   selectedStudents!: Student[] | null;
+  studentDialogVisible: boolean = false;
 
   constructor(
     private confirmationService: ConfirmationService,
@@ -63,53 +75,53 @@ export class StudentsListComponent implements OnInit {
       {
         studentId: 'A01234568',
         name: 'Juan',
-        lastName: 'Perez',
-        secondLastName: 'Gonzalez',
+        paternalSurname: 'Perez',
+        maternalSurname: 'Gonzalez',
+        phoneNumber: '1234567890',
+        email: 'juan@gmail.com',
         consumptionState: 'No consumidor',
       },
       {
         studentId: 'A01234569',
         name: 'Maria',
-        lastName: 'Garcia',
-        secondLastName: 'Lopez',
+        paternalSurname: 'Garcia',
+        maternalSurname: 'Lopez',
+        phoneNumber: '0987654321',
+        email: 'mr@gmail.com',
         consumptionState: 'Probable consumidor',
       },
       {
         studentId: 'A01234570',
         name: 'Pedro',
-        lastName: 'Gomez',
-        secondLastName: 'Hernandez',
+        paternalSurname: 'Gomez',
+        maternalSurname: 'Hernandez',
+        phoneNumber: '0987688321',
+        email: 'gh@gmail.com',
         consumptionState: 'Consumidor',
       },
       {
         studentId: 'A01234571',
         name: 'Ana',
-        lastName: 'Martinez',
-        secondLastName: 'Jimenez',
+        paternalSurname: 'Martinez',
+        maternalSurname: 'Jimenez',
+        phoneNumber: '0987677321',
+        email: 'am@gmail.com',
         consumptionState: 'No consumidor',
       },
       {
         studentId: 'A01234572',
         name: 'Carlos',
-        lastName: 'Rodriguez',
-        secondLastName: 'Perez',
+        paternalSurname: 'Rodriguez',
+        maternalSurname: 'Perez',
+        phoneNumber: '0987657721',
+        email: 'rp@gmail.com',
         consumptionState: 'Consumidor',
       },
     ];
-
-    this.cols = [
-      { field: 'studentId', header: 'Matricula', sortable: true },
-      { field: 'name', header: 'Nombre', sortable: true },
-      { field: 'lastName', header: 'Apellido Paterno', sortable: true },
-      { field: 'secondLastName', header: 'Apellido Materno', sortable: true },
-      { field: 'consumptionState', header: 'Estado de consumo', sortable: true },
-    ];
   }
 
-  openNew() {}
-
-  onGlobalFilter(table: Table, event: Event) {
-    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  createStudent() {
+    this.studentDialogVisible = true;
   }
 
   editStudent(student: Student) {
@@ -120,7 +132,7 @@ export class StudentsListComponent implements OnInit {
     this.confirmationService.confirm({
       message: '¿Estás seguro de que quieres eliminar ' + student.name + '?',
       header: 'Confirmar',
-      closable: true,
+      closable: false,
       closeOnEscape: false,
       icon: 'pi pi-exclamation-triangle',
       rejectButtonProps: {
@@ -136,8 +148,10 @@ export class StudentsListComponent implements OnInit {
         this.student = {
           studentId: '',
           name: '',
-          lastName: '',
-          secondLastName: '',
+          paternalSurname: '',
+          maternalSurname: '',
+          phoneNumber: '',
+          email: '',
           consumptionState: '',
         };
 
@@ -161,6 +175,33 @@ export class StudentsListComponent implements OnInit {
 
   deleteSelectedStudents() {
     console.log('Delete selected students', this.selectedStudents);
+  }
+
+  changeStudentDialog(event: { isOpen: boolean; message: string }) {
+    this.studentDialogVisible = event.isOpen;
+    if (event.message === 'save') {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Exitoso',
+        detail: 'Estudiante guardado',
+        life: 3000,
+      });
+    } else if (event.message === 'close') {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Cancelado',
+        detail: 'Has cancelado la operación',
+        life: 3000,
+      });
+    }
+  }
+
+  getGlobalFilterFields() {
+    return this.cols.map((col: Column) => col.field);
+  }
+
+  onGlobalFilter(table: Table, event: Event) {
+    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
   getSeverity(status: string) {
