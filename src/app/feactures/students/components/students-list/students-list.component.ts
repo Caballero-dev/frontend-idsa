@@ -12,12 +12,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { StudentsFormComponent } from '../students-form/students-form.component';
-
-interface Column {
-  field: string;
-  header: string;
-  sortable: boolean;
-}
+import { Column, getGlobalFilterFields, onGlobalFilter } from '../../../shared/interfaces/table.interface';
 
 interface Student {
   studentId: string;
@@ -197,11 +192,11 @@ export class StudentsListComponent implements OnInit {
   }
 
   getGlobalFilterFields() {
-    return this.cols.map((col: Column) => col.field);
+    return getGlobalFilterFields(this.cols);
   }
 
   onGlobalFilter(table: Table, event: Event) {
-    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    return onGlobalFilter(table, event);
   }
 
   getSeverity(status: string) {

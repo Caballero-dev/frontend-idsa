@@ -15,7 +15,7 @@ import { KeyFilter } from 'primeng/keyfilter';
 })
 export class StudentsFormComponent implements OnInit {
   @Input() studentDialog: boolean = false;
-  @Output() defaultChangeStudentDialog = new EventEmitter<{isOpen: boolean; message: string}>();
+  @Output() defaultChangeStudentDialog = new EventEmitter<{ isOpen: boolean; message: string }>();
   studentForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
@@ -32,12 +32,11 @@ export class StudentsFormComponent implements OnInit {
   ngOnInit() {}
 
   closeDialog() {
-    this.defaultChangeStudentDialog.emit({isOpen: false, message:'close'});
+    this.defaultChangeStudentDialog.emit({ isOpen: false, message: 'close' });
   }
 
   saveStudent() {
     console.log(this.studentForm.value);
-    this.defaultChangeStudentDialog.emit({isOpen: false, message:'save'});
+    this.defaultChangeStudentDialog.emit({ isOpen: false, message: 'save' });
   }
-
 }
