@@ -24,10 +24,10 @@
       [routerLink]="['./perfil']"
     >
       <p-avatar
-        image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+        [label]="getInitials()"
         shape="circle"
       />
-      <span class="font-bold">Amy Elsner</span>
+      <span class="font-bold">{{ userName }}</span>
     </a>
   </div>
 </div>

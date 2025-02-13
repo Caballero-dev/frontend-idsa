@@ -19,6 +19,8 @@ interface MenuItem {
   templateUrl: './sidebar.component.html',
 })
 export class SidebarComponent implements OnInit {
+  userName: string = 'Amy Taylor';
+
   menuItem: MenuItem[] = [
     { label: 'Inicio', icon: 'pi pi-home', path: './inicio' },
     { label: 'Alumnos', icon: 'pi pi-users', path: './alumnos' },
@@ -29,4 +31,11 @@ export class SidebarComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
+
+  getInitials() {
+    return this.userName
+      .split(' ')
+      .map((n) => n[0])
+      .join('');
+  }
 }
