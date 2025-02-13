@@ -1,0 +1,112 @@
+<p-toolbar styleClass="mb-6">
+  <ng-template #start>
+    <p-button
+      label="Crear"
+      icon="pi pi-plus"
+      severity="secondary"
+      class="mr-2"
+      (onClick)="createTutor()"
+    />
+    <p-button
+      severity="secondary"
+      label="Eliminar"
+      icon="pi pi-trash"
+      outlined
+      (onClick)="deleteSelectedTutors()"
+      [disabled]="!selectedTutors || !selectedTutors.length"
+    />
+  </ng-template>
+</p-toolbar>
+
+<p-table
+  #dt
+  [value]="tutors"
+  [rows]="15"
+  [columns]="cols"
+  [paginator]="true"
+  [globalFilterFields]="getGlobalFilterFields()"
+  [tableStyle]="{ 'min-width': '75rem' }"
+  [(selection)]="selectedTutors"
+  [rowHover]="true"
+  dataKey="tutorId"
+  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} tutores"
+  [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="[15, 30, 45]"
+>
+  <ng-template #caption>
+    <div class="flex items-center justify-between">
+      <h5 class="m-0">Administrar tutores</h5>
+      <p-iconfield>
+        <p-inputicon styleClass="pi pi-search" />
+        <input
+          pInputText
+          type="text"
+          (input)="onGlobalFilter(dt, $event)"
+          placeholder="Buscar..."
+        />
+      </p-iconfield>
+    </div>
+  </ng-template>
+  <ng-template
+    #header
+    let-columns
+  >
+    <tr>
+      <th style="width: 3rem">
+        <p-tableHeaderCheckbox />
+      </th>
+      @for (col of columns; track $index) {
+        <th
+          [pSortableColumn]="col.sortable ? col.field : null"
+          style="min-width: 16rem"
+        >
+          {{ col.header }}
+          @if (col.sortable) {
+            <p-sortIcon field="{{ col.field }}" />
+          }
+        </th>
+      }
+      <th style="min-width: 12rem"></th>
+    </tr>
+  </ng-template>
+  <ng-template
+    #body
+    let-tutor
+    let-columns="columns"
+  >
+    <tr>
+      <td style="width: 3rem">
+        <p-tableCheckbox [value]="tutor" />
+      </td>
+      @for (col of columns; track $index) {
+        <td style="min-width: 12rem">{{ getNestedValue(tutor, col.field) }}</td>
+      }
+      <td>
+        <p-button
+          icon="pi pi-pencil"
+          class="mr-2"
+          [rounded]="true"
+          [outlined]="true"
+          (click)="editTutor(tutor)"
+        />
+        <p-button
+          icon="pi pi-trash"
+          severity="danger"
+          [rounded]="true"
+          [outlined]="true"
+          (click)="deleteTutor(tutor)"
+        />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+@if (tutorDialogVisible) {
+  <tutors-form
+    [tutorDialog]="tutorDialogVisible"
+    (defaultChangeTutorDialog)="changeTutorDialogVisible($event)"
+  ></tutors-form>
+}
+
+<p-toast />
+<p-confirmdialog [style]="{ width: '450px' }" />

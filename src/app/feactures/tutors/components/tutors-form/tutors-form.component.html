@@ -1,0 +1,138 @@
+<p-dialog
+  [(visible)]="tutorDialog"
+  [modal]="true"
+  header="Detalles del tutor"
+  closable="false"
+  [style]="{ width: '450px' }"
+>
+  <ng-template #content>
+    <form
+      [formGroup]="tutorForm"
+      class="flex flex-col gap-6"
+    >
+      <div>
+        <label
+          for="employeeNumber"
+          class="block font-bold mb-3"
+        >
+          Número de empleado
+        </label>
+        <input
+          pInputText
+          pKeyFilter="num"
+          id="employeeNumber"
+          required
+          autofocus
+          fluid
+          formControlName="employeeNumber"
+        />
+      </div>
+
+      <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+          <label
+            for="email"
+            class="block font-bold mb-3"
+          >
+            Correo electrónico
+          </label>
+          <input
+            pInputText
+            id="email"
+            type="email"
+            required
+            fluid
+            formControlName="email"
+          />
+        </div>
+
+        <div class="col-span-6">
+          <label
+            for="phone"
+            class="block font-bold mb-3"
+          >
+            Teléfono
+          </label>
+          <input
+            pInputText
+            pKeyFilter="num"
+            id="phone"
+            type="tel"
+            required
+            fluid
+            formControlName="phoneNumber"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label
+          for="name"
+          class="block font-bold mb-3"
+        >
+          Nombre
+        </label>
+        <input
+          pInputText
+          pKeyFilter="alpha"
+          id="name"
+          type="text"
+          required
+          fluid
+          formControlName="name"
+        />
+      </div>
+
+      <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+          <label
+            for="paternalSurname"
+            class="block font-bold mb-3"
+          >
+            Apellido paterno
+          </label>
+          <input
+            pInputText
+            pKeyFilter="alpha"
+            id="paternalSurname"
+            type="text"
+            required
+            fluid
+            formControlName="paternalSurname"
+          />
+        </div>
+        <div class="col-span-6">
+          <label
+            for="maternalSurname"
+            class="block font-bold mb-3"
+          >
+            Apellido materno
+          </label>
+          <input
+            pInputText
+            pKeyFilter="alpha"
+            id="maternalSurname"
+            type="text"
+            required
+            fluid
+            formControlName="maternalSurname"
+          />
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #footer>
+    <p-button
+      label="Cancel"
+      icon="pi pi-times"
+      text
+      (click)="closeDialog()"
+    />
+    <p-button
+      label="Save"
+      icon="pi pi-check"
+      (click)="saveTutor()"
+    />
+  </ng-template>
+</p-dialog>

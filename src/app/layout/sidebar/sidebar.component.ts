@@ -23,7 +23,8 @@ export class SidebarComponent implements OnInit {
 
   menuItem: MenuItem[] = [
     { label: 'Inicio', icon: 'pi pi-home', path: './inicio' },
-    { label: 'Alumnos', icon: 'pi pi-users', path: './alumnos' },
+    { label: 'Tutores', icon: 'pi pi-book', path: './tutores' },
+    { label: 'Alumnos', icon: 'pi pi-graduation-cap', path: './alumnos' },
     { label: 'Usuarios', icon: 'pi pi-users', path: './usuarios' },
     { label: 'ejemplo', icon: 'pi pi-book', path: './ejemplo' },
   ];
