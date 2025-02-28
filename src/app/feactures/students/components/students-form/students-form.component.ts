@@ -11,7 +11,7 @@ import { KeyFilter } from 'primeng/keyfilter';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, DialogModule, InputTextModule, KeyFilter, ButtonModule],
   templateUrl: './students-form.component.html',
-  styleUrl: './students-form.component.css',
+  styleUrl: './students-form.component.scss',
 })
 export class StudentsFormComponent implements OnInit {
   @Input() studentDialog: boolean = false;

@@ -42,7 +42,7 @@ interface Student {
     StudentsFormComponent,
   ],
   templateUrl: './students-list.component.html',
-  styleUrl: './students-list.component.css',
+  styleUrl: './students-list.component.scss',
   providers: [ConfirmationService, MessageService],
 })
 export class StudentsListComponent implements OnInit {

@@ -1,33 +1,13 @@
 <div class="layout-sidebar">
-  <div class="overflow-y-auto">
-    <ul class="layout-menu">
-      <li>
-        <!-- <ul class="list-none p-4 m-0"> -->
-        <ul class="overflow-hidden">
-          @for (item of menuItem; track $index) {
-            <menu-item
-              [path]="item.path"
-              [icon]="item.icon"
-              [label]="item.label"
-            ></menu-item>
-          }
-        </ul>
-      </li>
-    </ul>
-  </div>
-
-  <div class="mt-auto">
-    <hr class="mb-4 mx-4 border-t border-0 border-surface" />
-    <a
-      pRipple
-      class="m-4 flex items-center cursor-pointer p-4 gap-2 rounded-border text-surface-700 hover:bg-surface-100 duration-150 transition-colors p-ripple"
-      [routerLink]="['./perfil']"
-    >
-      <p-avatar
-        [label]="getInitials()"
-        shape="circle"
-      />
-      <span class="font-bold">{{ userName }}</span>
-    </a>
-  </div>
+  <ul class="layout-menu">
+    @for (item of menuItem; track $index) {
+      @if (item.separator) {
+        <hr />
+      }
+      <li
+        menu-item
+        [item]="item"
+      ></li>
+    }
+  </ul>
 </div>

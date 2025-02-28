@@ -1,42 +1,24 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-import { AvatarModule } from 'primeng/avatar';
-import { Ripple } from 'primeng/ripple';
-import { RouterLink } from '@angular/router';
-import { MenuItemComponent } from '../menu-item/menu-item.component';
-
-interface MenuItem {
-  label: string;
-  icon: string;
-  path: string;
-}
+import { RippleModule } from 'primeng/ripple';
+import { MenuItemComponent } from '../shared/components/menu-item/menu-item.component';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [ButtonModule, Ripple, AvatarModule, RouterLink, MenuItemComponent],
-  styleUrl: './sidebar.component.css',
+  imports: [CommonModule, ButtonModule, RippleModule, MenuItemComponent],
+  styleUrl: './sidebar.component.scss',
   templateUrl: './sidebar.component.html',
 })
-export class SidebarComponent implements OnInit {
-  userName: string = 'Amy Taylor';
-
+export class SidebarComponent {
   menuItem: MenuItem[] = [
-    { label: 'Inicio', icon: 'pi pi-home', path: './inicio' },
-    { label: 'Tutores', icon: 'pi pi-book', path: './tutores' },
-    { label: 'Alumnos', icon: 'pi pi-graduation-cap', path: './alumnos' },
-    { label: 'Usuarios', icon: 'pi pi-users', path: './usuarios' },
-    { label: 'ejemplo', icon: 'pi pi-book', path: './ejemplo' },
+    { label: 'Inicio', icon: 'pi pi-home', routerLink: './inicio' },
+    { label: 'Tutores', icon: 'pi pi-book', routerLink: './tutores' },
+    { label: 'Alumnos', icon: 'pi pi-graduation-cap', routerLink: './alumnos' },
+    { label: 'Usuarios', icon: 'pi pi-users', routerLink: './usuarios' },
+    { label: 'Mi perfil', icon: 'pi pi-user', routerLink: './perfil', separator: true },
+    { label: 'Cerrar sesión', icon: 'pi pi-sign-out', routerLink: '/auth/login' },
   ];
-
-  constructor() {}
-
-  ngOnInit() {}
-
-  getInitials() {
-    return this.userName
-      .split(' ')
-      .map((n) => n[0])
-      .join('');
-  }
 }

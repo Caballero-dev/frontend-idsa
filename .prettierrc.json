@@ -14,7 +14,8 @@
   "overrides": [
     {
       "files": [
-        "*.ts"],
+        "*.ts"
+      ],
       "options": {
         "parser": "typescript"
       }
@@ -28,9 +29,19 @@
       }
     },
     {
-      "files": ["*.css"],
+      "files": [
+        "*.css"
+      ],
       "options": {
         "parser": "css"
+      }
+    },
+    {
+      "files": [
+        "*.scss"
+      ],
+      "options": {
+        "parser": "scss"
       }
     },
     {

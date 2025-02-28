@@ -26,9 +26,21 @@ interface Tutor {
 @Component({
   selector: 'app-tutors-list',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule, ToastModule, ToolbarModule, InputTextModule, InputIconModule, IconFieldModule, DialogModule, ConfirmDialogModule, TutorsFormComponent],
+  imports: [
+    CommonModule,
+    TableModule,
+    ButtonModule,
+    ToastModule,
+    ToolbarModule,
+    InputTextModule,
+    InputIconModule,
+    IconFieldModule,
+    DialogModule,
+    ConfirmDialogModule,
+    TutorsFormComponent,
+  ],
   templateUrl: './tutors-list.component.html',
-  styleUrl: './tutors-list.component.css',
+  styleUrl: './tutors-list.component.scss',
   providers: [ConfirmationService, MessageService],
 })
 export class TutorsListComponent implements OnInit {
@@ -140,7 +152,7 @@ export class TutorsListComponent implements OnInit {
           detail: 'Operación cancelada',
           life: 3000,
         });
-      }
+      },
     });
   }
 
@@ -171,13 +183,11 @@ export class TutorsListComponent implements OnInit {
     return field.split('.').reduce((prev: any, curr: string) => prev?.[curr], data);
   }
 
-    getGlobalFilterFields() {
-      return getGlobalFilterFields(this.cols);
-    }
-  
-    onGlobalFilter(table: Table, event: Event) {
-      return onGlobalFilter(table, event);
-    }
-  
+  getGlobalFilterFields() {
+    return getGlobalFilterFields(this.cols);
+  }
 
+  onGlobalFilter(table: Table, event: Event) {
+    return onGlobalFilter(table, event);
+  }
 }

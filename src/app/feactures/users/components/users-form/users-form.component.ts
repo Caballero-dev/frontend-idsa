@@ -20,7 +20,7 @@ import { PasswordModule } from 'primeng/password';
     ButtonModule,
   ],
   templateUrl: './users-form.component.html',
-  styleUrl: './users-form.component.css',
+  styleUrl: './users-form.component.scss',
 })
 export class UsersFormComponent implements OnInit {
   @Input() userDialog: boolean = false;

@@ -47,7 +47,6 @@ export class LayoutService {
     }
 
     if (this.isDesktop()) {
-      console.log(' toggle desk');
       this.layoutState.update((prev) => ({
         ...prev,
         staticMenuDesktopInactive: !this.layoutState().staticMenuDesktopInactive,

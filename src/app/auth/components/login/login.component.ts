@@ -10,7 +10,7 @@ import { PasswordModule } from 'primeng/password';
   standalone: true,
   imports: [ButtonModule, InputTextModule, PasswordModule, RouterModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;

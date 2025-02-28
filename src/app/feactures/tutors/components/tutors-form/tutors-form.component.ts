@@ -11,7 +11,7 @@ import { KeyFilterModule } from 'primeng/keyfilter';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, DialogModule, InputTextModule, KeyFilterModule, ButtonModule],
   templateUrl: './tutors-form.component.html',
-  styleUrl: './tutors-form.component.css'
+  styleUrl: './tutors-form.component.scss',
 })
 export class TutorsFormComponent {
   @Input() tutorDialog: boolean = false;
@@ -36,5 +36,4 @@ export class TutorsFormComponent {
   saveTutor() {
     this.defaultChangeTutorDialog.emit({ isOpen: false, message: 'save' });
   }
-
 }

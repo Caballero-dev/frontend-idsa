@@ -8,14 +8,16 @@
     </button>
     <a
       class="layout-topbar-logo"
-      routerLink="/"
+      [routerLink]="['./panel']"
     >
-      <img src="/img/logo.jpg" />
+      <img
+        src="/img/logo.jpg"
+        alt="logo identifi Adicc"
+      />
       <span>Identifi Adicc</span>
     </a>
   </div>
 
-  <!-- 
   <div class="layout-topbar-actions">
     <button
       class="layout-topbar-menu-button layout-topbar-action"
@@ -26,27 +28,36 @@
       leaveActiveClass="animate-fadeout"
       [hideOnOutsideClick]="true"
     >
-      <i class="pi pi-ellipsis-v"></i>
+      <p-avatar
+        label="JL"
+        shape="circle"
+      />
     </button>
 
-    <div class="layout-topbar-menu hidden lg:block">
-      <div class="layout-topbar-menu-content">
+    <div class="layout-topbar-menu hidden">
+      <div
+        class="layout-topbar-menu-content"
+        pStyleClass="@parent"
+        leaveToClass="hidden"
+        leaveActiveClass="animate-fadeout"
+      >
         <button
           type="button"
           class="layout-topbar-action"
+          [routerLink]="['./perfil']"
         >
-          <i class="pi pi-inbox"></i>
-          <span>Mensajes</span>
+          <i class="pi pi-user"></i>
+          <span>Mi perfil</span>
         </button>
         <button
           type="button"
           class="layout-topbar-action"
+          [routerLink]="['/auth/login']"
         >
-          <i class="pi pi-user"></i>
-          <span>Perfil</span>
+          <i class="pi pi-sign-out"></i>
+          <span>Cerrar sesión</span>
         </button>
       </div>
     </div>
-  </div> 
-  -->
+  </div>
 </div>

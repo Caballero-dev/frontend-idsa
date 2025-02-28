@@ -46,7 +46,7 @@ interface User {
     UsersFormComponent,
   ],
   templateUrl: './users-list.component.html',
-  styleUrl: './users-list.component.css',
+  styleUrl: './users-list.component.scss',
   providers: [ConfirmationService, MessageService],
 })
 export class UsersListComponent implements OnInit {
