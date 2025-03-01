@@ -20,22 +20,30 @@
   </div>
 
   <div class="layout-topbar-actions">
-    <button
-      class="layout-topbar-menu-button layout-topbar-action"
-      pStyleClass="@next"
-      enterFromClass="hidden"
-      enterActiveClass="animate-scalein"
-      leaveToClass="hidden"
-      leaveActiveClass="animate-fadeout"
-      [hideOnOutsideClick]="true"
-    >
-      <p-avatar
-        label="JL"
-        shape="circle"
-      />
-    </button>
+    <div class="user-container">
+      @if (isDesktop()) {
+        <span class="username">{{ userName }}</span>
+      }
+      <button
+        class="layout-topbar-menu-button layout-topbar-action"
+        pStyleClass="#menuContainer"
+        enterFromClass="hidden"
+        enterActiveClass="animate-scalein"
+        leaveToClass="hidden"
+        leaveActiveClass="animate-fadeout"
+        [hideOnOutsideClick]="true"
+      >
+        <p-avatar
+          [label]="getInitials()"
+          shape="circle"
+        />
+      </button>
+    </div>
 
-    <div class="layout-topbar-menu hidden">
+    <div
+      class="layout-topbar-menu hidden"
+      id="menuContainer"
+    >
       <div
         class="layout-topbar-menu-content"
         pStyleClass="@parent"
