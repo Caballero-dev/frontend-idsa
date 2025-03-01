@@ -13,7 +13,7 @@ import { LayoutService } from './service/layout.service';
   imports: [CommonModule, RouterModule, TopbarComponent, SidebarComponent, FooterComponent],
   template: `
     <div
-      class="layout-wrapper"
+      class="layout-wrapper layout-static"
       [ngClass]="containerClass"
     >
       <app-topbar></app-topbar>
@@ -74,9 +74,7 @@ export class LayoutComponent {
   hideMenu() {
     this.layoutService.layoutState.update((prev) => ({
       ...prev,
-      overlayMenuActive: false,
       staticMenuMobileActive: false,
-      menuHoverActive: false,
     }));
     if (this.menuOutsideClickListener) {
       this.menuOutsideClickListener();
@@ -106,12 +104,7 @@ export class LayoutComponent {
 
   get containerClass() {
     return {
-      'layout-overlay': this.layoutService.layoutConfig().menuMode === 'overlay',
-      'layout-static': this.layoutService.layoutConfig().menuMode === 'static',
-      'layout-static-inactive':
-        this.layoutService.layoutState().staticMenuDesktopInactive &&
-        this.layoutService.layoutConfig().menuMode === 'static',
-      'layout-overlay-active': this.layoutService.layoutState().overlayMenuActive,
+      'layout-static-inactive': this.layoutService.layoutState().staticMenuDesktopInactive,
       'layout-mobile-active': this.layoutService.layoutState().staticMenuMobileActive,
     };
   }
