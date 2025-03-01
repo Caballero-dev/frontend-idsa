@@ -33,6 +33,7 @@ export class LayoutService {
   layoutState = signal<LayoutState>(this._state);
   private overlayOpen = new Subject<any>();
   overlayOpen$ = this.overlayOpen.asObservable();
+  /*Quitar el overlay*/
   isOverlay = computed(() => this.layoutConfig().menuMode === 'overlay');
 
   constructor() {}

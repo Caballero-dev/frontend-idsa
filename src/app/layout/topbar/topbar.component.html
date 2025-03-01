@@ -1,6 +1,7 @@
 <div class="layout-topbar">
   <div class="layout-topbar-logo-container">
     <button
+      type="button"
       class="layout-menu-button layout-topbar-action"
       (click)="layoutService.onMenuToggle()"
     >
@@ -8,7 +9,7 @@
     </button>
     <a
       class="layout-topbar-logo"
-      [routerLink]="['./panel']"
+      [routerLink]="['./inicio']"
     >
       <img
         src="/img/logo.jpg"

@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
-import { MenuItemComponent } from '../shared/components/menu-item/menu-item.component';
 import { MenuItem } from 'primeng/api';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, ButtonModule, RippleModule, MenuItemComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, ButtonModule, RippleModule],
   styleUrl: './sidebar.component.scss',
   templateUrl: './sidebar.component.html',
 })

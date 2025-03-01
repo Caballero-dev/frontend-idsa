@@ -2,12 +2,21 @@
   <ul class="layout-menu">
     @for (item of menuItem; track $index) {
       @if (item.separator) {
-        <hr />
+        <li class="divider-list"></li>
       }
-      <li
-        menu-item
-        [item]="item"
-      ></li>
+      <li>
+        <a
+          pRipple
+          [routerLink]="[item.routerLink]"
+          routerLinkActive="active-route"
+        >
+          <i
+            class="layout-menuitem-icon"
+            [ngClass]="[item.icon]"
+          ></i>
+          <span class="layout-menuitem-text">{{ item.label }}</span>
+        </a>
+      </li>
     }
   </ul>
 </div>
