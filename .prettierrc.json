@@ -7,14 +7,15 @@
   "trailingComma": "es5",
   "bracketSpacing": true,
   "bracketSameLine": false,
-  "endOfLine": "lf",
+  "endOfLine": "crlf",
   "htmlWhitespaceSensitivity": "ignore",
   "embeddedLanguageFormatting": "auto",
   "singleAttributePerLine": true,
   "overrides": [
     {
       "files": [
-        "*.ts"],
+        "*.ts"
+      ],
       "options": {
         "parser": "typescript"
       }
@@ -28,9 +29,19 @@
       }
     },
     {
-      "files": ["*.css"],
+      "files": [
+        "*.css"
+      ],
       "options": {
         "parser": "css"
+      }
+    },
+    {
+      "files": [
+        "*.scss"
+      ],
+      "options": {
+        "parser": "scss"
       }
     },
     {

@@ -8,8 +8,3 @@
     box-shadow var(--transition-duration),
     outline-color var(--transition-duration);
 }
-
-@mixin focused-inset() {
-  outline-offset: -1px;
-  box-shadow: inset var(--focus-ring-shadow);
-}

@@ -1,32 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-import { AvatarModule } from 'primeng/avatar';
-import { Ripple } from 'primeng/ripple';
-import { RouterLink } from '@angular/router';
-import { MenuItemComponent } from '../menu-item/menu-item.component';
-
-interface MenuItem {
-  label: string;
-  icon: string;
-  path: string;
-}
+import { RippleModule } from 'primeng/ripple';
+import { MenuItem } from 'primeng/api';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [ButtonModule, Ripple, AvatarModule, RouterLink, MenuItemComponent],
-  styleUrl: './sidebar.component.css',
+  imports: [CommonModule, RouterLink, RouterLinkActive, ButtonModule, RippleModule],
+  styleUrl: './sidebar.component.scss',
   templateUrl: './sidebar.component.html',
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
   menuItem: MenuItem[] = [
-    { label: 'Inicio', icon: 'pi pi-home', path: './inicio' },
-    { label: 'Alumnos', icon: 'pi pi-users', path: './alumnos' },
-    { label: 'Usuarios', icon: 'pi pi-users', path: './usuarios' },
-    { label: 'ejemplo', icon: 'pi pi-book', path: './ejemplo' },
+    { label: 'Inicio', icon: 'pi pi-home', routerLink: './inicio' },
+    { label: 'Tutores', icon: 'pi pi-book', routerLink: './tutores' },
+    { label: 'Alumnos', icon: 'pi pi-graduation-cap', routerLink: './alumnos' },
+    { label: 'Usuarios', icon: 'pi pi-users', routerLink: './usuarios' },
+    { label: 'Mi perfil', icon: 'pi pi-user', routerLink: './perfil', separator: true },
+    { label: 'Cerrar sesión', icon: 'pi pi-sign-out', routerLink: '/auth/login' },
   ];
-
-  constructor() {}
-
-  ngOnInit() {}
 }
