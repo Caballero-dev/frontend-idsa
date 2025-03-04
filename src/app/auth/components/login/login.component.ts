@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -7,6 +7,7 @@ import { FormUtils } from '../../../utils/form.utils';
 import { CommonModule } from '@angular/common';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
+import { InputTextComponent } from '../../../shared/components/input-text/input-text.component';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +20,7 @@ import { InputIconModule } from 'primeng/inputicon';
     InputTextModule,
     IconFieldModule,
     InputIconModule,
+    InputTextComponent,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -29,9 +31,10 @@ export class LoginComponent implements OnInit {
   formUtils = FormUtils;
   showPassword: boolean = false;
 
-  loginForm: FormGroup = this.fb.group({
+  loginForm = this.fb.group({
     email: [
       '',
+      // { value: '', disabled: true }, // Configuración inicial del estado disabled
       [
         Validators.required,
         Validators.minLength(6),
@@ -51,10 +54,6 @@ export class LoginComponent implements OnInit {
   });
 
   ngOnInit(): void {}
-
-  isFieldInvalid(fieldName: string): boolean | null {
-    return FormUtils.isValidField(this.loginForm, fieldName);
-  }
 
   login(): void {
     this.router.navigate(['./panel']);
