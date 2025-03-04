@@ -1,7 +1,4 @@
-<div
-  class="flex flex-col gap-2"
-  *ngIf="type !== 'password'"
->
+<div class="flex flex-col gap-2">
   <label
     [for]="inputId"
     class="text-xl"
@@ -9,24 +6,53 @@
     {{ label }}
   </label>
 
-  <input
-    type="text"
-    pInputText
-    [id]="inputId"
-    [formControl]="customFormControl"
-    [placeholder]="placeholder"
-    [required]="required"
-    [readOnly]="readonly"
-    [maxLength]="maxLength"
-    [minLength]="minLength"
-    [variant]="variant"
-    [pSize]="size"
-    [attr.aria-label]="label"
-    [attr.aria-required]="required"
-    [attr.aria-describedby]="getAriaDescribedBy()"
-  />
+  @if (type === 'email') {
+    <input
+      type="text"
+      pInputText
+      [id]="inputId"
+      [formControl]="customFormControl"
+      [placeholder]="placeholder"
+      [required]="required"
+      [readOnly]="readonly"
+      [maxLength]="maxLength"
+      [minLength]="minLength"
+      [variant]="variant"
+      [pSize]="size"
+      [attr.aria-label]="label"
+      [attr.aria-required]="required"
+      [attr.aria-describedby]="getAriaDescribedBy()"
+    />
+  }
 
-  @if (formUtils.isValidField(this.customFormControl)) {
+  @if (type === 'password') {
+    <p-iconfield>
+      <input
+        [type]="showPassword ? 'text' : 'password'"
+        pInputText
+        [id]="inputId"
+        [formControl]="customFormControl"
+        [placeholder]="placeholder"
+        [required]="required"
+        [readOnly]="readonly"
+        [maxLength]="maxLength"
+        [minLength]="minLength"
+        [variant]="variant"
+        [pSize]="size"
+        [attr.aria-label]="label"
+        [attr.aria-required]="required"
+        [attr.aria-describedby]="getAriaDescribedBy()"
+        class="w-full md:w-[30rem]"
+      />
+      <p-inputicon
+        class="cursor-pointer"
+        [ngClass]="showPassword ? 'pi pi-eye' : 'pi pi-eye-slash'"
+        (click)="showPassword = !showPassword"
+      />
+    </p-iconfield>
+  }
+
+  @if (formUtils.isValidField(customFormControl)) {
     <span
       [id]="inputId + '-error'"
       class="text-red-600"
@@ -35,7 +61,7 @@
     </span>
   }
 
-  <!--  @if (helpText !== null && !isFieldInvalid()) {
+  <!--  @if (helpText !== null && !formUtils.isValidField(customFormControl)) {
     <small
       [id]="inputId + '-help'"
       class="text-muted-color"

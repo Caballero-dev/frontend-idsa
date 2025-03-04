@@ -28,78 +28,36 @@
             (ngSubmit)="login()"
           >
             <div class="mb-8 md:w-[30rem]">
-              <idsa-input-text
-                inputId="email"
-                label="Correo electrónico"
-                [customFormControl]="loginForm.controls.email"
-                placeholder="Ingresa tu correo electrónico"
-                variant="outlined"
-                size="large"
-                [disabled]="true"
-                [minLength]="6"
-                [maxLength]="100"
-              ></idsa-input-text>
-              <!--
-              <div class="flex flex-col gap-2 mb-4">
-                <label
-                  for="email"
-                  class="text-xl"
-                >
-                  Correo electrónico
-                </label>
-
-                <input
-                  id="email"
-                  type="text"
-                  pInputText
-                  formControlName="email"
-                  placeholder="ejemplo@gmail.com"
+              <div class="mb-4">
+                <idsa-input-text
+                  type="email"
+                  inputId="email"
+                  label="Correo electrónico"
+                  [customFormControl]="loginForm.controls.email"
+                  placeholder="Ingresa tu correo electrónico"
+                  [required]="true"
+                  [disabled]="false"
+                  [readonly]="false"
+                  [maxLength]="100"
+                  [minLength]="6"
                   variant="outlined"
-                  pSize="large"
-                  class="w-full md:w-[30rem]"
-                  maxlength="100"
-                />
-
-                @if (isFieldInvalid('email')) {
-                  <span class="text-red-600">
-                    {{ formUtils.getFieldError(loginForm, 'email') }}
-                  </span>
-                }
+                  size="large"
+                ></idsa-input-text>
               </div>
--->
-              <!--<div class="flex flex-col gap-2 mb-4">
-                <label
-                  for="password"
-                  class="text-xl"
-                >
-                  Contraseña
-                </label>
 
-                <p-iconfield>
-                  <input
-                    id="password"
-                    [type]="showPassword ? 'text' : 'password'"
-                    pInputText
-                    formControlName="password"
-                    placeholder="Contraseña de acceso"
-                    variant="outlined"
-                    pSize="large"
-                    class="w-full md:w-[30rem]"
-                    maxlength="20"
-                  />
-                  <p-inputicon
-                    class="cursor-pointer"
-                    [ngClass]="showPassword ? 'pi pi-eye' : 'pi pi-eye-slash'"
-                    (click)="showPassword = !showPassword"
-                  />
-                </p-iconfield>
-
-                @if (isFieldInvalid('password')) {
-                  <span class="text-red-600">
-                    {{ formUtils.getFieldError(loginForm, 'password') }}
-                  </span>
-                }
-              </div>-->
+              <div>
+                <idsa-input-text
+                  type="password"
+                  inputId="password"
+                  label="Contraseña"
+                  [customFormControl]="loginForm.controls.password"
+                  placeholder="Ingresa tu contraseña"
+                  variant="outlined"
+                  size="large"
+                  [minLength]="8"
+                  [maxLength]="20"
+                ></idsa-input-text>
+              </div>
             </div>
 
             <p-button

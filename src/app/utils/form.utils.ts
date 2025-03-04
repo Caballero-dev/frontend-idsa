@@ -1,4 +1,4 @@
-import { AbstractControl, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
 
 export class FormUtils {
   static namePattern = '([a-zA-Z]+) ([a-zA-Z]+)';
@@ -51,7 +51,6 @@ export class FormUtils {
     return !!formControl.errors && formControl.touched;
   }
 
-  // revisar
   /**
    * @param formControl Campo a validar
    * @returns Mensaje de error del campo

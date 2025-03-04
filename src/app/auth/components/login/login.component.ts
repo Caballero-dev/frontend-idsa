@@ -1,12 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
 import { FormUtils } from '../../../utils/form.utils';
 import { CommonModule } from '@angular/common';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
 import { InputTextComponent } from '../../../shared/components/input-text/input-text.component';
 
 @Component({
@@ -17,9 +14,6 @@ import { InputTextComponent } from '../../../shared/components/input-text/input-
     RouterModule,
     ReactiveFormsModule,
     ButtonModule,
-    InputTextModule,
-    IconFieldModule,
-    InputIconModule,
     InputTextComponent,
   ],
   templateUrl: './login.component.html',
@@ -29,7 +23,6 @@ export class LoginComponent implements OnInit {
   fb: FormBuilder = inject(FormBuilder);
   router: Router = inject(Router);
   formUtils = FormUtils;
-  showPassword: boolean = false;
 
   loginForm = this.fb.group({
     email: [
