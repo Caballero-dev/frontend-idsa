@@ -22,6 +22,8 @@
       [attr.aria-label]="label"
       [attr.aria-required]="required"
       [attr.aria-describedby]="getAriaDescribedBy()"
+      (keydown)="formUtils.isValidEmailCharacters($event)"
+      (paste)="formUtils.isValidEmailPaste($event)"
     />
   }
 
@@ -43,6 +45,8 @@
         [attr.aria-required]="required"
         [attr.aria-describedby]="getAriaDescribedBy()"
         class="w-full md:w-[30rem]"
+        (keydown)="formUtils.isValidPasswordCharacters($event)"
+        (paste)="formUtils.isValidPasswordPaste($event)"
       />
       <p-inputicon
         class="cursor-pointer"

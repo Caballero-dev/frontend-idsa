@@ -2,8 +2,8 @@ import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
 
 export class FormUtils {
   static namePattern = '([a-zA-Z]+) ([a-zA-Z]+)';
-  static emailPattern: RegExp = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
-  static passwordPattern: RegExp = /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{}|;:'"\\,.<>\/?~`]+$/;
+  static emailPattern: RegExp = /^[a-zA-Z0-9.]+@[a-z0-9.]+\.[a-z]{2,4}$/;
+  static passwordPattern: RegExp = /^[a-zA-Z0-9ñÑ!@#$%^&*()_+\-=\[\]{}|;:'"\\,.<>\/?~`]+$/;
   static notOnlySpacesPattern = '^[a-zA-Z0-9]+$';
 
   /**
@@ -84,4 +84,55 @@ export class FormUtils {
       return field1Value === field2Value ? null : { passwordsNotEqual: true };
     };
   }
+
+  /**
+   * @param event Evento de teclado
+   * @returns true si el caracter es válido, false si no lo es
+   * */
+  static isValidEmailCharacters(event: KeyboardEvent): boolean {
+   const allowedCharacters:RegExp = /^[a-zA-Z0-9@.]+$/;
+   const key: string = event.key;
+
+    return allowedCharacters.test(key);
+  }
+
+  /**
+   * @param event Evento de pegado
+   * @returns true si el pegado es válido, false si no lo es
+   * */
+  static isValidEmailPaste(event: ClipboardEvent): boolean {
+    if (event.clipboardData) {
+      const clipboardData: string = event.clipboardData.getData('text');
+      const allowedCharacters: RegExp = FormUtils.emailPattern;
+
+      return allowedCharacters.test(clipboardData);
+    }
+    return false;
+  }
+
+  /**
+   * @param event Evento de teclado
+   * @returns true si el caracter es válido, false si no lo es
+   * */
+  static isValidPasswordCharacters(event: KeyboardEvent): boolean {
+    const allowedCharacters: RegExp = FormUtils.passwordPattern;
+    const key: string = event.key;
+
+    return allowedCharacters.test(key);
+  }
+
+  /**
+   * @param event Evento de pegado
+   * @returns true si el pegado es válido, false si no lo es
+   * */
+  static isValidPasswordPaste(event: ClipboardEvent): boolean {
+    if (event.clipboardData) {
+      const clipboardData: string = event.clipboardData.getData('text');
+      const allowedCharacters: RegExp = FormUtils.passwordPattern;
+
+      return allowedCharacters.test(clipboardData);
+    }
+    return false;
+  }
+
 }
