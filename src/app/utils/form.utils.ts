@@ -1,4 +1,4 @@
-import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 
 export class FormUtils {
   static namePattern = '([a-zA-Z]+) ([a-zA-Z]+)';
@@ -44,23 +44,22 @@ export class FormUtils {
   }
 
   /**
-   * @param form Formulario a validar
-   * @param fieldName Nombre del campo a validar
-   * @returns true si el campo es válido, false si no lo es
+   * @param formControl Campo a validar
+   * @returns true si el campo es inválido, false si es válido
    * */
-  static isValidField(form: FormGroup, fieldName: string): boolean | null {
-    return !!form.controls[fieldName].errors && form.controls[fieldName].touched;
+  static isValidField(formControl: FormControl): boolean | null {
+    return !!formControl.errors && formControl.touched;
   }
 
+  // revisar
   /**
-   * @param form Formulario a validar
-   * @param fieldName Nombre del campo a validar
+   * @param formControl Campo a validar
    * @returns Mensaje de error del campo
    * */
-  static getFieldError(form: FormGroup, fieldName: string): string | null {
-    if (!form.controls[fieldName]) return null;
+  static getFieldError(formControl: FormControl): string | null {
+    if (!formControl) return null;
 
-    const errors: ValidationErrors = form.controls[fieldName].errors ?? {};
+    const errors: ValidationErrors = formControl.errors ?? {};
 
     return FormUtils.getTextError(errors);
   }

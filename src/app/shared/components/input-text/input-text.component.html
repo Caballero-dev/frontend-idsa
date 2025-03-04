@@ -1,0 +1,46 @@
+<div
+  class="flex flex-col gap-2"
+  *ngIf="type !== 'password'"
+>
+  <label
+    [for]="inputId"
+    class="text-xl"
+  >
+    {{ label }}
+  </label>
+
+  <input
+    type="text"
+    pInputText
+    [id]="inputId"
+    [formControl]="customFormControl"
+    [placeholder]="placeholder"
+    [required]="required"
+    [readOnly]="readonly"
+    [maxLength]="maxLength"
+    [minLength]="minLength"
+    [variant]="variant"
+    [pSize]="size"
+    [attr.aria-label]="label"
+    [attr.aria-required]="required"
+    [attr.aria-describedby]="getAriaDescribedBy()"
+  />
+
+  @if (formUtils.isValidField(this.customFormControl)) {
+    <span
+      [id]="inputId + '-error'"
+      class="text-red-600"
+    >
+      {{ formUtils.getFieldError(customFormControl) }}
+    </span>
+  }
+
+  <!--  @if (helpText !== null && !isFieldInvalid()) {
+    <small
+      [id]="inputId + '-help'"
+      class="text-muted-color"
+    >
+      {{ helpText }}
+    </small>
+  }-->
+</div>
