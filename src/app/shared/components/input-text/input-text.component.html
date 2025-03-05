@@ -1,36 +1,18 @@
-<div class="flex flex-col gap-2">
-  <label
-    [for]="inputId"
-    class="text-xl"
-  >
-    {{ label }}
-  </label>
-
-  @if (type === 'email') {
-    <input
-      type="text"
-      pInputText
-      [id]="inputId"
-      [formControl]="customFormControl"
-      [placeholder]="placeholder"
-      [required]="required"
-      [readOnly]="readonly"
-      [maxLength]="maxLength"
-      [minLength]="minLength"
-      [variant]="variant"
-      [pSize]="size"
-      [attr.aria-label]="label"
-      [attr.aria-required]="required"
-      [attr.aria-describedby]="getAriaDescribedBy()"
-      (keydown)="formUtils.isValidEmailCharacters($event)"
-      (paste)="formUtils.isValidEmailPaste($event)"
-    />
+<div [ngClass]="getClassContainerInput()">
+  @if (label !== '') {
+    <label
+      [for]="inputId"
+      class="text-xl"
+      [ngClass]="getClassLabel()"
+    >
+      {{ label }}
+    </label>
   }
 
-  @if (type === 'password') {
-    <p-iconfield>
+  <div [ngClass]="getClassInput()">
+    @if (type === 'email') {
       <input
-        [type]="showPassword ? 'text' : 'password'"
+        type="text"
         pInputText
         [id]="inputId"
         [formControl]="customFormControl"
@@ -45,32 +27,56 @@
         [attr.aria-required]="required"
         [attr.aria-describedby]="getAriaDescribedBy()"
         class="w-full md:w-[30rem]"
-        (keydown)="formUtils.isValidPasswordCharacters($event)"
-        (paste)="formUtils.isValidPasswordPaste($event)"
+        (keydown)="formUtils.isValidEmailCharacters($event)"
+        (paste)="formUtils.isValidEmailPaste($event)"
       />
-      <p-inputicon
-        class="cursor-pointer"
-        [ngClass]="showPassword ? 'pi pi-eye' : 'pi pi-eye-slash'"
-        (click)="showPassword = !showPassword"
-      />
-    </p-iconfield>
-  }
+    }
 
-  @if (formUtils.isValidField(customFormControl)) {
-    <span
-      [id]="inputId + '-error'"
-      class="text-red-600"
-    >
-      {{ formUtils.getFieldError(customFormControl) }}
-    </span>
-  }
+    @if (type === 'password') {
+      <p-iconfield>
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          pInputText
+          [id]="inputId"
+          [formControl]="customFormControl"
+          [placeholder]="placeholder"
+          [required]="required"
+          [readOnly]="readonly"
+          [maxLength]="maxLength"
+          [minLength]="minLength"
+          [variant]="variant"
+          [pSize]="size"
+          [attr.aria-label]="label"
+          [attr.aria-required]="required"
+          [attr.aria-describedby]="getAriaDescribedBy()"
+          class="w-full md:w-[30rem]"
+          (keydown)="formUtils.isValidPasswordCharacters($event)"
+          (paste)="formUtils.isValidPasswordPaste($event)"
+        />
+        <p-inputicon
+          class="cursor-pointer"
+          [ngClass]="showPassword ? 'pi pi-eye' : 'pi pi-eye-slash'"
+          (click)="showPassword = !showPassword"
+        />
+      </p-iconfield>
+    }
 
-  <!--  @if (helpText !== null && !formUtils.isValidField(customFormControl)) {
-    <small
-      [id]="inputId + '-help'"
-      class="text-muted-color"
-    >
-      {{ helpText }}
-    </small>
-  }-->
+    @if (formUtils.isValidField(customFormControl)) {
+      <span
+        [id]="inputId + '-error'"
+        class="text-red-600"
+      >
+        {{ formUtils.getFieldError(customFormControl) }}
+      </span>
+    }
+
+    <!--  @if (helpText !== null && !formUtils.isValidField(customFormControl)) {
+      <small
+        [id]="inputId + '-help'"
+        class="text-muted-color"
+      >
+        {{ helpText }}
+      </small>
+    }-->
+  </div>
 </div>

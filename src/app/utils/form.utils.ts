@@ -90,8 +90,8 @@ export class FormUtils {
    * @returns true si el caracter es válido, false si no lo es
    * */
   static isValidEmailCharacters(event: KeyboardEvent): boolean {
-   const allowedCharacters:RegExp = /^[a-zA-Z0-9@.]+$/;
-   const key: string = event.key;
+    const allowedCharacters: RegExp = /^[a-zA-Z0-9@.]+$/;
+    const key: string = event.key;
 
     return allowedCharacters.test(key);
   }
@@ -134,5 +134,4 @@ export class FormUtils {
     }
     return false;
   }
-
 }

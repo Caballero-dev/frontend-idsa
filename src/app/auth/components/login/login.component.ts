@@ -9,13 +9,7 @@ import { InputTextComponent } from '../../../shared/components/input-text/input-
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    ReactiveFormsModule,
-    ButtonModule,
-    InputTextComponent,
-  ],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonModule, InputTextComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -49,11 +43,12 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {}
 
   login(): void {
-    this.router.navigate(['./panel']);
-    // if (this.loginForm.valid) {
-    //   console.log('Credenciales', this.loginForm.value);
-    // } else {
-    //   this.loginForm.markAllAsTouched();
-    // }
+    if (this.loginForm.valid) {
+      console.log('Credenciales', this.loginForm.value);
+      this.router.navigate(['./panel']);
+    } else {
+      console.log('No se puede acceder al panel');
+      this.loginForm.markAllAsTouched();
+    }
   }
 }

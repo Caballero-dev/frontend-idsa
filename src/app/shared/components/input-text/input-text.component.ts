@@ -17,6 +17,7 @@ export class InputTextComponent implements OnInit {
   @Input() type: 'onlyLetters' | 'onlyNumbers' | 'email' | 'password' | 'text' | 'all' = 'all';
   @Input() inputId: string = '';
   @Input() label: string = '';
+  @Input() labelPosition: 'top' | 'left' = 'top';
   @Input() customFormControl: FormControl = new FormControl();
   @Input() placeholder: string = '';
   @Input() required: boolean = false;
@@ -25,7 +26,7 @@ export class InputTextComponent implements OnInit {
   @Input() maxLength: number | null = null;
   @Input() minLength: number | null = null;
   @Input() variant: 'filled' | 'outlined' = 'outlined';
-  @Input({ required: false }) size: 'small' | 'large' | 'small' = 'small';
+  @Input({ required: false }) size: 'small' | 'large' = 'small';
   @Input() helpText: string | null = null;
 
   formUtils = FormUtils;
@@ -36,6 +37,30 @@ export class InputTextComponent implements OnInit {
       this.customFormControl.disable();
     } else {
       this.customFormControl.enable();
+    }
+  }
+
+  getClassContainerInput(): string {
+    if (this.labelPosition === 'top') {
+      return 'flex flex-col gap-2';
+    } else {
+      return 'grid gap-2 grid-cols-12';
+    }
+  }
+
+  getClassLabel(): string {
+    if (this.labelPosition === 'top') {
+      return '';
+    } else {
+      return 'flex items-center col-span-12 mb-2 md:col-span-2 md:mb-0';
+    }
+  }
+
+  getClassInput(): string {
+    if (this.labelPosition === 'top') {
+      return 'flex flex-col gap-2';
+    } else {
+      return 'col-span-12 md:col-span-10';
     }
   }
 
