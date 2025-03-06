@@ -1,39 +1,131 @@
-<div>
-  <h1>
-    <i
-      class="pi pi-user"
-      style="font-size: 2.5rem"
-    ></i>
-    Mi perfil
-  </h1>
+<div class="card flex flex-col w-full">
+  <div class="flex flex-col md:flex-row">
+    <div class="w-full md:w-3/12 flex flex-col gap-3 py-5 md:pr-4">
+      <button
+        pButton
+        type="button"
+        fluid
+        severity="secondary"
+        class="text-xl btn"
+        [class.button-active]="viewMyProfile"
+        (click)="viewUpdatePassword = false; viewMyProfile = true"
+      >
+        <span pButtonLabel>Mi perfil</span>
+      </button>
+      <button
+        pButton
+        type="button"
+        fluid
+        severity="secondary"
+        class="text-xl btn"
+        [class.button-active]="viewUpdatePassword"
+        (click)="viewMyProfile = false; viewUpdatePassword = true"
+      >
+        <span pButtonLabel>Actualizar contraseña</span>
+      </button>
+    </div>
+
+    <div class="w-full md:w-9/12 py-5 flex flex-col gap-4">
+      @if (viewMyProfile) {
+        <div class="font-semibold text-2xl mb-5">Mi perfil</div>
+
+        <div class="grid gap-4 grid-cols-12 mb-5">
+          <label class="flex items-center col-span-12 md:col-span-4 text-xl font-semibold">Nombre:</label>
+          <div class="col-span-12 md:col-span-8 text-xl">John Doe Jr.</div>
+        </div>
+
+        <div class="grid gap-4 grid-cols-12 mb-5">
+          <label class="flex items-center col-span-12 md:col-span-4 text-xl font-semibold">Correo electrónico:</label>
+          <div class="col-span-12 md:col-span-8 text-xl">
+            {{ 'john.doe@gamil.com' }}
+          </div>
+        </div>
+
+        <div class="grid gap-4 grid-cols-12 mb-5">
+          <label class="flex items-center col-span-12 md:col-span-4 text-xl font-semibold">Numero de telefono:</label>
+          <div class="col-span-12 md:col-span-8 text-xl">123456789</div>
+        </div>
+
+        <div class="grid gap-4 grid-cols-12 mb-5">
+          <label class="flex items-center col-span-12 md:col-span-4 text-xl font-semibold">Fecha creación:</label>
+          <div class="col-span-12 md:col-span-8 text-xl">2021-01-01</div>
+        </div>
+      }
+
+      @if (viewUpdatePassword) {
+        <div class="font-semibold text-2xl mb-5">Actualizar contraseña</div>
+        <form
+          [formGroup]="updatePasswordForm"
+          (ngSubmit)="updatePassword()"
+        >
+          <div class="mb-5">
+            <idsa-input-text
+              type="password"
+              inputId="password"
+              label="Contraseña actual"
+              labelPosition="left"
+              [customFormControl]="updatePasswordForm.controls.password"
+              placeholder="Ingresa tu contraseña actual"
+              [required]="true"
+              [disabled]="false"
+              [readonly]="false"
+              [maxLength]="20"
+              [minLength]="8"
+              variant="outlined"
+              size="large"
+            ></idsa-input-text>
+          </div>
+
+          <div class="mb-5">
+            <idsa-input-text
+              type="password"
+              inputId="newPassword"
+              label="Contraseña nueva"
+              labelPosition="left"
+              [customFormControl]="updatePasswordForm.controls.newPassword"
+              placeholder="Ingresa tu nueva contraseña"
+              [required]="true"
+              [disabled]="false"
+              [readonly]="false"
+              [maxLength]="20"
+              [minLength]="8"
+              variant="outlined"
+              size="large"
+            ></idsa-input-text>
+          </div>
+
+          <div class="mb-5">
+            <idsa-input-text
+              type="password"
+              inputId="confirmPassword"
+              label="Confirmar contraseña"
+              labelPosition="left"
+              [customFormControl]="updatePasswordForm.controls.confirmPassword"
+              placeholder="Confirma tu nueva contraseña"
+              [required]="true"
+              [disabled]="false"
+              [readonly]="false"
+              [maxLength]="20"
+              [minLength]="8"
+              variant="outlined"
+              size="large"
+              helpTextType="error"
+              [helpText]="
+                updatePasswordForm.errors && updatePasswordForm.touched ? 'Las contraseñas no son iguales' : null
+              "
+            ></idsa-input-text>
+          </div>
+
+          <div class="flex justify-end">
+            <p-button
+              label="Actualizar contraseña"
+              [rounded]="true"
+              size="large"
+              type="submit"
+            />
+          </div>
+        </form>
+      }
+    </div>
+  </div>
 </div>
-
-<p-card
-  styleClass="ui-card-shadow"
-  [style]="{ 'font-size': '1.5rem' }"
->
-  <div class="columns-2">
-    <p>Nombre:</p>
-    <p>Amy Taylor</p>
-  </div>
-
-  <div class="columns-2">
-    <p>Email:</p>
-    <p>{{ 'amy@gmail.com' }}</p>
-  </div>
-
-  <div class="columns-2">
-    <p>Teléfono:</p>
-    <p>123456789</p>
-  </div>
-
-  <div class="columns-2">
-    <p>Fecha creación:</p>
-    <p>2021-01-01</p>
-  </div>
-
-  <div class="columns-2">
-    <p>Numero de empleado:</p>
-    <p>123456</p>
-  </div>
-</p-card>
