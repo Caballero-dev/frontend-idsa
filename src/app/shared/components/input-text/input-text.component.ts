@@ -28,6 +28,7 @@ export class InputTextComponent implements OnInit {
   @Input() variant: 'filled' | 'outlined' = 'outlined';
   @Input({ required: false }) size: 'small' | 'large' = 'small';
   @Input() helpText: string | null = null;
+  @Input() helpTextType: 'error' | 'info' = 'info';
 
   formUtils = FormUtils;
   showPassword: boolean = false;
@@ -40,11 +41,11 @@ export class InputTextComponent implements OnInit {
     }
   }
 
-  getClassContainerInput(): string {
+  getClassContainerDiv(): string {
     if (this.labelPosition === 'top') {
       return 'flex flex-col gap-2';
     } else {
-      return 'grid gap-2 grid-cols-12';
+      return 'grid grid-cols-12';
     }
   }
 
@@ -52,15 +53,15 @@ export class InputTextComponent implements OnInit {
     if (this.labelPosition === 'top') {
       return '';
     } else {
-      return 'flex items-center col-span-12 mb-2 md:col-span-2 md:mb-0';
+      return 'flex items-center col-span-12 md:col-span-4';
     }
   }
 
-  getClassInput(): string {
+  getClassContainerInput(): string {
     if (this.labelPosition === 'top') {
       return 'flex flex-col gap-2';
     } else {
-      return 'col-span-12 md:col-span-10';
+      return 'flex flex-col gap-2 col-span-12 md:col-span-8';
     }
   }
 
@@ -71,7 +72,7 @@ export class InputTextComponent implements OnInit {
       ids.push(`${this.inputId}-help`);
     }
 
-    if (this.formUtils.isValidField(this.customFormControl)) {
+    if (this.formUtils.isInvalidValidField(this.customFormControl)) {
       ids.push(`${this.inputId}-error`);
     }
 

@@ -45,9 +45,9 @@ export class FormUtils {
 
   /**
    * @param formControl Campo a validar
-   * @returns true si el campo es inválido, false si es válido
+   * @returns {boolean} `true` cuando el campo tiene errores y ha sido tocado, `false` en cualquier otro caso
    * */
-  static isValidField(formControl: FormControl): boolean | null {
+  static isInvalidValidField(formControl: FormControl): boolean {
     return !!formControl.errors && formControl.touched;
   }
 
@@ -66,15 +66,7 @@ export class FormUtils {
   /**
    * @param field1 Nombre del primer campo
    * @param field2 Nombre del segundo campo
-   * @returns true si los campos son iguales, false si no lo son
-   *
-   * @example
-   * ```typescript
-   * this.form = this.fb.group({
-   *  password: ['', Validators.required],
-   *  confirmPassword: ['', [Validators.required, FormUtils.isFieldOneEqualFieldTwo('password', 'confirmPassword')]]
-   *  });
-   *  ```
+   * @returns null si los campos son iguales, { passwordsNotEqual: true } si no lo son
    * */
   static isFieldOneEqualFieldTwo(field1: string, field2: string) {
     return (formGroup: AbstractControl) => {

@@ -1,4 +1,4 @@
-<div [ngClass]="getClassContainerInput()">
+<div [ngClass]="getClassContainerDiv()">
   @if (label !== '') {
     <label
       [for]="inputId"
@@ -9,9 +9,10 @@
     </label>
   }
 
-  <div [ngClass]="getClassInput()">
+  <div [ngClass]="getClassContainerInput()">
     @if (type === 'email') {
       <input
+        fluid
         type="text"
         pInputText
         [id]="inputId"
@@ -26,7 +27,6 @@
         [attr.aria-label]="label"
         [attr.aria-required]="required"
         [attr.aria-describedby]="getAriaDescribedBy()"
-        class="w-full md:w-[30rem]"
         (keydown)="formUtils.isValidEmailCharacters($event)"
         (paste)="formUtils.isValidEmailPaste($event)"
       />
@@ -35,6 +35,7 @@
     @if (type === 'password') {
       <p-iconfield>
         <input
+          fluid
           [type]="showPassword ? 'text' : 'password'"
           pInputText
           [id]="inputId"
@@ -49,7 +50,6 @@
           [attr.aria-label]="label"
           [attr.aria-required]="required"
           [attr.aria-describedby]="getAriaDescribedBy()"
-          class="w-full md:w-[30rem]"
           (keydown)="formUtils.isValidPasswordCharacters($event)"
           (paste)="formUtils.isValidPasswordPaste($event)"
         />
@@ -61,22 +61,20 @@
       </p-iconfield>
     }
 
-    @if (formUtils.isValidField(customFormControl)) {
+    @if (formUtils.isInvalidValidField(customFormControl)) {
       <span
         [id]="inputId + '-error'"
         class="text-red-600"
       >
         {{ formUtils.getFieldError(customFormControl) }}
       </span>
-    }
-
-    <!--  @if (helpText !== null && !formUtils.isValidField(customFormControl)) {
-      <small
+    } @else if (helpText !== null) {
+      <span
         [id]="inputId + '-help'"
-        class="text-muted-color"
+        [ngClass]="helpTextType === 'error' ? 'text-red-600' : 'text-muted-color'"
       >
         {{ helpText }}
-      </small>
-    }-->
+      </span>
+    }
   </div>
 </div>
