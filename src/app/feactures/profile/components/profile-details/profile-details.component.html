@@ -54,6 +54,20 @@
 
       @if (viewUpdatePassword) {
         <div class="font-semibold text-2xl mb-5">Actualizar contraseña</div>
+
+        @if (errorUpdatePassword) {
+          <p-message
+            variant="text"
+            severity="error"
+            icon="pi pi-times-circle"
+            styleClass="mb-2"
+            closable
+            (onClose)="errorUpdatePassword = false"
+          >
+            Verifica que la información ingresada sea correcta
+          </p-message>
+        }
+
         <form
           [formGroup]="updatePasswordForm"
           (ngSubmit)="updatePassword()"
@@ -129,3 +143,5 @@
     </div>
   </div>
 </div>
+
+<p-toast />
