@@ -1,0 +1,23 @@
+.btn {
+  justify-content: left;
+  background: transparent;
+  border-color: transparent;
+  color: var(--p-button-text-secondary-color);
+
+  &:hover {
+    .p-button-label {
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+  }
+}
+
+.button-active {
+  background-color: var(--surface-hover);
+  border-radius: var(--p-button-border-radius);
+  color: var(--primary-color);
+
+  .p-button-label {
+    font-weight: 700;
+  }
+}
