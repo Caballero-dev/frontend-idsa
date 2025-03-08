@@ -11,6 +11,7 @@
   "htmlWhitespaceSensitivity": "ignore",
   "embeddedLanguageFormatting": "auto",
   "singleAttributePerLine": true,
+  "plugins": ["prettier-plugin-tailwindcss"],
   "overrides": [
     {
       "files": [

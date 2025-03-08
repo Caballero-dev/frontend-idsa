@@ -1,12 +1,12 @@
-<div class="card flex flex-col w-full">
+<div class="card flex w-full flex-col">
   <div class="flex flex-col md:flex-row">
-    <div class="w-full md:w-3/12 flex flex-col gap-3 py-5 md:pr-4">
+    <div class="flex w-full flex-col gap-3 py-5 md:w-3/12 md:pr-4">
       <button
         pButton
         type="button"
         fluid
         severity="secondary"
-        class="text-xl btn"
+        class="btn text-xl"
         [class.button-active]="viewMyProfile"
         (click)="viewUpdatePassword = false; viewMyProfile = true"
       >
@@ -17,7 +17,7 @@
         type="button"
         fluid
         severity="secondary"
-        class="text-xl btn"
+        class="btn text-xl"
         [class.button-active]="viewUpdatePassword"
         (click)="viewMyProfile = false; viewUpdatePassword = true"
       >
@@ -25,35 +25,35 @@
       </button>
     </div>
 
-    <div class="w-full md:w-9/12 py-5 flex flex-col gap-4">
+    <div class="flex w-full flex-col gap-4 py-5 md:w-9/12">
       @if (viewMyProfile) {
-        <div class="font-semibold text-2xl mb-5">Mi perfil</div>
+        <div class="mb-5 text-2xl font-semibold">Mi perfil</div>
 
-        <div class="grid gap-4 grid-cols-12 mb-5">
-          <label class="flex items-center col-span-12 md:col-span-4 text-xl font-semibold">Nombre:</label>
-          <div class="col-span-12 md:col-span-8 text-xl">John Doe Jr.</div>
+        <div class="mb-5 grid grid-cols-12 gap-4">
+          <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Nombre:</label>
+          <div class="col-span-12 text-xl md:col-span-8">John Doe Jr.</div>
         </div>
 
-        <div class="grid gap-4 grid-cols-12 mb-5">
-          <label class="flex items-center col-span-12 md:col-span-4 text-xl font-semibold">Correo electrónico:</label>
-          <div class="col-span-12 md:col-span-8 text-xl">
+        <div class="mb-5 grid grid-cols-12 gap-4">
+          <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Correo electrónico:</label>
+          <div class="col-span-12 text-xl md:col-span-8">
             {{ 'john.doe@gamil.com' }}
           </div>
         </div>
 
-        <div class="grid gap-4 grid-cols-12 mb-5">
-          <label class="flex items-center col-span-12 md:col-span-4 text-xl font-semibold">Numero de telefono:</label>
-          <div class="col-span-12 md:col-span-8 text-xl">123456789</div>
+        <div class="mb-5 grid grid-cols-12 gap-4">
+          <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Numero de telefono:</label>
+          <div class="col-span-12 text-xl md:col-span-8">123456789</div>
         </div>
 
-        <div class="grid gap-4 grid-cols-12 mb-5">
-          <label class="flex items-center col-span-12 md:col-span-4 text-xl font-semibold">Fecha creación:</label>
-          <div class="col-span-12 md:col-span-8 text-xl">2021-01-01</div>
+        <div class="mb-5 grid grid-cols-12 gap-4">
+          <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Fecha creación:</label>
+          <div class="col-span-12 text-xl md:col-span-8">2021-01-01</div>
         </div>
       }
 
       @if (viewUpdatePassword) {
-        <div class="font-semibold text-2xl mb-5">Actualizar contraseña</div>
+        <div class="mb-5 text-2xl font-semibold">Actualizar contraseña</div>
 
         @if (errorUpdatePassword) {
           <p-message

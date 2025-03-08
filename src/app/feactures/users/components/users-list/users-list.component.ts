@@ -70,7 +70,7 @@ export class UsersListComponent implements OnInit {
   messageService: MessageService = inject(MessageService);
 
   ngOnInit(): void {
-    this.loadUsers()
+    this.loadUsers();
   }
 
   loadUsers(): void {
