@@ -7,11 +7,11 @@ import { DialogModule } from 'primeng/dialog';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
-import { Table, TableModule } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
-import { Column, getGlobalFilterFields, onGlobalFilter } from '../../../shared/interfaces/table.interface';
 import { TutorsFormComponent } from '../tutors-form/tutors-form.component';
+import { Column, TableUtils } from '../../../utils/table.utils';
 
 interface Tutor {
   tutorId: string;
@@ -56,6 +56,8 @@ export class TutorsListComponent implements OnInit {
   tutors!: Tutor[];
   selectedTutors!: Tutor[] | null;
   tutorDialogVisible: boolean = false;
+
+  tableUtils = TableUtils;
 
   constructor(
     private confirmationService: ConfirmationService,
@@ -179,15 +181,4 @@ export class TutorsListComponent implements OnInit {
     }
   }
 
-  getNestedValue(data: Tutor, field: string) {
-    return field.split('.').reduce((prev: any, curr: string) => prev?.[curr], data);
-  }
-
-  getGlobalFilterFields() {
-    return getGlobalFilterFields(this.cols);
-  }
-
-  onGlobalFilter(table: Table, event: Event) {
-    return onGlobalFilter(table, event);
-  }
 }

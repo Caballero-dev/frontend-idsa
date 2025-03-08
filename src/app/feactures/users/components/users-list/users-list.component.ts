@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
-import { Table, TableModule } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
-import { Column, getGlobalFilterFields, onGlobalFilter } from '../../../shared/interfaces/table.interface';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { UsersFormComponent } from '../users-form/users-form.component';
+import { Column, TableUtils } from '../../../utils/table.utils';
 
 interface Role {
   roleId: string;
@@ -21,6 +21,8 @@ interface Role {
 interface User {
   userId: string;
   name: string;
+  firstSurname: string;
+  secondSurname: string;
   email: string;
   password?: string;
   creationDate: string;
@@ -50,9 +52,10 @@ interface User {
   providers: [ConfirmationService, MessageService],
 })
 export class UsersListComponent implements OnInit {
-  user!: User;
   cols: Column[] = [
     { field: 'name', header: 'Nombre', sortable: true },
+    { field: 'firstSurname', header: 'Primer Apellido', sortable: true },
+    { field: 'secondSurname', header: 'Segundo Apellido', sortable: true },
     { field: 'email', header: 'Correo', sortable: true },
     { field: 'creationDate', header: 'Fecha de Creación', sortable: true },
     { field: 'lastAccess', header: 'Último Acceso', sortable: true },
@@ -63,16 +66,17 @@ export class UsersListComponent implements OnInit {
   selectedUsers!: User[] | null;
   userDialogVisible: boolean = false;
 
-  constructor(
-    protected confirmationService: ConfirmationService,
-    private messageService: MessageService
-  ) {}
+  tableUtils = TableUtils;
+  confirmationService: ConfirmationService = inject(ConfirmationService);
+  messageService: MessageService = inject(MessageService);
 
   ngOnInit(): void {
     this.users = [
       {
         userId: '1',
-        name: 'Jose Perez',
+        name: 'Jose',
+        firstSurname: 'Perez',
+        secondSurname: 'Gonzalez',
         email: 'jose@gmail.com',
         creationDate: '2021-11-10',
         lastAccess: '2021-10-10',
@@ -81,7 +85,9 @@ export class UsersListComponent implements OnInit {
       },
       {
         userId: '2',
-        name: 'Juan Perez',
+        name: 'Juan',
+        firstSurname: 'Perez',
+        secondSurname: 'Gonzalez',
         role: { roleId: '2', roleName: 'Estudiante' },
         email: '2@gmail.com',
         creationDate: '2021-10-10',
@@ -90,7 +96,9 @@ export class UsersListComponent implements OnInit {
       },
       {
         userId: '3',
-        name: 'Maria Perez',
+        name: 'Maria',
+        firstSurname: 'Perez',
+        secondSurname: 'Gonzalez',
         role: { roleId: '3', roleName: 'Tutor' },
         email: '5@gmail.com',
         creationDate: '2021-10-10',
@@ -99,7 +107,9 @@ export class UsersListComponent implements OnInit {
       },
       {
         userId: '4',
-        name: 'Pedro Perez',
+        name: 'Pedro',
+        firstSurname: 'Perez',
+        secondSurname: 'Gonzalez',
         role: { roleId: '4', roleName: 'Administrador' },
         email: 'pedro@gamil.com',
         creationDate: '2021-10-10',
@@ -135,20 +145,30 @@ export class UsersListComponent implements OnInit {
       accept: () => {
         this.users = this.users.filter((val) => val.userId !== user.userId);
 
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Exitoso',
-          detail: 'Estudiante eliminado',
-          life: 3000,
-        });
+        this.messageToast(
+          'success',
+          'pi pi-verified',
+          true,
+          'pi pi-times',
+          false,
+          'Estudiante eliminado',
+          'El estudiante ha sido eliminado correctamente',
+          3000
+        )
+
       },
       reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Rechazado',
-          detail: 'Has rechazado la eliminación del estudiante',
-          life: 3000,
-        });
+        this.messageToast(
+          'error',
+          'pi pi-times-circle',
+          true,
+          'pi pi-times',
+          false,
+          'Eliminación cancelada',
+          'Has cancelado la eliminación del estudiante',
+          3000
+        )
+
       },
     });
   }
@@ -160,31 +180,53 @@ export class UsersListComponent implements OnInit {
   changeUserDialog(event: { isOpen: boolean; message: string }) {
     this.userDialogVisible = event.isOpen;
     if (event.message === 'save') {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Exitoso',
-        detail: 'Estudiante guardado',
-        life: 3000,
-      });
+
+      this.messageToast(
+        'success',
+        'pi pi-verified',
+        true,
+        'pi pi-times',
+        false,
+        'Estudiante guardado',
+        'El estudiante ha sido guardado correctamente',
+        3000
+      )
+
     } else if (event.message === 'close') {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Cancelado',
-        detail: 'Has cancelado la operación',
-        life: 3000,
-      });
+
+      this.messageToast(
+        'error',
+        'pi pi-times-circle',
+        true,
+        'pi pi-times',
+        false,
+        'Operación cancelada',
+        'Has cancelado la operación',
+      )
+
     }
   }
 
-  getNestedValue(data: User, field: string) {
-    return field.split('.').reduce((prev: any, curr: string) => prev?.[curr], data);
+  messageToast(
+    severity?: 'success' | 'info' | 'warn' | 'error' | 'secondary' | 'contrast',
+    icon?: string,
+    closable?: boolean,
+    closeIcon?: string,
+    sticky?: boolean,
+    summary?: string,
+    detail?: string,
+    life?: number
+  ): void {
+    this.messageService.add({
+      severity: severity,
+      icon: icon,
+      closable: closable,
+      closeIcon: closeIcon,
+      sticky: sticky,
+      summary: summary,
+      detail: detail,
+      life: life,
+    });
   }
 
-  getGlobalFilterFields() {
-    return getGlobalFilterFields(this.cols);
-  }
-
-  onGlobalFilter(table: Table, event: Event) {
-    return onGlobalFilter(table, event);
-  }
 }
