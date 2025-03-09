@@ -126,6 +126,7 @@
 @if (userDialogVisible) {
   <users-form
     [userDialog]="userDialogVisible"
+    [isCreateUser]="isCreateUser"
     (defaultChangeUserDialog)="changeUserDialog($event)"
   ></users-form>
 }

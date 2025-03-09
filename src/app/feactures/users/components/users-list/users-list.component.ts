@@ -64,6 +64,7 @@ export class UsersListComponent implements OnInit {
   users!: User[];
   selectedUsers!: User[] | null;
   userDialogVisible: boolean = false;
+  isCreateUser: boolean = true;
 
   tableUtils = TableUtils;
   confirmationService: ConfirmationService = inject(ConfirmationService);
@@ -123,10 +124,13 @@ export class UsersListComponent implements OnInit {
 
   createUser(): void {
     this.userDialogVisible = true;
+    this.isCreateUser = true;
   }
 
   editUser(user: User) {
     console.log('Edit user', user);
+    this.isCreateUser = false;
+    this.userDialogVisible = true;
   }
 
   deleteUser(user: User): void {
