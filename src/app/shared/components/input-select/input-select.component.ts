@@ -35,13 +35,7 @@ export class InputSelectComponent implements OnInit {
 
   formUtils = FormUtils;
 
-  ngOnInit(): void {
-    /*    if (this.disabled) {
-      this.customFormControl.disable();
-    } else {
-      this.customFormControl.enable();
-    }*/
-  }
+  ngOnInit(): void {}
 
   getClassContainerDiv(): string {
     if (this.labelPosition === 'top') {

@@ -48,8 +48,9 @@ export class UsersListComponent implements OnInit {
   ];
   users!: User[];
   selectedUsers!: User[] | null;
-  userDialogVisible: boolean = false;
   isCreateUser: boolean = true;
+  selectedUser!: User | null;
+  userDialogVisible: boolean = false;
 
   tableUtils = TableUtils;
   confirmationService: ConfirmationService = inject(ConfirmationService);
@@ -61,21 +62,23 @@ export class UsersListComponent implements OnInit {
   }
 
   loadUsers(): void {
-    setTimeout(() => { // Simula carga de datos
+    setTimeout(() => {
       this.users = this.userTestService.getData();
       this.isLoading = false;
-    }, 5000);
+    }, 1000);
   }
 
   createUser(): void {
-    this.userDialogVisible = true;
     this.isCreateUser = true;
+    this.selectedUser = null;
+    this.userDialogVisible = true;
   }
 
   editUser(user: User) {
-    console.log('Edit user', user);
     this.isCreateUser = false;
+    this.selectedUser = user;
     this.userDialogVisible = true;
+    console.log('Edit user', user);
   }
 
   deleteUser(user: User): void {

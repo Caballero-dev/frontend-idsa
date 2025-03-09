@@ -3,7 +3,7 @@
   [modal]="true"
   [header]="isCreateUser ? 'Crear Usuario' : 'Editar Usuario'"
   closable="false"
-  [style]="{ width: '500px' }"
+  [style]="{ width: '550px' }"
 >
   <form
     [formGroup]="userForm"
@@ -161,6 +161,7 @@
           </div>
           <div class="w-full">
             <p-checkbox
+              class="mr-2"
               id="activePassword"
               [binary]="true"
               (onChange)="toggleEditPassword($event)"

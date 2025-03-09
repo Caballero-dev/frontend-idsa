@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormUtils } from '../../../../utils/form.utils';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -8,7 +8,7 @@ import { CheckboxChangeEvent, CheckboxModule } from 'primeng/checkbox';
 import { SelectChangeEvent } from 'primeng/select';
 import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
 import { InputSelectComponent } from '../../../../shared/components/input-select/input-select.component';
-import { Role } from '../../models/user.model';
+import { Role, User } from '../../models/user.model';
 
 @Component({
   selector: 'users-form',
@@ -28,6 +28,7 @@ import { Role } from '../../models/user.model';
 export class UsersFormComponent implements OnInit {
   @Input() userDialog: boolean = false;
   @Input() isCreateUser: boolean = true;
+  @Input() selectedUser: User | null = null;
   @Output() defaultChangeUserDialog = new EventEmitter<{ isOpen: boolean; message: string }>();
 
   roles: Role[] = [
@@ -48,7 +49,7 @@ export class UsersFormComponent implements OnInit {
         Validators.pattern(this.formUtils.emailPattern),
       ],
     ],
-    role: ['', [Validators.required]],
+    role: new FormControl<Role | null>(null, [Validators.required]),
     name: [
       '',
       [
@@ -105,7 +106,30 @@ export class UsersFormComponent implements OnInit {
     ],
   });
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.selectedUser) {
+      this.setValuesToForm(this.selectedUser);
+    }
+  }
+
+  setValuesToForm(user: User) {
+    this.selectedRole = user.role;
+    this.userForm.patchValue({
+      email: user.email,
+      role: user.role,
+      name: user.name,
+      firstSurname: user.firstSurname,
+      secondSurname: user.secondSurname,
+    });
+
+    if (user.role.roleId === 'ROLE_ESTUDIANTE') {
+      this.userForm.patchValue({ studentCode: user.studentCode });
+      this.userForm.controls.studentCode.enable();
+    } else {
+      this.userForm.patchValue({ employeeCode: user.employeeCode });
+      this.userForm.controls.employeeCode.enable();
+    }
+  }
 
   roleChange(event: SelectChangeEvent) {
     this.selectedRole = event.value;
