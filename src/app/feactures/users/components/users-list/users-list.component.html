@@ -22,6 +22,10 @@
   #dt
   [value]="users"
   [rows]="15"
+  [scrollable]="true"
+  scrollHeight="500px"
+  [resizableColumns]="true"
+  [showGridlines]="true"
   [loading]="isLoading"
   [columns]="cols"
   [paginator]="true"
@@ -41,7 +45,7 @@
         label="Limpiar"
         [outlined]="true"
         icon="pi pi-filter-slash"
-        (click)="dt.clear(); searchUserValue = ''"
+        (click)="dt.reset(); searchUserValue = ''; selectedUsers = []"
       />
       <div class="mb-3 mt-3 xs:mb-0 xs:mt-0">
         <p-inputgroup>
@@ -70,7 +74,7 @@
       @for (col of columns; track $index) {
         <th
           [pSortableColumn]="col.sortable ? col.field : null"
-          style="min-width: 16rem"
+          pResizableColumn
         >
           {{ col.header }}
           @if (col.sortable) {
@@ -78,7 +82,7 @@
           }
         </th>
       }
-      <th style="min-width: 12rem"></th>
+      <th style="min-width: 10rem"></th>
     </tr>
   </ng-template>
   <ng-template
@@ -91,18 +95,19 @@
         <p-tableCheckbox [value]="user" />
       </td>
       @for (col of columns; track $index) {
-        <td style="min-width: 12rem">{{ tableUtils.getNestedValue(user, col.field) }}</td>
+        <td>{{ tableUtils.getNestedValue(user, col.field) }}</td>
       }
-      <td>
+      <td style="text-align: center; min-width: 10rem">
         <p-button
           icon="pi pi-pencil"
-          class="mr-2"
+          class="mr-3"
           [rounded]="true"
           [outlined]="true"
           (click)="editUser(user)"
         />
         <p-button
           icon="pi pi-trash"
+          class="ml-3"
           severity="danger"
           [rounded]="true"
           [outlined]="true"

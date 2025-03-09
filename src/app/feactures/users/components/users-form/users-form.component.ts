@@ -8,11 +8,7 @@ import { CheckboxChangeEvent, CheckboxModule } from 'primeng/checkbox';
 import { SelectChangeEvent } from 'primeng/select';
 import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
 import { InputSelectComponent } from '../../../../shared/components/input-select/input-select.component';
-
-interface Role {
-  roleId: string;
-  roleName: string;
-}
+import { Role } from '../../models/user.model';
 
 @Component({
   selector: 'users-form',

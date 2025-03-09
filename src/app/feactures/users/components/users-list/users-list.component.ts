@@ -12,23 +12,8 @@ import { TableModule } from 'primeng/table';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
-
-interface Role {
-  roleId: string;
-  roleName: string;
-}
-
-interface User {
-  userId: string;
-  name: string;
-  firstSurname: string;
-  secondSurname: string;
-  email: string;
-  password?: string;
-  createdAt: string;
-  isActive: boolean;
-  role: Role;
-}
+import { User } from '../../models/user.model';
+import { UsersTestService } from '../../tests/users-test.service';
 
 @Component({
   selector: 'app-users-list',
@@ -69,57 +54,17 @@ export class UsersListComponent implements OnInit {
   tableUtils = TableUtils;
   confirmationService: ConfirmationService = inject(ConfirmationService);
   messageService: MessageService = inject(MessageService);
+  userTestService = inject(UsersTestService);
 
   ngOnInit(): void {
     this.loadUsers();
   }
 
   loadUsers(): void {
-    setTimeout(() => {
-      this.users = [
-        {
-          userId: '1',
-          name: 'Jose',
-          firstSurname: 'Perez',
-          secondSurname: 'Gonzalez',
-          email: 'jose@gmail.com',
-          createdAt: '2021-11-10',
-          isActive: true,
-          role: { roleId: '1', roleName: 'Administrador' },
-        },
-        {
-          userId: '2',
-          name: 'Juan',
-          firstSurname: 'Perez',
-          secondSurname: 'Gonzalez',
-          role: { roleId: '2', roleName: 'Estudiante' },
-          email: '2@gmail.com',
-          createdAt: '2021-10-10',
-          isActive: true,
-        },
-        {
-          userId: '3',
-          name: 'Maria',
-          firstSurname: 'Perez',
-          secondSurname: 'Gonzalez',
-          role: { roleId: '3', roleName: 'Tutor' },
-          email: '5@gmail.com',
-          createdAt: '2021-10-10',
-          isActive: true,
-        },
-        {
-          userId: '4',
-          name: 'Pedro',
-          firstSurname: 'Perez',
-          secondSurname: 'Gonzalez',
-          role: { roleId: '4', roleName: 'Administrador' },
-          email: 'pedro@gamil.com',
-          createdAt: '2021-10-10',
-          isActive: false,
-        },
-      ];
+    setTimeout(() => { // Simula carga de datos
+      this.users = this.userTestService.getData();
       this.isLoading = false;
-    }, 1000);
+    }, 5000);
   }
 
   createUser(): void {
