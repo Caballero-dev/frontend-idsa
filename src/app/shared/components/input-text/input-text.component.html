@@ -2,7 +2,6 @@
   @if (label !== '') {
     <label
       [for]="inputId"
-      class="text-xl"
       [ngClass]="getClassLabel()"
     >
       {{ label }}
@@ -59,6 +58,48 @@
           (click)="showPassword = !showPassword"
         />
       </p-iconfield>
+    }
+
+    @if (type === 'onlyLetters') {
+      <input
+        fluid
+        pInputText
+        [id]="inputId"
+        [formControl]="customFormControl"
+        [placeholder]="placeholder"
+        [required]="required"
+        [readOnly]="readonly"
+        [maxLength]="maxLength"
+        [minLength]="minLength"
+        [variant]="variant"
+        [pSize]="size"
+        [attr.aria-label]="label"
+        [attr.aria-required]="required"
+        [attr.aria-describedby]="getAriaDescribedBy()"
+        (keydown)="formUtils.isvalidOnlyLettersCharacters($event)"
+        (paste)="formUtils.isValidOnlyLettersPaste($event)"
+      />
+    }
+
+    @if (type === 'alphanumeric') {
+      <input
+        fluid
+        pInputText
+        [id]="inputId"
+        [formControl]="customFormControl"
+        [placeholder]="placeholder"
+        [required]="required"
+        [readOnly]="readonly"
+        [maxLength]="maxLength"
+        [minLength]="minLength"
+        [variant]="variant"
+        [pSize]="size"
+        [attr.aria-label]="label"
+        [attr.aria-required]="required"
+        [attr.aria-describedby]="getAriaDescribedBy()"
+        (keydown)="formUtils.isValidAlphanumericCharacters($event)"
+        (paste)="formUtils.isValidAlphanumericPaste($event)"
+      />
     }
 
     @if (formUtils.isInvalidValidField(customFormControl)) {

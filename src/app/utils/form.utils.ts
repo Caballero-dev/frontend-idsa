@@ -4,6 +4,8 @@ export class FormUtils {
   static namePattern = '([a-zA-Z]+) ([a-zA-Z]+)';
   static emailPattern: RegExp = /^[a-zA-Z0-9.]+@[a-z0-9.]+\.[a-z]{2,4}$/;
   static passwordPattern: RegExp = /^[a-zA-Z0-9ñÑ!@#$%^&*()_+\-=\[\]{}|;:'"\\,.<>\/?~`]+$/;
+  static onlyLettersPattern: RegExp = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
+  static alphanumericPattern: RegExp = /^[a-zA-Z0-9]+$/;
   static notOnlySpacesPattern = '^[a-zA-Z0-9]+$';
 
   /**
@@ -31,6 +33,12 @@ export class FormUtils {
           }
           if (errors['pattern'].requiredPattern === FormUtils.passwordPattern.toString()) {
             return 'La contraseña contiene caracteres no permitidos';
+          }
+          if (errors['pattern'].requiredPattern === FormUtils.onlyLettersPattern.toString()) {
+            return 'El campo solo permite letras';
+          }
+          if (errors['pattern'].requiredPattern === FormUtils.alphanumericPattern.toString()) {
+            return 'El campo solo permite letras y números';
           }
 
           return 'Error de patrón contra expresión regular';
@@ -121,6 +129,62 @@ export class FormUtils {
     if (event.clipboardData) {
       const clipboardData: string = event.clipboardData.getData('text');
       const allowedCharacters: RegExp = FormUtils.passwordPattern;
+
+      return allowedCharacters.test(clipboardData);
+    }
+    return false;
+  }
+
+  /**
+   * @param event Evento de teclado
+   * @returns true si el caracter es válido, false si no lo es
+   * */
+  static isvalidOnlyLettersCharacters(event: KeyboardEvent): boolean {
+    const allowedCharacters: RegExp = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    const key: string = event.key;
+    const inputElement = event.target as HTMLInputElement;
+    const cursorPosition: number | null = inputElement.selectionStart;
+
+    if (key === ' ' && cursorPosition === 0) {
+      return false;
+    }
+
+    if ((inputElement.value + key).includes('  ')) {
+      return false;
+    }
+
+    return allowedCharacters.test(key);
+  }
+
+  /**
+   * @param event Evento de pegado
+   * @returns true si el pegado es válido, false si no lo es
+   * */
+  static isValidOnlyLettersPaste(event: ClipboardEvent): boolean {
+    if (event.clipboardData) {
+      const clipboardData: string = event.clipboardData.getData('text');
+      const allowedCharacters: RegExp = FormUtils.onlyLettersPattern;
+
+      return allowedCharacters.test(clipboardData) && !clipboardData.includes('  ');
+    }
+    return false;
+  }
+
+  /**
+   * @param event Evento de teclado
+   * @returns true si el caracter es válido, false si no lo es
+   * */
+  static isValidAlphanumericCharacters(event: KeyboardEvent): boolean {
+    const allowedCharacters: RegExp = FormUtils.alphanumericPattern;
+    const key: string = event.key;
+
+    return allowedCharacters.test(key);
+  }
+
+  static isValidAlphanumericPaste(event: ClipboardEvent): boolean {
+    if (event.clipboardData) {
+      const clipboardData: string = event.clipboardData.getData('text');
+      const allowedCharacters: RegExp = FormUtils.alphanumericPattern;
 
       return allowedCharacters.test(clipboardData);
     }

@@ -14,14 +14,15 @@ import { InputIconModule } from 'primeng/inputicon';
   styleUrl: './input-text.component.scss',
 })
 export class InputTextComponent implements OnInit {
-  @Input() type: 'onlyLetters' | 'onlyNumbers' | 'email' | 'password' | 'text' | 'all' = 'all';
+  @Input() type: 'onlyLetters' | 'onlyNumbers' | 'alphanumeric' | 'email' | 'password' | 'text' | 'all' = 'all';
   @Input() inputId: string = '';
   @Input() label: string = '';
+  @Input() labelFontSize: 'text-xs' | 'text-sm' | 'text-base' | 'text-lg' | 'text-xl' = 'text-xl';
   @Input() labelPosition: 'top' | 'left' = 'top';
   @Input() customFormControl: FormControl = new FormControl();
   @Input() placeholder: string = '';
   @Input() required: boolean = false;
-  @Input() disabled: boolean = false;
+  @Input() disabled: boolean = false; // Disabled mejor manejarlo desde el formGroup del padre
   @Input() readonly: boolean = false;
   @Input() maxLength: number | null = null;
   @Input() minLength: number | null = null;
@@ -33,13 +34,7 @@ export class InputTextComponent implements OnInit {
   formUtils = FormUtils;
   showPassword: boolean = false;
 
-  ngOnInit(): void {
-    if (this.disabled) {
-      this.customFormControl.disable();
-    } else {
-      this.customFormControl.enable();
-    }
-  }
+  ngOnInit(): void {}
 
   getClassContainerDiv(): string {
     if (this.labelPosition === 'top') {
@@ -51,9 +46,9 @@ export class InputTextComponent implements OnInit {
 
   getClassLabel(): string {
     if (this.labelPosition === 'top') {
-      return '';
+      return this.labelFontSize;
     } else {
-      return 'flex items-center col-span-12 md:col-span-4';
+      return 'flex items-center col-span-12 md:col-span-4 ' + this.labelFontSize;
     }
   }
 
