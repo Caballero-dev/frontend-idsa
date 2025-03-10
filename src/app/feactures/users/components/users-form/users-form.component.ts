@@ -182,7 +182,6 @@ export class UsersFormComponent implements OnInit {
 
       this.defaultChangeUserDialog.emit({ isOpen: false, message: 'save', user });
     } else {
-      console.log(this.userForm.value);
       this.userForm.markAllAsTouched();
     }
   }
@@ -198,7 +197,6 @@ export class UsersFormComponent implements OnInit {
 
       this.defaultChangeUserDialog.emit({ isOpen: false, message: 'edit', user: user });
     } else {
-      console.log(this.userForm.value);
       this.userForm.markAllAsTouched();
     }
   }
