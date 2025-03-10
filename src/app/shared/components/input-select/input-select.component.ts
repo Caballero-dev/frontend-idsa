@@ -1,38 +1,39 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InputTextModule } from 'primeng/inputtext';
 import { FormUtils } from '../../../utils/form.utils';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
+import { SelectChangeEvent, SelectModule } from 'primeng/select';
 
 @Component({
-  selector: 'idsa-input-text',
+  selector: 'idsa-input-select',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputTextModule, IconFieldModule, InputIconModule],
-  templateUrl: './input-text.component.html',
-  styleUrl: './input-text.component.scss',
+  imports: [CommonModule, ReactiveFormsModule, SelectModule],
+  templateUrl: './input-select.component.html',
+  styleUrl: './input-select.component.scss',
 })
-export class InputTextComponent implements OnInit {
-  @Input() type: 'onlyLetters' | 'onlyNumbers' | 'alphanumeric' | 'email' | 'password' | 'text' | 'all' = 'all';
-  @Input() inputId: string = '';
+export class InputSelectComponent implements OnInit {
+  @Input() type: 'valueObject' | 'valueString' = 'valueString';
+  @Input() selectId: string = '';
   @Input() label: string = '';
   @Input() labelFontSize: 'text-xs' | 'text-sm' | 'text-base' | 'text-lg' | 'text-xl' = 'text-xl';
   @Input() labelPosition: 'top' | 'left' = 'top';
   @Input() customFormControl: FormControl = new FormControl();
+  @Input() options: any[] = [];
+  @Input() optionLabel: string = '';
+  @Input() optionValue: string = '';
+  @Input() showClear: boolean = false;
   @Input() placeholder: string = '';
   @Input() required: boolean = false;
   @Input() disabled: boolean = false; // Disabled mejor manejarlo desde el formGroup del padre
   @Input() readonly: boolean = false;
-  @Input() maxLength: number | null = null;
-  @Input() minLength: number | null = null;
   @Input() variant: 'filled' | 'outlined' = 'outlined';
   @Input({ required: false }) size: 'small' | 'large' = 'small';
   @Input() helpText: string | null = null;
   @Input() helpTextType: 'error' | 'info' = 'info';
 
+  @Output() onChange: EventEmitter<SelectChangeEvent> = new EventEmitter<SelectChangeEvent>();
+
   formUtils = FormUtils;
-  showPassword: boolean = false;
 
   ngOnInit(): void {}
 
@@ -64,11 +65,11 @@ export class InputTextComponent implements OnInit {
     const ids: string[] = [];
 
     if (this.helpText) {
-      ids.push(`${this.inputId}-help`);
+      ids.push(`${this.selectId}-help`);
     }
 
     if (this.formUtils.isInvalidValidField(this.customFormControl)) {
-      ids.push(`${this.inputId}-error`);
+      ids.push(`${this.selectId}-error`);
     }
 
     return ids ? ids.join(' ') : null;

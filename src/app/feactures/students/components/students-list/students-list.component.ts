@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
-import { Table, TableModule } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
@@ -12,7 +12,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { StudentsFormComponent } from '../students-form/students-form.component';
-import { Column, getGlobalFilterFields, onGlobalFilter } from '../../../shared/interfaces/table.interface';
+import { Column, TableUtils } from '../../../utils/table.utils';
 
 interface Student {
   studentId: string;
@@ -59,6 +59,8 @@ export class StudentsListComponent implements OnInit {
   students!: Student[];
   selectedStudents!: Student[] | null;
   studentDialogVisible: boolean = false;
+
+  tableUtils = TableUtils;
 
   constructor(
     private confirmationService: ConfirmationService,
@@ -189,14 +191,6 @@ export class StudentsListComponent implements OnInit {
         life: 3000,
       });
     }
-  }
-
-  getGlobalFilterFields() {
-    return getGlobalFilterFields(this.cols);
-  }
-
-  onGlobalFilter(table: Table, event: Event) {
-    return onGlobalFilter(table, event);
   }
 
   getSeverity(status: string) {
