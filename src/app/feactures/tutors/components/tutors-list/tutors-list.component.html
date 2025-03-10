@@ -24,7 +24,7 @@
   [rows]="15"
   [columns]="cols"
   [paginator]="true"
-  [globalFilterFields]="getGlobalFilterFields()"
+  [globalFilterFields]="tableUtils.getGlobalFilterFields(cols)"
   [tableStyle]="{ 'min-width': '75rem' }"
   [(selection)]="selectedTutors"
   [rowHover]="true"
@@ -41,7 +41,7 @@
         <input
           pInputText
           type="text"
-          (input)="onGlobalFilter(dt, $event)"
+          (input)="tableUtils.onGlobalFilter(dt, $event)"
           placeholder="Buscar..."
         />
       </p-iconfield>
@@ -79,7 +79,7 @@
         <p-tableCheckbox [value]="tutor" />
       </td>
       @for (col of columns; track $index) {
-        <td style="min-width: 12rem">{{ getNestedValue(tutor, col.field) }}</td>
+        <td style="min-width: 12rem">{{ tableUtils.getNestedValue(tutor, col.field) }}</td>
       }
       <td>
         <p-button

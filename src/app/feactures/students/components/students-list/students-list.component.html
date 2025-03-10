@@ -24,7 +24,7 @@
   [rows]="15"
   [columns]="cols"
   [paginator]="true"
-  [globalFilterFields]="getGlobalFilterFields()"
+  [globalFilterFields]="tableUtils.getGlobalFilterFields(cols)"
   [tableStyle]="{ 'min-width': '75rem' }"
   [(selection)]="selectedStudents"
   [rowHover]="true"
@@ -41,7 +41,7 @@
         <input
           pInputText
           type="text"
-          (input)="onGlobalFilter(dt, $event)"
+          (input)="tableUtils.onGlobalFilter(dt, $event)"
           placeholder="Buscar..."
         />
       </p-iconfield>

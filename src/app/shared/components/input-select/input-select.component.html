@@ -1,0 +1,62 @@
+<div [ngClass]="getClassContainerDiv()">
+  @if (label !== '') {
+    <label
+      [for]="selectId"
+      [ngClass]="getClassLabel()"
+    >
+      {{ label }}
+    </label>
+  }
+
+  <div [ngClass]="getClassContainerInput()">
+    @if (type === 'valueString') {
+      <p-select
+        fluid
+        [id]="selectId"
+        [formControl]="customFormControl"
+        [placeholder]="placeholder"
+        [options]="options"
+        [optionLabel]="optionLabel"
+        [optionValue]="optionValue"
+        [showClear]="showClear"
+        [size]="size"
+        [attr.aria-label]="label"
+        [attr.aria-required]="required"
+        [attr.aria-describedby]="getAriaDescribedBy()"
+        (onChange)="onChange.emit($event)"
+      ></p-select>
+    }
+
+    @if (type === 'valueObject') {
+      <p-select
+        [id]="selectId"
+        [formControl]="customFormControl"
+        [placeholder]="placeholder"
+        [options]="options"
+        [optionLabel]="optionLabel"
+        [showClear]="showClear"
+        [size]="size"
+        [attr.aria-label]="label"
+        [attr.aria-required]="required"
+        [attr.aria-describedby]="getAriaDescribedBy()"
+        (onChange)="onChange.emit($event)"
+      ></p-select>
+    }
+
+    @if (formUtils.isInvalidValidField(customFormControl)) {
+      <span
+        [id]="selectId + '-error'"
+        class="text-red-600"
+      >
+        {{ formUtils.getFieldError(customFormControl) }}
+      </span>
+    } @else if (helpText !== null) {
+      <span
+        [id]="selectId + '-help'"
+        [ngClass]="helpTextType === 'error' ? 'text-red-600' : 'text-muted-color'"
+      >
+        {{ helpText }}
+      </span>
+    }
+  </div>
+</div>
