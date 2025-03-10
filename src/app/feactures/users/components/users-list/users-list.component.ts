@@ -83,7 +83,6 @@ export class UsersListComponent implements OnInit {
     this.isCreateUser = false;
     this.selectedUser = user;
     this.userDialogVisible = true;
-    console.log('Edit user', user);
   }
 
   deleteUser(user: User): void {
