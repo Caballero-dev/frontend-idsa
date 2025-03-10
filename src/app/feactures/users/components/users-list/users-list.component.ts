@@ -113,7 +113,7 @@ export class UsersListComponent implements OnInit {
           3000
         );
 
-        this.users = this.users.filter((u: User) => u.userId !== u.userId);
+        this.users = this.users.filter((u: User) => u.userId !== user.userId);
       },
       reject: () => {
         this.messageToast(
