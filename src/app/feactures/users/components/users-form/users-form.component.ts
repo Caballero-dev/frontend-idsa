@@ -8,7 +8,7 @@ import { CheckboxChangeEvent, CheckboxModule } from 'primeng/checkbox';
 import { SelectChangeEvent } from 'primeng/select';
 import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
 import { InputSelectComponent } from '../../../../shared/components/input-select/input-select.component';
-import { Role, User } from '../../models/user.model';
+import { EmitterDialogUser, Role, User } from '../../models/user.model';
 
 @Component({
   selector: 'users-form',
@@ -29,7 +29,7 @@ export class UsersFormComponent implements OnInit {
   @Input() userDialog: boolean = false;
   @Input() isCreateUser: boolean = true;
   @Input() selectedUser: User | null = null;
-  @Output() defaultChangeUserDialog = new EventEmitter<{ isOpen: boolean; message: string }>();
+  @Output() defaultChangeUserDialog: EventEmitter<EmitterDialogUser> = new EventEmitter<EmitterDialogUser>();
 
   roles: Role[] = [
     { roleId: 'ROLE_TUTOR', roleName: 'Tutor' },
@@ -158,15 +158,70 @@ export class UsersFormComponent implements OnInit {
   }
 
   closeDialog() {
-    this.defaultChangeUserDialog.emit({ isOpen: false, message: 'close' });
+    this.defaultChangeUserDialog.emit({ isOpen: false, message: 'close', user: null });
+  }
+
+  saveOrUpdateUser() {
+    if (this.isCreateUser) {
+      this.saveUser();
+    } else {
+      this.editUser();
+    }
   }
 
   saveUser() {
     if (this.userForm.valid) {
-      this.defaultChangeUserDialog.emit({ isOpen: false, message: 'save' });
+      // Cuando se implemente api se debe enviar el objeto getUserData() y quitar ?? ''
+      // Simula la respuesta del servidor
+      let user: User = {
+        userId: Math.floor(Math.random() * 1000),
+        ...this.getUserData(),
+        createdAt: new Date().toLocaleString(),
+        isActive: true,
+      };
+
+      this.defaultChangeUserDialog.emit({ isOpen: false, message: 'save', user });
     } else {
       console.log(this.userForm.value);
       this.userForm.markAllAsTouched();
+    }
+  }
+
+  editUser() {
+    if (this.userForm.valid && this.selectedUser) {
+      let user: User = {
+        userId: this.selectedUser.userId,
+        ...this.getUserData(),
+        createdAt: this.selectedUser?.createdAt,
+        isActive: this.selectedUser.isActive,
+      };
+
+      this.defaultChangeUserDialog.emit({ isOpen: false, message: 'edit', user: user });
+    } else {
+      console.log(this.userForm.value);
+      this.userForm.markAllAsTouched();
+    }
+  }
+
+  getUserData() {
+    let user = {
+      email: this.userForm.value.email ?? '',
+      role: this.userForm.value.role ?? { roleId: '', roleName: '' },
+      name: this.userForm.value.name ?? '',
+      firstSurname: this.userForm.value.firstSurname ?? '',
+      secondSurname: this.userForm.value.secondSurname ?? '',
+    };
+
+    if (this.selectedRole?.roleId === 'ROLE_ESTUDIANTE') {
+      return {
+        ...user,
+        studentCode: this.userForm.value.studentCode ?? '',
+      };
+    } else {
+      return {
+        ...user,
+        employeeCode: this.userForm.value.employeeCode ?? '',
+      };
     }
   }
 }

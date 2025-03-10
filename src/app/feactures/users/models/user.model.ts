@@ -16,3 +16,9 @@ export interface User {
   createdAt: string;
   isActive: boolean;
 }
+
+export interface EmitterDialogUser {
+  isOpen: boolean;
+  message: string;
+  user: User | null;
+}

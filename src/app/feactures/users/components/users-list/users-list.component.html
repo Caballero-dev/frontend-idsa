@@ -57,7 +57,7 @@
           />
           <p-button
             icon="pi pi-search"
-            (click)="dt.filterGlobal(searchUserValue, 'contains')"
+            (click)="dt.filterGlobal(searchUserValue.trim(), 'contains')"
           />
         </p-inputgroup>
       </div>

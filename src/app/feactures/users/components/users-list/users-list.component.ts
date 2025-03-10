@@ -12,7 +12,7 @@ import { TableModule } from 'primeng/table';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
-import { User } from '../../models/user.model';
+import { EmitterDialogUser, User } from '../../models/user.model';
 import { UsersTestService } from '../../tests/users-test.service';
 
 @Component({
@@ -63,7 +63,12 @@ export class UsersListComponent implements OnInit {
 
   loadUsers(): void {
     setTimeout(() => {
-      this.users = this.userTestService.getData();
+      this.users = this.userTestService.getData().map((usr) => {
+        return {
+          ...usr,
+          createdAt: new Date(usr.createdAt).toLocaleString(),
+        };
+      });
       this.isLoading = false;
     }, 1000);
   }
@@ -83,7 +88,7 @@ export class UsersListComponent implements OnInit {
 
   deleteUser(user: User): void {
     this.confirmationService.confirm({
-      message: '¿Está seguro que quieres eliminar ' + user.name + '?',
+      message: `¿Está seguro que quieres eliminar el usuario seleccionado?<br><br>Nombre: ${user.name} ${user.firstSurname} ${user.secondSurname} <br>Correo: ${user.email}`,
       header: 'Confirmar',
       closable: false,
       closeOnEscape: false,
@@ -97,18 +102,18 @@ export class UsersListComponent implements OnInit {
         label: 'Aceptar',
       },
       accept: () => {
-        this.users = this.users.filter((val) => val.userId !== user.userId);
-
         this.messageToast(
           'success',
           'pi pi-verified',
           true,
           'pi pi-times',
           false,
-          'Estudiante eliminado',
-          'El estudiante ha sido eliminado correctamente',
+          'Usuario eliminado',
+          'El usuario ha sido eliminado correctamente',
           3000
         );
+
+        this.users = this.users.filter((u: User) => u.userId !== u.userId);
       },
       reject: () => {
         this.messageToast(
@@ -118,7 +123,7 @@ export class UsersListComponent implements OnInit {
           'pi pi-times',
           false,
           'Eliminación cancelada',
-          'Has cancelado la eliminación del estudiante',
+          'Has cancelado la eliminación del usuario',
           3000
         );
       },
@@ -126,10 +131,52 @@ export class UsersListComponent implements OnInit {
   }
 
   deleteSelectedUsers(): void {
-    console.log('Delete selected users', this.selectedUsers);
+    this.confirmationService.confirm({
+      header: 'Confirmar',
+      message: `¿Está seguro que quieres eliminar los usuarios seleccionados?
+        <br><br>${this.selectedUsers?.length} usuarios serán eliminados.
+        <br><br>Correos:<br>- ${this.selectedUsers?.map((user) => user.email).join('<br>- ')}`,
+      closable: false,
+      closeOnEscape: false,
+      icon: 'pi pi-exclamation-triangle',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Aceptar',
+      },
+      accept: () => {
+        this.messageToast(
+          'success',
+          'pi pi-verified',
+          true,
+          'pi pi-times',
+          false,
+          'Usuarios eliminados',
+          'Los usuarios han sido eliminados correctamente',
+          3000
+        );
+
+        this.users = this.users.filter((u: User) => !this.selectedUsers?.includes(u));
+      },
+      reject: () => {
+        this.messageToast(
+          'error',
+          'pi pi-times-circle',
+          true,
+          'pi pi-times',
+          false,
+          'Eliminación cancelada',
+          'Has cancelado la eliminación de los usuarios',
+          3000
+        );
+      },
+    });
   }
 
-  changeUserDialog(event: { isOpen: boolean; message: string }): void {
+  changeUserDialog(event: EmitterDialogUser): void {
     this.userDialogVisible = event.isOpen;
     if (event.message === 'save') {
       this.messageToast(
@@ -138,10 +185,25 @@ export class UsersListComponent implements OnInit {
         true,
         'pi pi-times',
         false,
-        'Estudiante guardado',
-        'El estudiante ha sido guardado correctamente',
+        'Usuario guardado',
+        'El usuario ha sido guardado correctamente',
         3000
       );
+      if (event.user) this.users.push(event.user);
+    } else if (event.message === 'edit') {
+      this.messageToast(
+        'success',
+        'pi pi-verified',
+        true,
+        'pi pi-times',
+        false,
+        'Usuario editado',
+        'El usuario ha sido editado correctamente',
+        3000
+      );
+      if (event.user !== null) {
+        this.users = this.users.map((usr: User) => (usr.userId === event.user?.userId ? event.user : usr));
+      }
     } else if (event.message === 'close') {
       this.messageToast(
         'error',

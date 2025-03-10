@@ -19,7 +19,7 @@ export class UsersTestService {
         secondSurname: 'Martinez',
         employeeCode: 'TUT1234ABCDE',
         password: 'Pass1234$',
-        createdAt: '2024-05-15T08:30:22',
+        createdAt: '2025-03-10T03:25:08.083009906Z',
         isActive: true,
       },
       {
@@ -34,7 +34,7 @@ export class UsersTestService {
         secondSurname: 'Fernandez',
         employeeCode: 'TUT5678FGHIJ',
         password: 'Secure456!',
-        createdAt: '2024-06-02T14:15:45',
+        createdAt: '2025-03-10T02:23:02.672881Z',
         isActive: true,
       },
       {
@@ -49,7 +49,7 @@ export class UsersTestService {
         secondSurname: 'Gonzalez',
         studentCode: 'EST2023ABC456',
         password: 'Student789#',
-        createdAt: '2024-03-10T09:45:30',
+        createdAt: '2025-03-10T03:19:58.067920083Z',
         isActive: true,
       },
       {
@@ -64,7 +64,7 @@ export class UsersTestService {
         secondSurname: 'Morales',
         studentCode: 'EST2023DEF789',
         password: 'Ana2024!',
-        createdAt: '2024-03-12T11:20:15',
+        createdAt: '2025-03-10T03:20:41.470523836Z',
         isActive: true,
       },
       {
