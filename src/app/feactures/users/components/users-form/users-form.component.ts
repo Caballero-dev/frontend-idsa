@@ -49,6 +49,15 @@ export class UsersFormComponent implements OnInit {
         Validators.pattern(this.formUtils.emailPattern),
       ],
     ],
+    phoneNumber: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(10),
+        Validators.pattern(this.formUtils.onlyNumbersPattern),
+      ],
+    ],
     role: new FormControl<Role | null>(null, [Validators.required]),
     name: [
       '',
@@ -116,6 +125,7 @@ export class UsersFormComponent implements OnInit {
     this.selectedRole = user.role;
     this.userForm.patchValue({
       email: user.email,
+      phoneNumber: user.phoneNumber,
       role: user.role,
       name: user.name,
       firstSurname: user.firstSurname,
@@ -180,7 +190,7 @@ export class UsersFormComponent implements OnInit {
         isActive: true,
       };
 
-      this.defaultChangeUserDialog.emit({ isOpen: false, message: 'save', user });
+      this.defaultChangeUserDialog.emit({ isOpen: false, message: 'save', user: user });
     } else {
       this.userForm.markAllAsTouched();
     }
@@ -203,22 +213,23 @@ export class UsersFormComponent implements OnInit {
 
   getUserData() {
     let user = {
-      email: this.userForm.value.email ?? '',
-      role: this.userForm.value.role ?? { roleId: '', roleName: '' },
-      name: this.userForm.value.name ?? '',
-      firstSurname: this.userForm.value.firstSurname ?? '',
-      secondSurname: this.userForm.value.secondSurname ?? '',
+      email: this.userForm.value.email as string,
+      phoneNumber: this.userForm.value.phoneNumber as string,
+      role: this.userForm.value.role as Role,
+      name: this.userForm.value.name as string,
+      firstSurname: this.userForm.value.firstSurname as string,
+      secondSurname: this.userForm.value.secondSurname as string,
     };
 
     if (this.selectedRole?.roleId === 'ROLE_ESTUDIANTE') {
       return {
         ...user,
-        studentCode: this.userForm.value.studentCode ?? '',
+        studentCode: this.userForm.value.studentCode as string,
       };
     } else {
       return {
         ...user,
-        employeeCode: this.userForm.value.employeeCode ?? '',
+        employeeCode: this.userForm.value.employeeCode as string,
       };
     }
   }

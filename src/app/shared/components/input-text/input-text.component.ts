@@ -14,7 +14,15 @@ import { InputIconModule } from 'primeng/inputicon';
   styleUrl: './input-text.component.scss',
 })
 export class InputTextComponent implements OnInit {
-  @Input() type: 'onlyLetters' | 'onlyNumbers' | 'alphanumeric' | 'email' | 'password' | 'text' | 'all' = 'all';
+  @Input() type:
+    | 'onlyLetters'
+    | 'onlyNumbers'
+    | 'alphanumeric'
+    | 'alphanumericUpperCase'
+    | 'email'
+    | 'password'
+    | 'text'
+    | 'all' = 'all';
   @Input() inputId: string = '';
   @Input() label: string = '';
   @Input() labelFontSize: 'text-xs' | 'text-sm' | 'text-base' | 'text-lg' | 'text-xl' = 'text-xl';

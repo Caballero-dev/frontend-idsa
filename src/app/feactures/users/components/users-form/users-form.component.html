@@ -11,7 +11,7 @@
   >
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
-        <div class="w-full xs:w-2/4">
+        <div class="w-full">
           <idsa-input-text
             type="email"
             inputId="email"
@@ -28,7 +28,9 @@
             size="large"
           ></idsa-input-text>
         </div>
+      </div>
 
+      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
         <div class="w-full xs:w-2/4">
           <idsa-input-select
             type="valueObject"
@@ -45,6 +47,24 @@
             (onChange)="roleChange($event)"
           ></idsa-input-select>
         </div>
+
+        <div class="w-full xs:w-2/4">
+          <idsa-input-text
+            type="onlyNumbers"
+            inputId="phoneNumber"
+            label="Teléfono"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="userForm.controls.phoneNumber"
+            placeholder="Ingresa el numero de telefono"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="10"
+            [minLength]="10"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
       </div>
       <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
         <div class="w-full xs:w-2/4">
@@ -55,11 +75,11 @@
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="userForm.controls.name"
-            placeholder="Ingresa el nomre"
+            placeholder="Ingresa el nombre"
             [required]="true"
             [readonly]="false"
             [maxLength]="50"
-            [minLength]="2"
+            [minLength]="3"
             variant="outlined"
             size="large"
           ></idsa-input-text>
@@ -77,7 +97,7 @@
             [required]="true"
             [readonly]="false"
             [maxLength]="50"
-            [minLength]="2"
+            [minLength]="3"
             variant="outlined"
             size="large"
           ></idsa-input-text>
@@ -96,7 +116,7 @@
             [required]="true"
             [readonly]="false"
             [maxLength]="50"
-            [minLength]="2"
+            [minLength]="3"
             variant="outlined"
             size="large"
           ></idsa-input-text>
@@ -105,7 +125,7 @@
         @if (selectedRole?.roleName === 'Estudiante') {
           <div class="w-full xs:w-2/4">
             <idsa-input-text
-              type="alphanumeric"
+              type="alphanumericUpperCase"
               inputId="studentCode"
               label="Matrícula"
               labelFontSize="text-lg"
@@ -123,7 +143,7 @@
         } @else if (selectedRole?.roleName === 'Tutor') {
           <div class="w-full xs:w-2/4">
             <idsa-input-text
-              type="alphanumeric"
+              type="alphanumericUpperCase"
               inputId="employeeNumber"
               label="Número de empleado"
               labelFontSize="text-lg"
