@@ -1,10 +1,25 @@
 import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
 
 export class FormUtils {
+  private static specialKeys: string[] = [
+    'Backspace',
+    'Delete',
+    'ArrowLeft',
+    'ArrowRight',
+    'Home',
+    'End',
+    'Tab',
+    'Control',
+    'Alt',
+    'Shift',
+    'Escape',
+    'Enter',
+  ];
   static namePattern = '([a-zA-Z]+) ([a-zA-Z]+)';
   static emailPattern: RegExp = /^[a-zA-Z0-9.]+@[a-z0-9.]+\.[a-z]{2,4}$/;
   static passwordPattern: RegExp = /^[a-zA-Z0-9ñÑ!@#$%^&*()_+\-=\[\]{}|;:'"\\,.<>\/?~`]+$/;
   static onlyLettersPattern: RegExp = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
+  static onlyNumbersPattern: RegExp = /^[0-9]+$/;
   static alphanumericPattern: RegExp = /^[a-zA-Z0-9]+$/;
   static notOnlySpacesPattern = '^[a-zA-Z0-9]+$';
 
@@ -21,6 +36,9 @@ export class FormUtils {
         case 'minlength':
           return `Mínimo de ${errors['minlength'].requiredLength} caracteres.`;
 
+        case 'maxlength':
+          return `Máximo de ${errors['maxlength'].requiredLength} caracteres.`;
+
         case 'min':
           return `Valor mínimo de ${errors['min'].min}`;
 
@@ -36,6 +54,9 @@ export class FormUtils {
           }
           if (errors['pattern'].requiredPattern === FormUtils.onlyLettersPattern.toString()) {
             return 'El campo solo permite letras';
+          }
+          if (errors['pattern'].requiredPattern === FormUtils.onlyNumbersPattern.toString()) {
+            return 'El campo solo permite números';
           }
           if (errors['pattern'].requiredPattern === FormUtils.alphanumericPattern.toString()) {
             return 'El campo solo permite letras y números';
@@ -170,6 +191,31 @@ export class FormUtils {
     return false;
   }
 
+  static isValidOnlyNumbersCharacters(event: KeyboardEvent): boolean {
+    const allowedCharacters: RegExp = FormUtils.onlyNumbersPattern;
+    const key: string = event.key;
+
+    if (this.specialKeys.includes(key)) {
+      return true;
+    }
+
+    if (event.ctrlKey || event.metaKey || event.altKey) {
+      return true;
+    }
+
+    return allowedCharacters.test(key);
+  }
+
+  static isValidOnlyNumbersPaste(event: ClipboardEvent): boolean {
+    if (event.clipboardData) {
+      const clipboardData: string = event.clipboardData.getData('text');
+      const allowedCharacters: RegExp = FormUtils.onlyNumbersPattern;
+
+      return allowedCharacters.test(clipboardData);
+    }
+    return false;
+  }
+
   /**
    * @param event Evento de teclado
    * @returns true si el caracter es válido, false si no lo es
@@ -189,5 +235,12 @@ export class FormUtils {
       return allowedCharacters.test(clipboardData);
     }
     return false;
+  }
+
+  static convertToUpperCase(event: Event, formControl: FormControl): void {
+    const inputElement = event.target as HTMLInputElement;
+    const upperCaseValue = inputElement.value.toUpperCase();
+    inputElement.value = upperCaseValue;
+    formControl.setValue(upperCaseValue, { emitEvent: false });
   }
 }
