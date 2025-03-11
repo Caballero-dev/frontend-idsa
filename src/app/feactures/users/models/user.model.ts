@@ -12,6 +12,7 @@ export interface User {
   secondSurname: string;
   studentCode?: string;
   employeeCode?: string;
+  phoneNumber: string;
   password?: string;
   createdAt: string;
   isActive: boolean;
