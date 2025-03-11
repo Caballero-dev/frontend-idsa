@@ -1,138 +1,139 @@
 <p-dialog
   [(visible)]="tutorDialog"
   [modal]="true"
-  header="Detalles del tutor"
+  [header]="isCreateTutor ? 'Crear Tutor' : 'Editar Tutor'"
   closable="false"
-  [style]="{ width: '450px' }"
+  [style]="{ width: '550px' }"
 >
-  <ng-template #content>
-    <form
-      [formGroup]="tutorForm"
-      class="flex flex-col gap-6"
-    >
-      <div>
-        <label
-          for="employeeNumber"
-          class="mb-3 block font-bold"
-        >
-          Número de empleado
-        </label>
-        <input
-          pInputText
-          pKeyFilter="num"
-          id="employeeNumber"
-          required
-          autofocus
-          fluid
-          formControlName="employeeNumber"
-        />
-      </div>
-
-      <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-6">
-          <label
-            for="email"
-            class="mb-3 block font-bold"
-          >
-            Correo electrónico
-          </label>
-          <input
-            pInputText
-            id="email"
+  <form
+    [formGroup]="tutorForm"
+    (ngSubmit)="saveOrUpdateTutor()"
+  >
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
+        <div class="w-full xs:w-2/4">
+          <idsa-input-text
             type="email"
-            required
-            fluid
-            formControlName="email"
-          />
+            inputId="email"
+            label="Correo electrónico"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="tutorForm.controls.email"
+            placeholder="Ingresa el correo electrónico"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="100"
+            [minLength]="6"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
         </div>
-
-        <div class="col-span-6">
-          <label
-            for="phone"
-            class="mb-3 block font-bold"
-          >
-            Teléfono
-          </label>
-          <input
-            pInputText
-            pKeyFilter="num"
-            id="phone"
-            type="tel"
-            required
-            fluid
-            formControlName="phoneNumber"
-          />
+        <div class="w-full xs:w-2/4">
+          <idsa-input-text
+            type="onlyNumbers"
+            inputId="phoneNumber"
+            label="Teléfono"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="tutorForm.controls.phoneNumber"
+            placeholder="Ingresa el numero de telefono"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="10"
+            [minLength]="10"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
         </div>
       </div>
 
-      <div>
-        <label
-          for="name"
-          class="mb-3 block font-bold"
-        >
-          Nombre
-        </label>
-        <input
-          pInputText
-          pKeyFilter="alpha"
-          id="name"
-          type="text"
-          required
-          fluid
-          formControlName="name"
+      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
+        <div class="w-full xs:w-2/4">
+          <idsa-input-text
+            type="onlyLetters"
+            inputId="name"
+            label="Nombre"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="tutorForm.controls.name"
+            placeholder="Ingresa el nombre"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="50"
+            [minLength]="3"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
+        <div class="w-full xs:w-2/4">
+          <idsa-input-text
+            type="onlyLetters"
+            inputId="paternalSurname"
+            label="Apellido paterno"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="tutorForm.controls.firstSurname"
+            placeholder="Ingresa el apellido paterno"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="50"
+            [minLength]="3"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
+        <div class="w-full xs:w-2/4">
+          <idsa-input-text
+            type="onlyLetters"
+            inputId="maternalSurname"
+            label="Apellido materno"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="tutorForm.controls.secondSurname"
+            placeholder="Ingresa el apellido materno"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="50"
+            [minLength]="3"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
+        <div class="w-full xs:w-2/4">
+          <idsa-input-text
+            type="alphanumericUpperCase"
+            inputId="employeeCode"
+            label="Número de empleado"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="tutorForm.controls.employeeCode"
+            placeholder="Ingresa el número de empleado"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="20"
+            [minLength]="10"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end gap-2">
+        <p-button
+          label="Cancelar"
+          icon="pi pi-times"
+          text
+          (click)="closeDialog()"
+        />
+        <p-button
+          [label]="isCreateTutor ? 'Crear' : 'Actualizar'"
+          type="submit"
+          icon="pi pi-check"
         />
       </div>
-
-      <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-6">
-          <label
-            for="paternalSurname"
-            class="mb-3 block font-bold"
-          >
-            Apellido paterno
-          </label>
-          <input
-            pInputText
-            pKeyFilter="alpha"
-            id="paternalSurname"
-            type="text"
-            required
-            fluid
-            formControlName="paternalSurname"
-          />
-        </div>
-        <div class="col-span-6">
-          <label
-            for="maternalSurname"
-            class="mb-3 block font-bold"
-          >
-            Apellido materno
-          </label>
-          <input
-            pInputText
-            pKeyFilter="alpha"
-            id="maternalSurname"
-            type="text"
-            required
-            fluid
-            formControlName="maternalSurname"
-          />
-        </div>
-      </div>
-    </form>
-  </ng-template>
-
-  <ng-template #footer>
-    <p-button
-      label="Cancel"
-      icon="pi pi-times"
-      text
-      (click)="closeDialog()"
-    />
-    <p-button
-      label="Save"
-      icon="pi pi-check"
-      (click)="saveTutor()"
-    />
-  </ng-template>
+    </div>
+  </form>
 </p-dialog>
