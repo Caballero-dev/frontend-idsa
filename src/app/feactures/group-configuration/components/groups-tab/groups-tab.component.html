@@ -1,0 +1,47 @@
+<div class="mb-4 flex items-center justify-between">
+  <h2 class="text-2xl font-bold">Gestión de datos de grupos</h2>
+  <p-button
+    label="Regresar"
+    icon="pi pi-arrow-left"
+    variant="outlined"
+    severity="contrast"
+    rounded
+    [routerLink]="['../']"
+  ></p-button>
+</div>
+<!-- Este componente permite gestionar datos de grupos, incluyendo la administración de campus, modalidades, especialidades, grados, grupos y generaciones. -->
+
+<p-tabs
+  value="0"
+  scrollable
+  style="border-radius: 4rem"
+>
+  <p-tablist>
+    <p-tab value="0">Campus</p-tab>
+    <p-tab value="1">Modalidades</p-tab>
+    <p-tab value="2">Especialidades</p-tab>
+    <p-tab value="3">Grados</p-tab>
+    <p-tab value="4">Grupos</p-tab>
+    <p-tab value="5">Generaciones</p-tab>
+  </p-tablist>
+  <p-tabpanels>
+    <p-tabpanel value="0">
+      <app-campuses></app-campuses>
+    </p-tabpanel>
+    <p-tabpanel value="1">
+      <app-modalities></app-modalities>
+    </p-tabpanel>
+    <p-tabpanel value="2">
+      <app-specialties></app-specialties>
+    </p-tabpanel>
+    <p-tabpanel value="3">
+      <app-grades></app-grades>
+    </p-tabpanel>
+    <p-tabpanel value="4">
+      <app-groups></app-groups>
+    </p-tabpanel>
+    <p-tabpanel value="5">
+      <app-generations></app-generations>
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>
