@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Column, TableUtils } from '../../../utils/table.utils';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Campus } from '../../models/campuses.model';
+import { Campus } from '../../models/campus.model';
 import { CampusesTestService } from '../../tests/campuses-test.service';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -163,8 +163,12 @@ export class CampusesComponent implements OnInit {
   showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
     this.messageService.add({
       severity,
-      icon: severity === 'success' ? 'pi pi-check-circle' :
-        severity === 'error' ? 'pi pi-times-circle' : 'pi pi-info-circle',
+      icon:
+        severity === 'success'
+          ? 'pi pi-check-circle'
+          : severity === 'error'
+            ? 'pi pi-times-circle'
+            : 'pi pi-info-circle',
       summary,
       detail,
       life: 3000,
