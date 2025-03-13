@@ -23,21 +23,21 @@
   [globalFilterFields]="tableUtils.getGlobalFilterFields(cols)"
   [tableStyle]="{ 'min-width': '35rem' }"
   [rowHover]="true"
-  dataKey="campusId"
+  dataKey="modalityId"
   currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
   [showCurrentPageReport]="true"
   [rowsPerPageOptions]="[15, 30, 45]"
 >
   <ng-template #caption>
-    <h5 class="mb-2">Administrar campus</h5>
-    <div class="flex flex-col items-center justify-between xs:flex-row">
+    <h5 class="mb-2">Administrar modalidades</h5>
+    <div class="flex flex-col items-center justify-between sm:flex-row">
       <p-button
         label="Limpiar"
         [outlined]="true"
         icon="pi pi-filter-slash"
         (click)="dt.reset(); searchModalityValue = ''"
       />
-      <div class="mb-3 mt-3 xs:mb-0 xs:mt-0">
+      <div class="mb-3 mt-3 sm:mb-0 sm:mt-0">
         <p-inputgroup>
           <input
             pInputText
@@ -124,7 +124,7 @@
     (ngSubmit)="saveOrUpdateModality()"
   >
     <div class="flex flex-col gap-4">
-      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
+      <div class="flex flex-col gap-2 sm:flex-row sm:gap-4">
         <div class="w-full">
           <idsa-input-text
             type="onlyLetters"
