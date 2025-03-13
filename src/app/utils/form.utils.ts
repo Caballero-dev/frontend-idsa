@@ -19,6 +19,7 @@ export class FormUtils {
   static emailPattern: RegExp = /^[a-zA-Z0-9.]+@[a-z0-9.]+\.[a-z]{2,4}$/;
   static passwordPattern: RegExp = /^[a-zA-Z0-9ñÑ!@#$%^&*()_+\-=\[\]{}|;:'"\\,.<>\/?~`]+$/;
   static onlyLettersPattern: RegExp = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
+  static onlyPlainLettersPattern: RegExp = /^[a-zA-Z]+$/;
   static onlyNumbersPattern: RegExp = /^[0-9]+$/;
   static alphanumericPattern: RegExp = /^[a-zA-Z0-9]+$/;
   static notOnlySpacesPattern = '^[a-zA-Z0-9]+$';
@@ -54,6 +55,9 @@ export class FormUtils {
           }
           if (errors['pattern'].requiredPattern === FormUtils.onlyLettersPattern.toString()) {
             return 'El campo solo permite letras';
+          }
+          if (errors['pattern'].requiredPattern === FormUtils.onlyPlainLettersPattern.toString()) {
+            return 'El campo solo permite letras sin acentos';
           }
           if (errors['pattern'].requiredPattern === FormUtils.onlyNumbersPattern.toString()) {
             return 'El campo solo permite números';
@@ -187,6 +191,23 @@ export class FormUtils {
       const allowedCharacters: RegExp = FormUtils.onlyLettersPattern;
 
       return allowedCharacters.test(clipboardData) && !clipboardData.includes('  ');
+    }
+    return false;
+  }
+
+  static isValidOnlyPlainLettersCharacters(event: KeyboardEvent): boolean {
+    const allowedCharacters: RegExp = FormUtils.onlyPlainLettersPattern;
+    const key: string = event.key;
+
+    return allowedCharacters.test(key);
+  }
+
+  static isValidOnlyPlainLettersPaste(event: ClipboardEvent): boolean {
+    if (event.clipboardData) {
+      const clipboardData: string = event.clipboardData.getData('text');
+      const allowedCharacters: RegExp = FormUtils.onlyPlainLettersPattern;
+
+      return allowedCharacters.test(clipboardData);
     }
     return false;
   }
