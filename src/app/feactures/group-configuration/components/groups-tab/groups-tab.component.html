@@ -1,7 +1,6 @@
 <div class="mb-4 flex items-center justify-between">
-  <h2 class="text-2xl font-bold">Gestión de datos de grupos</h2>
+  <span class=" font-bold sm:text-3xl text-2xl">Gestión de datos de grupos</span>
   <p-button
-    label="Regresar"
     icon="pi pi-arrow-left"
     variant="outlined"
     severity="contrast"
@@ -9,12 +8,15 @@
     [routerLink]="['../']"
   ></p-button>
 </div>
-<!-- Este componente permite gestionar datos de grupos, incluyendo la administración de campus, modalidades, especialidades, grados, grupos y generaciones. -->
+
+<div class="mb-6 text-lg text-justify">
+  En esta sección se pueden gestionar los datos de los grupos, incluyendo la administración de campus, modalidades, especialidades, grados, grupos y generaciones.
+</div>
+
 
 <p-tabs
   value="0"
   scrollable
-  style="border-radius: 4rem"
 >
   <p-tablist>
     <p-tab value="0">Campus</p-tab>
