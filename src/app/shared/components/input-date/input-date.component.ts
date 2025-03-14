@@ -72,5 +72,4 @@ export class InputDateComponent implements OnInit {
 
     return ids ? ids.join(' ') : null;
   }
-
 }

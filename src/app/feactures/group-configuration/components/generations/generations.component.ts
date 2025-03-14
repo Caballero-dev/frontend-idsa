@@ -70,15 +70,10 @@ export class GenerationsComponent implements OnInit {
     this.loadGenerations();
   }
 
-  tets(ev: any) {
-    console.log(ev);
-  }
-
   loadGenerations(): void {
     this.generations = this.generationTestService.getData().map((gen: Generation) => {
       return {
         ...gen,
-        // yearStart: new Date(gen.yearStart).toISOString(),
         yearStart: formatDate(gen.yearStart, 'yyyy-MM-dd', 'en'),
         yearEnd: formatDate(gen.yearEnd, 'yyyy-MM-dd', 'en'),
       };
@@ -115,7 +110,6 @@ export class GenerationsComponent implements OnInit {
     if (this.generationForm.valid && this.selectedGeneration) {
       let generation: Generation = {
         generationId: this.selectedGeneration.generationId,
-        // yearStart: new Date(this.generationForm.value.yearStart as string).toLocaleDateString(),
         yearStart: formatDate(this.selectedGeneration.yearStart, 'yyyy-MM-dd', 'en'),
         yearEnd: formatDate(this.selectedGeneration.yearEnd, 'yyyy-MM-dd', 'en'),
       };
