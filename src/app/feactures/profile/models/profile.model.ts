@@ -5,7 +5,7 @@ export interface UserProfile {
   secondSurname: string;
   email: string;
   phone: string;
-  roleName: string
+  roleName: string;
   key?: string | null;
   createdAt: string;
 }

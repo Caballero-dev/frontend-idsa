@@ -30,7 +30,7 @@ export class ProfileDetailsComponent implements OnInit {
     phone: '1234567890',
     roleName: 'Administrador',
     createdAt: '2024-05-30T15:15:45',
-  }
+  };
 
   formUtils = FormUtils;
 
@@ -78,6 +78,12 @@ export class ProfileDetailsComponent implements OnInit {
     return formatDate(this.user.createdAt, 'dd/MM/yyyy hh:mm a', 'en');
   }
 
+  getHelpTextPassword(): string | null {
+    return this.updatePasswordForm.errors && this.updatePasswordForm.controls.confirmPassword.touched
+      ? 'Las contraseñas no son iguales'
+      : null;
+  }
+
   updatePassword(): void {
     if (this.updatePasswordForm.valid) {
       // En la respuesta verificar la actualización correcta
@@ -91,11 +97,11 @@ export class ProfileDetailsComponent implements OnInit {
     }
   }
 
-  getUpdatePasswordForm() : UpdatePasswordRequest{
+  getUpdatePasswordForm(): UpdatePasswordRequest {
     return {
       password: this.updatePasswordForm.value.password as string,
-      newPassword: this.updatePasswordForm.value.newPassword as string
-    }
+      newPassword: this.updatePasswordForm.value.newPassword as string,
+    };
   }
 
   showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
@@ -112,5 +118,4 @@ export class ProfileDetailsComponent implements OnInit {
       life: 3000,
     });
   }
-
 }
