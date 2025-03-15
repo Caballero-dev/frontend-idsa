@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
@@ -7,6 +7,7 @@ import { FormUtils } from '../../../../utils/form.utils';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { UpdatePasswordRequest, UserProfile } from '../../models/profile.model';
 
 @Component({
   selector: 'app-profile-details',
@@ -18,8 +19,19 @@ import { MessageService } from 'primeng/api';
 })
 export class ProfileDetailsComponent implements OnInit {
   viewMyProfile: boolean = true;
-  viewUpdatePassword: boolean = false;
   errorUpdatePassword: boolean = false;
+  // Simulación de carga de datos de usuario (get url: email)
+  user: UserProfile = {
+    userId: '1',
+    name: 'John',
+    firstSurname: 'Doe',
+    secondSurname: 'Jr',
+    email: 'john.doe@gamil.com',
+    phone: '1234567890',
+    roleName: 'Administrador',
+    createdAt: '2024-05-30T15:15:45',
+  };
+
   formUtils = FormUtils;
 
   fb: FormBuilder = inject(FormBuilder);
@@ -62,18 +74,21 @@ export class ProfileDetailsComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  getCreadtedAt(): string {
+    return formatDate(this.user.createdAt, 'dd/MM/yyyy hh:mm a', 'en');
+  }
+
+  getHelpTextPassword(): string | null {
+    return this.updatePasswordForm.errors && this.updatePasswordForm.controls.confirmPassword.touched
+      ? 'Las contraseñas no son iguales'
+      : null;
+  }
+
   updatePassword(): void {
     if (this.updatePasswordForm.valid) {
-      this.messageToast(
-        'success',
-        'pi pi-check',
-        true,
-        'pi pi-times',
-        false,
-        'Contraseña actualizada',
-        'La contraseña ha sido actualizada correctamente',
-        3000
-      );
+      // En la respuesta verificar la actualización correcta
+      let updatePasswordRequest: UpdatePasswordRequest = this.getUpdatePasswordForm();
+      this.showToast('success', 'Contraseña actualizada', 'La contraseña ha sido actualizada correctamente');
       this.errorUpdatePassword = false;
       this.updatePasswordForm.reset();
     } else {
@@ -82,25 +97,25 @@ export class ProfileDetailsComponent implements OnInit {
     }
   }
 
-  messageToast(
-    severity?: 'success' | 'info' | 'warn' | 'error' | 'secondary' | 'contrast',
-    icon?: string,
-    closable?: boolean,
-    closeIcon?: string,
-    sticky?: boolean,
-    summary?: string,
-    detail?: string,
-    life?: number
-  ): void {
+  getUpdatePasswordForm(): UpdatePasswordRequest {
+    return {
+      password: this.updatePasswordForm.value.password as string,
+      newPassword: this.updatePasswordForm.value.newPassword as string,
+    };
+  }
+
+  showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
     this.messageService.add({
-      severity: severity,
-      icon: icon,
-      closable: closable,
-      closeIcon: closeIcon,
-      sticky: sticky,
-      summary: summary,
-      detail: detail,
-      life: life,
+      severity,
+      icon:
+        severity === 'success'
+          ? 'pi pi-check-circle'
+          : severity === 'error'
+            ? 'pi pi-times-circle'
+            : 'pi pi-info-circle',
+      summary,
+      detail,
+      life: 3000,
     });
   }
 }
