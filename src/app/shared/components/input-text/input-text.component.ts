@@ -16,6 +16,7 @@ import { InputIconModule } from 'primeng/inputicon';
 export class InputTextComponent implements OnInit {
   @Input() type:
     | 'onlyLetters'
+    | 'onlyPlainLettersUpperCase'
     | 'onlyNumbers'
     | 'alphanumeric'
     | 'alphanumericUpperCase'

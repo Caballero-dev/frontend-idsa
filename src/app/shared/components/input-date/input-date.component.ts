@@ -1,38 +1,35 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormUtils } from '../../../utils/form.utils';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { SelectChangeEvent, SelectModule } from 'primeng/select';
+import { DatePicker } from 'primeng/datepicker';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgClass } from '@angular/common';
 
 @Component({
-  selector: 'idsa-input-select',
+  selector: 'idsa-input-date',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SelectModule],
-  templateUrl: './input-select.component.html',
-  styleUrl: './input-select.component.scss',
+  imports: [DatePicker, FormsModule, ReactiveFormsModule, NgClass],
+  templateUrl: './input-date.component.html',
+  styleUrl: './input-date.component.scss',
 })
-export class InputSelectComponent implements OnInit {
-  @Input() type: 'valueObject' | 'valueObjectLabels' | 'valueString' = 'valueString';
-  @Input() selectId: string = '';
+export class InputDateComponent implements OnInit {
+  @Input() type: 'date' = 'date';
+  @Input() inputId: string = '';
   @Input() label: string = '';
   @Input() labelFontSize: 'text-xs' | 'text-sm' | 'text-base' | 'text-lg' | 'text-xl' = 'text-xl';
   @Input() labelPosition: 'top' | 'left' = 'top';
   @Input() customFormControl: FormControl = new FormControl();
-  @Input() options: any[] = [];
-  @Input() optionLabel: string = '';
-  @Input() optionLabels: string[] = [];
-  @Input() optionValue: string = '';
-  @Input() showClear: boolean = false;
+  @Input() minDate: Date | null = null;
+  @Input() maxDate: Date | null = null;
   @Input() placeholder: string = '';
   @Input() required: boolean = false;
-  @Input() disabled: boolean = false; // Disabled mejor manejarlo desde el formGroup del padre
+  @Input() disabled: boolean = false;
   @Input() readonly: boolean = false;
   @Input() variant: 'filled' | 'outlined' = 'outlined';
   @Input({ required: false }) size: 'small' | 'large' = 'small';
   @Input() helpText: string | null = null;
   @Input() helpTextType: 'error' | 'info' = 'info';
 
-  @Output() onChange: EventEmitter<SelectChangeEvent> = new EventEmitter<SelectChangeEvent>();
+  @Output() onSelectDate: EventEmitter<Date> = new EventEmitter<Date>();
 
   formUtils = FormUtils;
 
@@ -66,11 +63,11 @@ export class InputSelectComponent implements OnInit {
     const ids: string[] = [];
 
     if (this.helpText) {
-      ids.push(`${this.selectId}-help`);
+      ids.push(`${this.inputId}-help`);
     }
 
     if (this.formUtils.isInvalidValidField(this.customFormControl)) {
-      ids.push(`${this.selectId}-error`);
+      ids.push(`${this.inputId}-error`);
     }
 
     return ids ? ids.join(' ') : null;

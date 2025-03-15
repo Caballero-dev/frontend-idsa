@@ -3,7 +3,7 @@ import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { EmitterDialogTutor, Tutor } from '../../models/tutors.model';
+import { EmitterDialogTutor, Tutor, TutorRequest } from '../../models/tutors.model';
 import { FormUtils } from '../../../../utils/form.utils';
 import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
 
@@ -111,9 +111,11 @@ export class TutorsFormComponent implements OnInit {
 
   saveTutor() {
     if (this.tutorForm.valid) {
+      let tutorRequest: TutorRequest = this.getTutorData();
+
       let tutor: Tutor = {
         tutorId: Math.floor(Math.random() * 100),
-        ...this.getTutorData(),
+        ...tutorRequest,
       };
 
       this.defaultChangeTutorDialog.emit({ isOpen: false, message: 'save', tutor: tutor });
@@ -124,9 +126,11 @@ export class TutorsFormComponent implements OnInit {
 
   editTutor() {
     if (this.tutorForm.valid && this.selectedTutor) {
+      let tutorRequest: TutorRequest = this.getTutorData();
+
       let tutor: Tutor = {
         tutorId: this.selectedTutor.tutorId,
-        ...this.getTutorData(),
+        ...tutorRequest,
       };
 
       this.defaultChangeTutorDialog.emit({ isOpen: false, message: 'edit', tutor: tutor });
@@ -135,7 +139,7 @@ export class TutorsFormComponent implements OnInit {
     }
   }
 
-  getTutorData() {
+  getTutorData(): TutorRequest {
     return {
       employeeCode: this.tutorForm.value.employeeCode as string,
       name: this.tutorForm.value.name as string,
