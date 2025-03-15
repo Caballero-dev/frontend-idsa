@@ -84,7 +84,6 @@ export class GradesComponent implements OnInit {
 
   saveGrade(): void {
     if (this.gradeForm.valid) {
-
       let gradeRequest: GradeRequest = this.getGradeFormData();
 
       let grade: Grade = {

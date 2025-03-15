@@ -12,7 +12,7 @@ import { InputTextComponent } from '../../../../shared/components/input-text/inp
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Column, TableUtils } from '../../../utils/table.utils';
 import { FormUtils } from '../../../../utils/form.utils';
-import { Group } from '../../models/group.model';
+import { Group, GroupRequest } from '../../models/group.model';
 import { GroupTestService } from '../../tests/group-test.service';
 
 @Component({
@@ -84,13 +84,14 @@ export class GroupsComponent implements OnInit {
 
   saveGroup(): void {
     if (this.groupForm.valid) {
+      let groupRequest: GroupRequest = this.getGroupFormData();
+
       let group: Group = {
         groupId: Math.random(),
-        name: this.groupForm.value.name as string,
+        name: groupRequest.name,
       };
 
       this.groups = [...this.groups, group];
-      this.groupDialogVisible = false;
       this.clearGroupForm();
       this.showToast('success', 'Grupo creado', 'El grupo ha sido creado correctamente');
     } else {
@@ -100,13 +101,14 @@ export class GroupsComponent implements OnInit {
 
   updateGroup(): void {
     if (this.groupForm.valid && this.selectedGroup) {
+      let groupRequest: GroupRequest = this.getGroupFormData();
+
       let group: Group = {
         groupId: this.selectedGroup.groupId,
-        name: this.groupForm.value.name as string,
+        name: groupRequest.name,
       };
 
-      this.groups = this.groups.filter((g: Group) => (g.groupId === group.groupId ? group : g));
-      this.groupDialogVisible = false;
+      this.groups = this.groups.map((g: Group) => (g.groupId === group.groupId ? group : g));
       this.clearGroupForm();
       this.showToast('success', 'Grupo actualizado', 'El grupo ha sido actualizado correctamente');
     } else {
@@ -147,15 +149,21 @@ export class GroupsComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.groupDialogVisible = false;
     this.clearGroupForm();
     this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
   }
 
   clearGroupForm(): void {
+    this.groupDialogVisible = false;
     this.groupForm.reset();
     this.selectedGroup = null;
     this.isCreateGroup = true;
+  }
+
+  getGroupFormData(): GroupRequest {
+    return {
+      name: this.groupForm.value.name as string,
+    };
   }
 
   showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
