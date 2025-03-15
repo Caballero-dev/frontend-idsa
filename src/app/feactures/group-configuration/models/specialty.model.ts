@@ -3,3 +3,8 @@ export interface Specialty {
   name: string;
   shortName: string;
 }
+
+export interface SpecialtyRequest {
+  name: string;
+  shortName: string;
+}
