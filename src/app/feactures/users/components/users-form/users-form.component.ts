@@ -201,13 +201,16 @@ export class UsersFormComponent implements OnInit {
 
   editUser() {
     if (this.userForm.valid && this.selectedUser) {
+      // en la api pasar en la url isUpdatePassword si se actualiza la contraseña y id
       let userRequest: UserRequest = this.getUserData();
+      if (this.isEditPassword) {
+        userRequest.password = this.userForm.value.password as string;
+      }
 
-      // en la api pasar en la url isUpdatePassword si se actualiza la contraseña
+      // Simulación de respuesta
       let user: User = {
         userId: this.selectedUser.userId,
         ...userRequest,
-        password: this.isEditPassword ? this.userForm.value.password : null,
         createdAt: this.selectedUser?.createdAt,
         isActive: this.selectedUser.isActive,
       };

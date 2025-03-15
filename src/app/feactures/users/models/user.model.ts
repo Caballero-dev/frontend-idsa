@@ -12,7 +12,6 @@ export interface User {
   secondSurname: string;
   key: string;
   phoneNumber: string;
-  password?: string | null;
   createdAt: string;
   isActive: boolean;
 }
