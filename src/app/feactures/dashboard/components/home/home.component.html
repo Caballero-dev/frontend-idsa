@@ -1,1 +1,92 @@
-<p>home works!</p>
+<div class="grid grid-cols-12 gap-8">
+  <div class="contents">
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+      <div class="card mb-0">
+        <div class="mb-4 flex justify-between">
+          <div>
+            <span class="mb-4 block font-medium text-muted-color">Alumnos</span>
+            <div class="text-xl font-medium text-surface-900">152</div>
+          </div>
+          <div
+            class="flex items-center justify-center bg-blue-100 rounded-border"
+            style="width: 2.5rem; height: 2.5rem"
+          >
+            <i class="pi pi-graduation-cap !text-xl text-blue-500"></i>
+          </div>
+        </div>
+        <span class="text-muted-color">Registrados</span>
+      </div>
+    </div>
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+      <div class="card mb-0">
+        <div class="mb-4 flex justify-between">
+          <div>
+            <span class="mb-4 block font-medium text-muted-color">Alumnos</span>
+            <div class="text-xl font-medium text-surface-900">40</div>
+          </div>
+          <div
+            class="message-success flex items-center justify-center rounded-border"
+            style="width: 2.5rem; height: 2.5rem"
+          >
+            <i class="pi pi-graduation-cap !text-xl"></i>
+          </div>
+        </div>
+        <span class="text-muted-color">Baja probabilidad</span>
+      </div>
+    </div>
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+      <div class="card mb-0">
+        <div class="mb-4 flex justify-between">
+          <div>
+            <span class="mb-4 block font-medium text-muted-color">Alumnos</span>
+            <div class="text-xl font-medium text-surface-900">51</div>
+          </div>
+          <div
+            class="message-warn flex items-center justify-center rounded-border"
+            style="width: 2.5rem; height: 2.5rem"
+          >
+            <i class="pi pi-graduation-cap !text-xl"></i>
+          </div>
+        </div>
+        <span class="text-muted-color">Probable</span>
+      </div>
+    </div>
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+      <div class="card mb-0">
+        <div class="mb-4 flex justify-between">
+          <div>
+            <span class="mb-4 block font-medium text-muted-color">Alumnos</span>
+            <div class="text-xl font-medium text-surface-900">60</div>
+          </div>
+          <div
+            class="message-error flex items-center justify-center rounded-border"
+            style="width: 2.5rem; height: 2.5rem"
+          >
+            <i class="pi pi-graduation-cap !text-xl"></i>
+          </div>
+        </div>
+        <span class="text-muted-color">Alta probabilidad</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-span-12 xl:col-span-6">
+    <div class="card">
+      <p-chart
+        type="pie"
+        [data]="pieData"
+        [options]="pieOptions"
+        height="400px"
+      ></p-chart>
+    </div>
+  </div>
+  <div class="col-span-12 xl:col-span-6">
+    <div class="card">
+      <p-chart
+        type="bar"
+        [data]="barData"
+        [options]="barOptions"
+        height="400px"
+      ></p-chart>
+    </div>
+  </div>
+</div>

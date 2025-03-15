@@ -1,9 +1,27 @@
 import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
 
 export class FormUtils {
+  private static specialKeys: string[] = [
+    'Backspace',
+    'Delete',
+    'ArrowLeft',
+    'ArrowRight',
+    'Home',
+    'End',
+    'Tab',
+    'Control',
+    'Alt',
+    'Shift',
+    'Escape',
+    'Enter',
+  ];
   static namePattern = '([a-zA-Z]+) ([a-zA-Z]+)';
   static emailPattern: RegExp = /^[a-zA-Z0-9.]+@[a-z0-9.]+\.[a-z]{2,4}$/;
   static passwordPattern: RegExp = /^[a-zA-Z0-9ñÑ!@#$%^&*()_+\-=\[\]{}|;:'"\\,.<>\/?~`]+$/;
+  static onlyLettersPattern: RegExp = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
+  static onlyPlainLettersPattern: RegExp = /^[a-zA-Z]+$/;
+  static onlyNumbersPattern: RegExp = /^[0-9]+$/;
+  static alphanumericPattern: RegExp = /^[a-zA-Z0-9]+$/;
   static notOnlySpacesPattern = '^[a-zA-Z0-9]+$';
 
   /**
@@ -19,6 +37,9 @@ export class FormUtils {
         case 'minlength':
           return `Mínimo de ${errors['minlength'].requiredLength} caracteres.`;
 
+        case 'maxlength':
+          return `Máximo de ${errors['maxlength'].requiredLength} caracteres.`;
+
         case 'min':
           return `Valor mínimo de ${errors['min'].min}`;
 
@@ -31,6 +52,18 @@ export class FormUtils {
           }
           if (errors['pattern'].requiredPattern === FormUtils.passwordPattern.toString()) {
             return 'La contraseña contiene caracteres no permitidos';
+          }
+          if (errors['pattern'].requiredPattern === FormUtils.onlyLettersPattern.toString()) {
+            return 'El campo solo permite letras';
+          }
+          if (errors['pattern'].requiredPattern === FormUtils.onlyPlainLettersPattern.toString()) {
+            return 'El campo solo permite letras sin acentos';
+          }
+          if (errors['pattern'].requiredPattern === FormUtils.onlyNumbersPattern.toString()) {
+            return 'El campo solo permite números';
+          }
+          if (errors['pattern'].requiredPattern === FormUtils.alphanumericPattern.toString()) {
+            return 'El campo solo permite letras y números';
           }
 
           return 'Error de patrón contra expresión regular';
@@ -125,5 +158,110 @@ export class FormUtils {
       return allowedCharacters.test(clipboardData);
     }
     return false;
+  }
+
+  /**
+   * @param event Evento de teclado
+   * @returns true si el caracter es válido, false si no lo es
+   * */
+  static isvalidOnlyLettersCharacters(event: KeyboardEvent): boolean {
+    const allowedCharacters: RegExp = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    const key: string = event.key;
+    const inputElement = event.target as HTMLInputElement;
+    const cursorPosition: number | null = inputElement.selectionStart;
+
+    if (key === ' ' && cursorPosition === 0) {
+      return false;
+    }
+
+    if ((inputElement.value + key).includes('  ')) {
+      return false;
+    }
+
+    return allowedCharacters.test(key);
+  }
+
+  /**
+   * @param event Evento de pegado
+   * @returns true si el pegado es válido, false si no lo es
+   * */
+  static isValidOnlyLettersPaste(event: ClipboardEvent): boolean {
+    if (event.clipboardData) {
+      const clipboardData: string = event.clipboardData.getData('text');
+      const allowedCharacters: RegExp = FormUtils.onlyLettersPattern;
+
+      return allowedCharacters.test(clipboardData) && !clipboardData.includes('  ');
+    }
+    return false;
+  }
+
+  static isValidOnlyPlainLettersCharacters(event: KeyboardEvent): boolean {
+    const allowedCharacters: RegExp = FormUtils.onlyPlainLettersPattern;
+    const key: string = event.key;
+
+    return allowedCharacters.test(key);
+  }
+
+  static isValidOnlyPlainLettersPaste(event: ClipboardEvent): boolean {
+    if (event.clipboardData) {
+      const clipboardData: string = event.clipboardData.getData('text');
+      const allowedCharacters: RegExp = FormUtils.onlyPlainLettersPattern;
+
+      return allowedCharacters.test(clipboardData);
+    }
+    return false;
+  }
+
+  static isValidOnlyNumbersCharacters(event: KeyboardEvent): boolean {
+    const allowedCharacters: RegExp = FormUtils.onlyNumbersPattern;
+    const key: string = event.key;
+
+    if (this.specialKeys.includes(key)) {
+      return true;
+    }
+
+    if (event.ctrlKey || event.metaKey || event.altKey) {
+      return true;
+    }
+
+    return allowedCharacters.test(key);
+  }
+
+  static isValidOnlyNumbersPaste(event: ClipboardEvent): boolean {
+    if (event.clipboardData) {
+      const clipboardData: string = event.clipboardData.getData('text');
+      const allowedCharacters: RegExp = FormUtils.onlyNumbersPattern;
+
+      return allowedCharacters.test(clipboardData);
+    }
+    return false;
+  }
+
+  /**
+   * @param event Evento de teclado
+   * @returns true si el caracter es válido, false si no lo es
+   * */
+  static isValidAlphanumericCharacters(event: KeyboardEvent): boolean {
+    const allowedCharacters: RegExp = FormUtils.alphanumericPattern;
+    const key: string = event.key;
+
+    return allowedCharacters.test(key);
+  }
+
+  static isValidAlphanumericPaste(event: ClipboardEvent): boolean {
+    if (event.clipboardData) {
+      const clipboardData: string = event.clipboardData.getData('text');
+      const allowedCharacters: RegExp = FormUtils.alphanumericPattern;
+
+      return allowedCharacters.test(clipboardData);
+    }
+    return false;
+  }
+
+  static convertToUpperCase(event: Event, formControl: FormControl): void {
+    const inputElement = event.target as HTMLInputElement;
+    const upperCaseValue = inputElement.value.toUpperCase();
+    inputElement.value = upperCaseValue;
+    formControl.setValue(upperCaseValue, { emitEvent: false });
   }
 }

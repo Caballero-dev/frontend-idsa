@@ -1,42 +1,34 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { Component, inject, OnInit } from '@angular/core';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
-import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { ToolbarModule } from 'primeng/toolbar';
-import { Column, getGlobalFilterFields, onGlobalFilter } from '../../../shared/interfaces/table.interface';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { TutorsFormComponent } from '../tutors-form/tutors-form.component';
-
-interface Tutor {
-  tutorId: string;
-  employeeNumber: string;
-  name: string;
-  paternalSurname: string;
-  maternalSurname: string;
-  phoneNumber: string;
-  email: string;
-}
+import { Column, TableUtils } from '../../../utils/table.utils';
+import { ButtonModule } from 'primeng/button';
+import { ToolbarModule } from 'primeng/toolbar';
+import { TableModule } from 'primeng/table';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { EmitterDialogTutor, Tutor } from '../../models/tutors.model';
+import { TutorsTestService } from '../../tests/tutors-test.service';
 
 @Component({
   selector: 'app-tutors-list',
   standalone: true,
   imports: [
     CommonModule,
-    TableModule,
-    ButtonModule,
-    ToastModule,
     ToolbarModule,
+    ButtonModule,
+    TableModule,
+    InputGroupModule,
     InputTextModule,
-    InputIconModule,
-    IconFieldModule,
     DialogModule,
     ConfirmDialogModule,
+    ToastModule,
+    FormsModule,
     TutorsFormComponent,
   ],
   templateUrl: './tutors-list.component.html',
@@ -44,85 +36,51 @@ interface Tutor {
   providers: [ConfirmationService, MessageService],
 })
 export class TutorsListComponent implements OnInit {
-  tutor!: Tutor[];
+  searchTutorValue: string = '';
+  isLoading: boolean = true;
   cols: Column[] = [
-    { field: 'employeeNumber', header: 'Numero de empleado', sortable: true },
+    { field: 'employeeCode', header: 'Numero de empleado', sortable: true },
     { field: 'name', header: 'Nombre', sortable: true },
-    { field: 'paternalSurname', header: 'Apellido Paterno', sortable: true },
-    { field: 'maternalSurname', header: 'Apellido Materno', sortable: true },
+    { field: 'firstSurname', header: 'Apellido Paterno', sortable: true },
+    { field: 'secondSurname', header: 'Apellido Materno', sortable: true },
     { field: 'phoneNumber', header: 'Telefono', sortable: true },
     { field: 'email', header: 'Correo', sortable: true },
   ];
   tutors!: Tutor[];
   selectedTutors!: Tutor[] | null;
+  isCreateTutor: boolean = true;
+  selectedTutor!: Tutor | null;
   tutorDialogVisible: boolean = false;
 
-  constructor(
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService
-  ) {}
+  tableUtils = TableUtils;
+  confirmationService: ConfirmationService = inject(ConfirmationService);
+  messageService: MessageService = inject(MessageService);
+  tutorTestService = inject(TutorsTestService);
 
   ngOnInit(): void {
-    this.tutors = [
-      {
-        tutorId: '1',
-        employeeNumber: '123456',
-        name: 'Juan',
-        paternalSurname: 'Perez',
-        maternalSurname: 'Gomez',
-        phoneNumber: '1234567890',
-        email: 'jaun@gmail.com',
-      },
-      {
-        tutorId: '2',
-        employeeNumber: '123457',
-        name: 'Pedro',
-        paternalSurname: 'Gomez',
-        maternalSurname: 'Perez',
-        phoneNumber: '1234567890',
-        email: 'pedro@gmail.com0',
-      },
-      {
-        tutorId: '3',
-        employeeNumber: '123458',
-        name: 'Maria',
-        paternalSurname: 'Lopez',
-        maternalSurname: 'Martinez',
-        phoneNumber: '0987654321',
-        email: 'maria@gmail.com',
-      },
-      {
-        tutorId: '4',
-        employeeNumber: '123459',
-        name: 'Luis',
-        paternalSurname: 'Hernandez',
-        maternalSurname: 'Rodriguez',
-        phoneNumber: '1122334455',
-        email: 'luis@gmail.com',
-      },
-      {
-        tutorId: '5',
-        employeeNumber: '123460',
-        name: 'Ana',
-        paternalSurname: 'Garcia',
-        maternalSurname: 'Fernandez',
-        phoneNumber: '6677889900',
-        email: 'ana@gmail.com',
-      },
-    ];
+    this.loadTutors();
   }
 
-  createTutor() {
+  loadTutors(): void {
+    this.tutors = this.tutorTestService.getData();
+    this.isLoading = false;
+  }
+
+  createTutor(): void {
+    this.isCreateTutor = true;
+    this.selectedTutor = null;
     this.tutorDialogVisible = true;
   }
 
-  editTutor(tutor: Tutor) {
+  editTutor(tutor: Tutor): void {
+    this.isCreateTutor = false;
+    this.selectedTutor = tutor;
     this.tutorDialogVisible = true;
   }
 
-  deleteTutor(tutor: Tutor) {
+  deleteTutor(tutor: Tutor): void {
     this.confirmationService.confirm({
-      message: '¿Estas seguro de que deseas eliminar ' + tutor.name + '?',
+      message: `¿Estas seguro de que deseas eliminar al tutor seleccionado?<br><br>Nombre: ${tutor.name} ${tutor.firstSurname} ${tutor.secondSurname} <br>Correo: ${tutor.email}`,
       header: 'Confirmar',
       closable: false,
       closeOnEscape: false,
@@ -136,58 +94,73 @@ export class TutorsListComponent implements OnInit {
         label: 'Aceptar',
       },
       accept: () => {
-        this.tutors = this.tutors.filter((val) => val.tutorId !== tutor.tutorId);
+        this.showToast('success', 'Tutor eliminado', 'El tutor ha sido eliminado correctamente');
 
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Exitoso',
-          detail: 'Tutor eliminado',
-          life: 3000,
-        });
+        this.tutors = this.tutors.filter((t: Tutor) => t.tutorId !== tutor.tutorId);
       },
       reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Rechazado',
-          detail: 'Operación cancelada',
-          life: 3000,
-        });
+        this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación del tutor');
       },
     });
   }
 
-  deleteSelectedTutors() {
-    console.log('Delete selected tutors', this.selectedTutors);
+  deleteSelectedTutors(): void {
+    this.confirmationService.confirm({
+      header: 'Confirmar',
+      message: `¿Estas seguro de que deseas eliminar los tutores seleccionados?
+      <br><br>${this.selectedTutors?.length} tutores serán eliminados.
+      <br><br>Correos:<br>- ${this.selectedTutors?.map((tutor: Tutor) => tutor.email).join('<br>- ')}`,
+      closable: false,
+      closeOnEscape: false,
+      icon: 'pi pi-exclamation-triangle',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Aceptar',
+      },
+      accept: () => {
+        this.showToast('success', 'Tutores eliminados', 'Los tutores han sido eliminados correctamente');
+
+        this.tutors = this.tutors.filter((t: Tutor) => !this.selectedTutors?.includes(t));
+      },
+      reject: () => {
+        this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación de los tutores');
+      },
+    });
   }
 
-  changeTutorDialogVisible(event: { isOpen: boolean; message: string }) {
+  changeTutorDialog(event: EmitterDialogTutor): void {
     this.tutorDialogVisible = event.isOpen;
     if (event.message === 'save') {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Exitoso',
-        detail: 'Tutor guardado',
-        life: 3000,
-      });
+      this.showToast('success', 'Tutor guardado', 'El tutor ha sido guardado correctamente');
+
+      if (event.tutor) this.tutors = [...this.tutors, event.tutor];
+    } else if (event.message === 'edit') {
+      this.showToast('success', 'Tutor actualizado', 'El tutor ha sido actualizado correctamente');
+
+      if (event.tutor) {
+        this.tutors = this.tutors.map((t: Tutor) => (t.tutorId === event.tutor?.tutorId ? event.tutor : t));
+      }
     } else if (event.message === 'close') {
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Información',
-        detail: 'Operación cancelada',
-        life: 3000,
-      });
+      this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
     }
   }
 
-  getNestedValue(data: Tutor, field: string) {
-    return field.split('.').reduce((prev: any, curr: string) => prev?.[curr], data);
-  }
-
-  getGlobalFilterFields() {
-    return getGlobalFilterFields(this.cols);
-  }
-
-  onGlobalFilter(table: Table, event: Event) {
-    return onGlobalFilter(table, event);
+  showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
+    this.messageService.add({
+      severity,
+      icon:
+        severity === 'success'
+          ? 'pi pi-check-circle'
+          : severity === 'error'
+            ? 'pi pi-times-circle'
+            : 'pi pi-info-circle',
+      summary,
+      detail,
+      life: 3000,
+    });
   }
 }

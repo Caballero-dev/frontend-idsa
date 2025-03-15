@@ -1,0 +1,48 @@
+<div [ngClass]="getClassContainerDiv()">
+  @if (label !== '') {
+    <label
+      [for]="inputId"
+      [ngClass]="getClassLabel()"
+    >
+      {{ label }}
+    </label>
+  }
+  <div [ngClass]="getClassContainerInput()">
+    @if (type === 'date') {
+      <p-datePicker
+        fluid
+        [inputId]="inputId"
+        [formControl]="customFormControl"
+        [minDate]="minDate"
+        [maxDate]="maxDate"
+        [showIcon]="true"
+        [showButtonBar]="true"
+        [appendTo]="'body'"
+        [iconDisplay]="'input'"
+        dateFormat="dd/mm/yy"
+        [placeholder]="placeholder"
+        [size]="size"
+        [attr.aria-label]="label"
+        [attr.aria-required]="required"
+        [attr.aria-describedby]="getAriaDescribedBy()"
+        (onSelect)="onSelectDate.emit($event)"
+      ></p-datePicker>
+    }
+
+    @if (formUtils.isInvalidValidField(customFormControl)) {
+      <span
+        [id]="inputId + '-error'"
+        class="text-red-600"
+      >
+        {{ formUtils.getFieldError(customFormControl) }}
+      </span>
+    } @else if (helpText !== null) {
+      <span
+        [id]="inputId + '-help'"
+        [ngClass]="helpTextType === 'error' ? 'text-red-600' : 'text-muted-color'"
+      >
+        {{ helpText }}
+      </span>
+    }
+  </div>
+</div>

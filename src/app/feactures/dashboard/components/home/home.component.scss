@@ -1,0 +1,23 @@
+.message-success {
+  background: color-mix(in srgb, var(--p-green-50), transparent 5%);
+  color: var(--p-green-600);
+  box-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-green-500), transparent 96%);
+  border-radius: var(--p-content-border-radius);
+  outline: var(--p-green-200) solid 1px;
+}
+
+.message-warn {
+  background: color-mix(in srgb, var(--p-yellow-50), transparent 5%);
+  color: var(--p-yellow-600);
+  box-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-yellow-500), transparent 96%);
+  border-radius: var(--p-content-border-radius);
+  outline-color: var(--p-yellow-200) solid 1px;
+}
+
+.message-error {
+  background: color-mix(in srgb, var(--p-red-50), transparent 5%);
+  color: var(--p-red-600);
+  box-shadow: 0px 4px 8px 0px color-mix(in srgb, var(--p-red-500), transparent 96%);
+  border-radius: var(--p-content-border-radius);
+  outline-color: var(--p-red-200) solid 1px;
+}

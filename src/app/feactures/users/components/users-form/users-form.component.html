@@ -1,121 +1,209 @@
 <p-dialog
   [(visible)]="userDialog"
   [modal]="true"
-  header="Detalles del usuario"
+  [header]="isCreateUser ? 'Crear Usuario' : 'Editar Usuario'"
   closable="false"
-  [style]="{ width: '450px' }"
+  [style]="{ width: '550px' }"
 >
-  <ng-template #content>
-    <form
-      [formGroup]="userForm"
-      class="flex flex-col gap-6"
-    >
-      <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-6">
-          <label
-            for="email"
-            class="block font-bold mb-3"
-          >
-            Correo electrónico
-          </label>
-          <input
-            pInputText
-            id="email"
+  <form
+    [formGroup]="userForm"
+    (ngSubmit)="saveOrUpdateUser()"
+  >
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
+        <div class="w-full">
+          <idsa-input-text
             type="email"
-            required
-            autofocus
-            fluid
-            formControlName="email"
-          />
-        </div>
-
-        <div class="col-span-6">
-          <label
-            for="password"
-            class="block font-bold mb-3"
-          >
-            Contraseña
-          </label>
-          <p-password
-            [feedback]="false"
-            [toggleMask]="true"
-            id="password"
-            type="tel"
-            required
-            fluid
-            formControlName="password"
-          />
+            inputId="email"
+            label="Correo electrónico"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="userForm.controls.email"
+            placeholder="Ingresa el correo electrónico"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="100"
+            [minLength]="6"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
         </div>
       </div>
 
-      <div>
-        <label
-          for="name"
-          class="block font-bold mb-3"
-        >
-          Nombre
-        </label>
-        <input
-          pInputText
-          pKeyFilter="alpha"
-          id="name"
-          type="text"
-          required
-          fluid
-          formControlName="name"
+      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
+        <div class="w-full xs:w-2/4">
+          <idsa-input-select
+            type="valueObject"
+            selectId="role"
+            label="Rol"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="userForm.controls.role"
+            [options]="roles"
+            optionLabel="roleName"
+            placeholder="Seleccione un rol"
+            [showClear]="true"
+            size="large"
+            (onChange)="roleChange($event)"
+          ></idsa-input-select>
+        </div>
+
+        <div class="w-full xs:w-2/4">
+          <idsa-input-text
+            type="onlyNumbers"
+            inputId="phoneNumber"
+            label="Teléfono"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="userForm.controls.phoneNumber"
+            placeholder="Ingresa el numero de telefono"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="10"
+            [minLength]="10"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
+        <div class="w-full xs:w-2/4">
+          <idsa-input-text
+            type="onlyLetters"
+            inputId="name"
+            label="Nombre"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="userForm.controls.name"
+            placeholder="Ingresa el nombre"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="50"
+            [minLength]="3"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
+
+        <div class="w-full xs:w-2/4">
+          <idsa-input-text
+            type="onlyLetters"
+            inputId="paternalSurname"
+            label="Apellido paterno"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="userForm.controls.firstSurname"
+            placeholder="Ingresa el apellido paterno"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="50"
+            [minLength]="3"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
+        <div class="w-full xs:w-2/4">
+          <idsa-input-text
+            type="onlyLetters"
+            inputId="maternalSurname"
+            label="Apellido materno"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="userForm.controls.secondSurname"
+            placeholder="Ingresa el apellido materno"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="50"
+            [minLength]="3"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
+
+        @if (selectedRole?.roleName === 'Estudiante') {
+          <div class="w-full xs:w-2/4">
+            <idsa-input-text
+              type="alphanumericUpperCase"
+              inputId="studentCode"
+              label="Matrícula"
+              labelFontSize="text-lg"
+              labelPosition="top"
+              [customFormControl]="userForm.controls.studentCode"
+              placeholder="Ingresa la matrícula"
+              [required]="true"
+              [readonly]="false"
+              [maxLength]="20"
+              [minLength]="10"
+              variant="outlined"
+              size="large"
+            ></idsa-input-text>
+          </div>
+        } @else if (selectedRole?.roleName === 'Tutor') {
+          <div class="w-full xs:w-2/4">
+            <idsa-input-text
+              type="alphanumericUpperCase"
+              inputId="employeeNumber"
+              label="Número de empleado"
+              labelFontSize="text-lg"
+              labelPosition="top"
+              [customFormControl]="userForm.controls.employeeCode"
+              placeholder="Ingresa el número de empleado"
+              [required]="true"
+              [readonly]="false"
+              [maxLength]="20"
+              [minLength]="10"
+              variant="outlined"
+              size="large"
+            ></idsa-input-text>
+          </div>
+        }
+      </div>
+
+      @if (!isCreateUser) {
+        <div class="flex flex-col gap-2">
+          <div class="w-full">
+            <idsa-input-text
+              type="password"
+              inputId="password"
+              label="Contraseña"
+              labelFontSize="text-lg"
+              labelPosition="top"
+              [customFormControl]="userForm.controls.password"
+              placeholder="Ingresa la contraseña"
+              [required]="true"
+              [maxLength]="20"
+              [minLength]="8"
+              variant="outlined"
+              size="large"
+            ></idsa-input-text>
+          </div>
+          <div class="w-full">
+            <p-checkbox
+              class="mr-2"
+              id="activePassword"
+              [binary]="true"
+              (onChange)="toggleEditPassword($event)"
+            />
+            <label for="activePassword">Actualizar Contraseña</label>
+          </div>
+        </div>
+      }
+
+      <div class="mt-4 flex justify-end gap-2">
+        <p-button
+          label="Cancelar"
+          icon="pi pi-times"
+          text
+          (click)="closeDialog()"
+        />
+        <p-button
+          [label]="isCreateUser ? 'Crear' : 'Actualizar'"
+          type="submit"
+          icon="pi pi-check"
         />
       </div>
-
-      <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-6">
-          <label
-            for="paternalSurname"
-            class="block font-bold mb-3"
-          >
-            Apellido paterno
-          </label>
-          <input
-            pInputText
-            pKeyFilter="alpha"
-            id="paternalSurname"
-            type="text"
-            required
-            fluid
-            formControlName="paternalSurname"
-          />
-        </div>
-        <div class="col-span-6">
-          <label
-            for="maternalSurname"
-            class="block font-bold mb-3"
-          >
-            Apellido materno
-          </label>
-          <input
-            pInputText
-            pKeyFilter="alpha"
-            id="maternalSurname"
-            type="text"
-            required
-            fluid
-            formControlName="maternalSurname"
-          />
-        </div>
-      </div>
-    </form>
-  </ng-template>
-
-  <ng-template #footer>
-    <p-button
-      label="Cancel"
-      icon="pi pi-times"
-      text
-      (click)="closeDialog()"
-    />
-    <p-button
-      label="Save"
-      icon="pi pi-check"
-      (click)="saveUser()"
-    />
-  </ng-template>
+    </div>
+  </form>
 </p-dialog>

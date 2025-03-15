@@ -22,9 +22,14 @@
   #dt
   [value]="tutors"
   [rows]="15"
+  [scrollable]="true"
+  scrollHeight="500px"
+  [resizableColumns]="true"
+  [showGridlines]="true"
+  [loading]="isLoading"
   [columns]="cols"
   [paginator]="true"
-  [globalFilterFields]="getGlobalFilterFields()"
+  [globalFilterFields]="tableUtils.getGlobalFilterFields(cols)"
   [tableStyle]="{ 'min-width': '75rem' }"
   [(selection)]="selectedTutors"
   [rowHover]="true"
@@ -34,17 +39,28 @@
   [rowsPerPageOptions]="[15, 30, 45]"
 >
   <ng-template #caption>
-    <div class="flex items-center justify-between">
-      <h5 class="m-0">Administrar tutores</h5>
-      <p-iconfield>
-        <p-inputicon styleClass="pi pi-search" />
-        <input
-          pInputText
-          type="text"
-          (input)="onGlobalFilter(dt, $event)"
-          placeholder="Buscar..."
-        />
-      </p-iconfield>
+    <h5 class="mb-2">Administrar tutores</h5>
+    <div class="flex flex-col items-center justify-between xs:flex-row">
+      <p-button
+        label="Limpiar"
+        [outlined]="true"
+        icon="pi pi-filter-slash"
+        (click)="dt.reset(); searchTutorValue = ''; selectedTutors = []"
+      />
+      <div class="mb-3 mt-3 xs:mb-0 xs:mt-0">
+        <p-inputgroup>
+          <input
+            pInputText
+            type="text"
+            [(ngModel)]="searchTutorValue"
+            placeholder="Buscar..."
+          />
+          <p-button
+            icon="pi pi-search"
+            (click)="dt.filterGlobal(searchTutorValue.trim(), 'contains')"
+          />
+        </p-inputgroup>
+      </div>
     </div>
   </ng-template>
   <ng-template
@@ -58,7 +74,7 @@
       @for (col of columns; track $index) {
         <th
           [pSortableColumn]="col.sortable ? col.field : null"
-          style="min-width: 16rem"
+          pResizableColumn
         >
           {{ col.header }}
           @if (col.sortable) {
@@ -66,7 +82,7 @@
           }
         </th>
       }
-      <th style="min-width: 12rem"></th>
+      <th style="min-width: 10rem"></th>
     </tr>
   </ng-template>
   <ng-template
@@ -79,18 +95,19 @@
         <p-tableCheckbox [value]="tutor" />
       </td>
       @for (col of columns; track $index) {
-        <td style="min-width: 12rem">{{ getNestedValue(tutor, col.field) }}</td>
+        <td>{{ tableUtils.getNestedValue(tutor, col.field) }}</td>
       }
-      <td>
+      <td style="text-align: center; min-width: 10rem">
         <p-button
           icon="pi pi-pencil"
-          class="mr-2"
+          class="mr-3"
           [rounded]="true"
           [outlined]="true"
           (click)="editTutor(tutor)"
         />
         <p-button
           icon="pi pi-trash"
+          class="ml-3"
           severity="danger"
           [rounded]="true"
           [outlined]="true"
@@ -99,12 +116,24 @@
       </td>
     </tr>
   </ng-template>
+  <ng-template #emptymessage>
+    <tr>
+      <td [attr.colspan]="cols.length + 2">No se encontraron tutores</td>
+    </tr>
+  </ng-template>
+  <ng-template #loadingbody>
+    <tr>
+      <td [attr.colspan]="cols.length + 2">Cargando datos de tutores. Por favor espere.</td>
+    </tr>
+  </ng-template>
 </p-table>
 
 @if (tutorDialogVisible) {
   <tutors-form
+    [isCreateTutor]="isCreateTutor"
+    [selectedTutor]="selectedTutor"
     [tutorDialog]="tutorDialogVisible"
-    (defaultChangeTutorDialog)="changeTutorDialogVisible($event)"
+    (defaultChangeTutorDialog)="changeTutorDialog($event)"
   ></tutors-form>
 }
 
