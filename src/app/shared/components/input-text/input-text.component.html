@@ -82,6 +82,29 @@
       />
     }
 
+    @if (type === 'onlyPlainLettersUpperCase') {
+      <input
+        fluid
+        type="text"
+        pInputText
+        [id]="inputId"
+        [formControl]="customFormControl"
+        [placeholder]="placeholder"
+        [required]="required"
+        [readOnly]="readonly"
+        [maxLength]="maxLength"
+        [minLength]="minLength"
+        [variant]="variant"
+        [pSize]="size"
+        [attr.aria-label]="label"
+        [attr.aria-required]="required"
+        [attr.aria-describedby]="getAriaDescribedBy()"
+        (keydown)="formUtils.isValidOnlyPlainLettersCharacters($event)"
+        (paste)="formUtils.isValidOnlyPlainLettersPaste($event)"
+        (input)="formUtils.convertToUpperCase($event, customFormControl)"
+      />
+    }
+
     @if (type === 'onlyNumbers') {
       <input
         fluid

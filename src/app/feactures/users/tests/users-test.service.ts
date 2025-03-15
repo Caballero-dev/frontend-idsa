@@ -21,6 +21,7 @@ export class UsersTestService {
         password: 'Pass1234$',
         createdAt: '2025-03-10T03:25:08.083009906Z',
         isActive: true,
+        phoneNumber: '1242073233',
       },
       {
         userId: 2,
@@ -36,6 +37,7 @@ export class UsersTestService {
         password: 'Secure456!',
         createdAt: '2025-03-10T02:23:02.672881Z',
         isActive: true,
+        phoneNumber: '4901465796',
       },
       {
         userId: 3,
@@ -51,6 +53,7 @@ export class UsersTestService {
         password: 'Student789#',
         createdAt: '2025-03-10T03:19:58.067920083Z',
         isActive: true,
+        phoneNumber: '2340027135',
       },
       {
         userId: 4,
@@ -66,6 +69,7 @@ export class UsersTestService {
         password: 'Ana2024!',
         createdAt: '2025-03-10T03:20:41.470523836Z',
         isActive: true,
+        phoneNumber: '9684283770',
       },
       {
         userId: 5,
@@ -81,6 +85,7 @@ export class UsersTestService {
         password: 'Tutor2024%',
         createdAt: '2024-06-15T10:05:33',
         isActive: true,
+        phoneNumber: '7094871880',
       },
       {
         userId: 6,
@@ -96,6 +101,7 @@ export class UsersTestService {
         password: 'Carmen789&',
         createdAt: '2024-04-05T13:25:40',
         isActive: true,
+        phoneNumber: '1550572563',
       },
       {
         userId: 7,
@@ -111,6 +117,7 @@ export class UsersTestService {
         password: 'Miguel123$',
         createdAt: '2024-05-28T16:40:12',
         isActive: true,
+        phoneNumber: '7994579895',
       },
       {
         userId: 8,
@@ -126,6 +133,7 @@ export class UsersTestService {
         password: 'Laura456#',
         createdAt: '2024-03-18T14:50:22',
         isActive: true,
+        phoneNumber: '3368777711',
       },
       {
         userId: 9,
@@ -141,6 +149,7 @@ export class UsersTestService {
         password: 'Pedro789!',
         createdAt: '2024-06-10T09:15:30',
         isActive: true,
+        phoneNumber: '8028185173',
       },
       {
         userId: 10,
@@ -156,6 +165,7 @@ export class UsersTestService {
         password: 'Sofia2024%',
         createdAt: '2024-04-20T10:35:18',
         isActive: true,
+        phoneNumber: '1809850558',
       },
       {
         userId: 11,
@@ -171,6 +181,7 @@ export class UsersTestService {
         password: 'Javier456&',
         createdAt: '2024-05-05T11:20:45',
         isActive: true,
+        phoneNumber: '8519758557',
       },
       {
         userId: 12,
@@ -186,6 +197,7 @@ export class UsersTestService {
         password: 'Elena123#',
         createdAt: '2024-03-25T15:40:33',
         isActive: true,
+        phoneNumber: '7651328113',
       },
       {
         userId: 13,
@@ -201,6 +213,7 @@ export class UsersTestService {
         password: 'David789$',
         createdAt: '2024-06-18T13:10:20',
         isActive: true,
+        phoneNumber: '3965612930',
       },
       {
         userId: 14,
@@ -216,6 +229,7 @@ export class UsersTestService {
         password: 'Patri456!',
         createdAt: '2024-04-02T08:55:42',
         isActive: false,
+        phoneNumber: '7017444733',
       },
       {
         userId: 15,
@@ -231,6 +245,7 @@ export class UsersTestService {
         password: 'Alej2024%',
         createdAt: '2024-05-12T10:30:15',
         isActive: true,
+        phoneNumber: '6001760605',
       },
       {
         userId: 16,
@@ -246,6 +261,7 @@ export class UsersTestService {
         password: 'Moni789&',
         createdAt: '2024-03-30T12:25:38',
         isActive: true,
+        phoneNumber: '2558567984',
       },
       {
         userId: 17,
@@ -261,6 +277,7 @@ export class UsersTestService {
         password: 'Raul123#',
         createdAt: '2024-06-25T14:45:50',
         isActive: true,
+        phoneNumber: '4584960402',
       },
       {
         userId: 18,
@@ -276,6 +293,7 @@ export class UsersTestService {
         password: 'Lucia456$',
         createdAt: '2024-04-15T09:35:27',
         isActive: true,
+        phoneNumber: '1495235264',
       },
       {
         userId: 19,
@@ -291,6 +309,7 @@ export class UsersTestService {
         password: 'Sergio789!',
         createdAt: '2024-05-20T15:15:40',
         isActive: true,
+        phoneNumber: '7155554015',
       },
       {
         userId: 20,
@@ -306,6 +325,7 @@ export class UsersTestService {
         password: 'Dani2024%',
         createdAt: '2024-03-05T16:50:33',
         isActive: true,
+        phoneNumber: '3727755247',
       },
       {
         userId: 21,
@@ -321,6 +341,7 @@ export class UsersTestService {
         password: 'Alberto456&',
         createdAt: '2024-06-30T08:40:15',
         isActive: true,
+        phoneNumber: '6617763759',
       },
       {
         userId: 22,
@@ -336,6 +357,7 @@ export class UsersTestService {
         password: 'Vero123#',
         createdAt: '2024-04-28T11:30:25',
         isActive: true,
+        phoneNumber: '7081808260',
       },
       {
         userId: 23,
@@ -351,6 +373,7 @@ export class UsersTestService {
         password: 'Franc789$',
         createdAt: '2024-05-08T13:20:48',
         isActive: false,
+        phoneNumber: '3965308033',
       },
       {
         userId: 24,
@@ -366,6 +389,7 @@ export class UsersTestService {
         password: 'Isa456!',
         createdAt: '2024-03-15T14:10:35',
         isActive: true,
+        phoneNumber: '1752855352',
       },
       {
         userId: 25,
@@ -381,6 +405,7 @@ export class UsersTestService {
         password: 'Gabi2024%',
         createdAt: '2024-06-05T10:50:22',
         isActive: true,
+        phoneNumber: '7930868545',
       },
       {
         userId: 26,
@@ -396,6 +421,7 @@ export class UsersTestService {
         password: 'Adri789&',
         createdAt: '2024-04-10T09:25:18',
         isActive: true,
+        phoneNumber: '3876450123',
       },
       {
         userId: 27,
@@ -411,6 +437,7 @@ export class UsersTestService {
         password: 'Hector123#',
         createdAt: '2024-05-25T15:40:30',
         isActive: true,
+        phoneNumber: '8224125248',
       },
       {
         userId: 28,
@@ -426,6 +453,7 @@ export class UsersTestService {
         password: 'Clau456$',
         createdAt: '2024-03-20T12:15:45',
         isActive: true,
+        phoneNumber: '3473246485',
       },
       {
         userId: 29,
@@ -441,6 +469,7 @@ export class UsersTestService {
         password: 'Jorge789!',
         createdAt: '2024-06-12T13:35:18',
         isActive: true,
+        phoneNumber: '8655459268',
       },
       {
         userId: 30,
@@ -456,6 +485,7 @@ export class UsersTestService {
         password: 'Ali2024%',
         createdAt: '2024-04-25T10:45:33',
         isActive: true,
+        phoneNumber: '5102080060',
       },
       {
         userId: 31,
@@ -471,6 +501,7 @@ export class UsersTestService {
         password: 'Ernesto456&',
         createdAt: '2024-05-18T14:30:40',
         isActive: true,
+        phoneNumber: '8101709639',
       },
       {
         userId: 32,
@@ -486,6 +517,7 @@ export class UsersTestService {
         password: 'Nati123#',
         createdAt: '2024-03-28T15:20:15',
         isActive: true,
+        phoneNumber: '1850119318',
       },
       {
         userId: 33,
@@ -501,6 +533,7 @@ export class UsersTestService {
         password: 'Oscar789$',
         createdAt: '2024-06-22T09:55:27',
         isActive: true,
+        phoneNumber: '9985696429',
       },
       {
         userId: 34,
@@ -516,6 +549,7 @@ export class UsersTestService {
         password: 'Bea456!',
         createdAt: '2024-04-05T08:40:33',
         isActive: true,
+        phoneNumber: '3874074176',
       },
       {
         userId: 35,
@@ -531,6 +565,7 @@ export class UsersTestService {
         password: 'Manu2024%',
         createdAt: '2024-05-30T11:15:48',
         isActive: false,
+        phoneNumber: '2545859018',
       },
       {
         userId: 36,
@@ -546,6 +581,7 @@ export class UsersTestService {
         password: 'Diana789&',
         createdAt: '2024-03-22T12:50:22',
         isActive: true,
+        phoneNumber: '9710802831',
       },
       {
         userId: 37,
@@ -561,6 +597,7 @@ export class UsersTestService {
         password: 'Julio123#',
         createdAt: '2024-06-08T13:25:40',
         isActive: true,
+        phoneNumber: '9992720050',
       },
       {
         userId: 38,
@@ -576,6 +613,7 @@ export class UsersTestService {
         password: 'Vale456$',
         createdAt: '2024-04-18T14:35:15',
         isActive: true,
+        phoneNumber: '6421236819',
       },
       {
         userId: 39,
@@ -591,6 +629,7 @@ export class UsersTestService {
         password: 'Ramon789!',
         createdAt: '2024-05-15T15:50:33',
         isActive: true,
+        phoneNumber: '2775293307',
       },
       {
         userId: 40,
@@ -606,6 +645,7 @@ export class UsersTestService {
         password: 'Cris2024%',
         createdAt: '2024-03-08T16:20:48',
         isActive: true,
+        phoneNumber: '5206611060',
       },
       {
         userId: 41,
@@ -621,6 +661,7 @@ export class UsersTestService {
         password: 'Martin456&',
         createdAt: '2024-06-28T09:40:22',
         isActive: true,
+        phoneNumber: '1295355613',
       },
       {
         userId: 42,
@@ -636,6 +677,7 @@ export class UsersTestService {
         password: 'Lore123#',
         createdAt: '2024-04-22T10:30:15',
         isActive: true,
+        phoneNumber: '8729082310',
       },
       {
         userId: 43,
@@ -651,6 +693,7 @@ export class UsersTestService {
         password: 'Rafa789$',
         createdAt: '2024-05-05T12:15:40',
         isActive: true,
+        phoneNumber: '4227807202',
       },
       {
         userId: 44,
@@ -666,6 +709,7 @@ export class UsersTestService {
         password: 'Susi456!',
         createdAt: '2024-03-17T13:55:33',
         isActive: true,
+        phoneNumber: '1600874606',
       },
       {
         userId: 45,
@@ -681,6 +725,7 @@ export class UsersTestService {
         password: 'Fer2024%',
         createdAt: '2024-06-15T14:40:18',
         isActive: true,
+        phoneNumber: '8861568673',
       },
       {
         userId: 46,
@@ -696,6 +741,7 @@ export class UsersTestService {
         password: 'Martha789&',
         createdAt: '2024-04-30T15:20:45',
         isActive: false,
+        phoneNumber: '6386721703',
       },
       {
         userId: 47,
@@ -711,6 +757,7 @@ export class UsersTestService {
         password: 'Arturo123#',
         createdAt: '2024-05-22T16:10:33',
         isActive: true,
+        phoneNumber: '9319884010',
       },
       {
         userId: 48,
@@ -726,6 +773,7 @@ export class UsersTestService {
         password: 'Raquel456$',
         createdAt: '2024-03-25T09:45:27',
         isActive: true,
+        phoneNumber: '4863665481',
       },
       {
         userId: 49,
@@ -741,6 +789,7 @@ export class UsersTestService {
         password: 'Simon789!',
         createdAt: '2024-06-20T10:35:48',
         isActive: true,
+        phoneNumber: '5847469972',
       },
       {
         userId: 50,
@@ -756,6 +805,7 @@ export class UsersTestService {
         password: 'Oli2024%',
         createdAt: '2024-04-12T11:50:22',
         isActive: true,
+        phoneNumber: '2028945279',
       },
       {
         userId: 51,
@@ -771,6 +821,7 @@ export class UsersTestService {
         password: 'CarlosM24$',
         createdAt: '2024-07-01T08:15:22',
         isActive: true,
+        phoneNumber: '7266558874',
       },
       {
         userId: 52,
@@ -786,6 +837,7 @@ export class UsersTestService {
         password: 'Maria456#',
         createdAt: '2024-03-05T09:30:45',
         isActive: true,
+        phoneNumber: '4411560772',
       },
       {
         userId: 53,
@@ -801,6 +853,7 @@ export class UsersTestService {
         password: 'Juan2024%',
         createdAt: '2024-06-10T10:45:30',
         isActive: true,
+        phoneNumber: '5491501272',
       },
       {
         userId: 54,
@@ -816,6 +869,7 @@ export class UsersTestService {
         password: 'Ana789&',
         createdAt: '2024-04-15T11:20:15',
         isActive: true,
+        phoneNumber: '5528086892',
       },
       {
         userId: 55,
@@ -831,6 +885,7 @@ export class UsersTestService {
         password: 'Rob123#',
         createdAt: '2024-07-05T12:35:33',
         isActive: true,
+        phoneNumber: '6032341317',
       },
       {
         userId: 56,
@@ -846,6 +901,7 @@ export class UsersTestService {
         password: 'Carm456$',
         createdAt: '2024-03-20T13:40:40',
         isActive: true,
+        phoneNumber: '4602720222',
       },
       {
         userId: 57,
@@ -861,6 +917,7 @@ export class UsersTestService {
         password: 'Mig2024%',
         createdAt: '2024-06-25T14:50:22',
         isActive: true,
+        phoneNumber: '3873300068',
       },
       {
         userId: 58,
@@ -876,6 +933,7 @@ export class UsersTestService {
         password: 'Laura789!',
         createdAt: '2024-04-30T15:15:18',
         isActive: false,
+        phoneNumber: '7422844089',
       },
       {
         userId: 59,
@@ -891,6 +949,7 @@ export class UsersTestService {
         password: 'Pedro123&',
         createdAt: '2024-07-10T08:30:45',
         isActive: true,
+        phoneNumber: '9446784269',
       },
       {
         userId: 60,
@@ -906,6 +965,7 @@ export class UsersTestService {
         password: 'Sof456#',
         createdAt: '2024-03-15T09:45:33',
         isActive: true,
+        phoneNumber: '2627832430',
       },
       {
         userId: 61,
@@ -921,6 +981,7 @@ export class UsersTestService {
         password: 'Jav2024$',
         createdAt: '2024-06-20T10:50:20',
         isActive: true,
+        phoneNumber: '8567877309',
       },
       {
         userId: 62,
@@ -936,6 +997,7 @@ export class UsersTestService {
         password: 'Elena789%',
         createdAt: '2024-04-05T11:25:48',
         isActive: true,
+        phoneNumber: '6110077694',
       },
       {
         userId: 63,
@@ -951,6 +1013,7 @@ export class UsersTestService {
         password: 'David123!',
         createdAt: '2024-07-15T12:40:15',
         isActive: true,
+        phoneNumber: '9585699396',
       },
       {
         userId: 64,
@@ -966,6 +1029,7 @@ export class UsersTestService {
         password: 'Pat456&',
         createdAt: '2024-03-25T13:15:33',
         isActive: true,
+        phoneNumber: '8720997223',
       },
       {
         userId: 65,
@@ -981,6 +1045,7 @@ export class UsersTestService {
         password: 'Ale2024#',
         createdAt: '2024-06-30T14:30:40',
         isActive: true,
+        phoneNumber: '6789898441',
       },
       {
         userId: 66,
@@ -996,6 +1061,7 @@ export class UsersTestService {
         password: 'Monica789$',
         createdAt: '2024-04-10T15:45:22',
         isActive: true,
+        phoneNumber: '5263053266',
       },
       {
         userId: 67,
@@ -1011,6 +1077,7 @@ export class UsersTestService {
         password: 'Raul456%',
         createdAt: '2024-07-20T08:20:48',
         isActive: false,
+        phoneNumber: '7774956771',
       },
       {
         userId: 68,
@@ -1026,6 +1093,7 @@ export class UsersTestService {
         password: 'Lucia123!',
         createdAt: '2024-03-30T09:35:15',
         isActive: true,
+        phoneNumber: '4527618279',
       },
       {
         userId: 69,
@@ -1041,6 +1109,7 @@ export class UsersTestService {
         password: 'Ser2024&',
         createdAt: '2024-06-15T10:50:33',
         isActive: true,
+        phoneNumber: '3421569341',
       },
       {
         userId: 70,
@@ -1056,6 +1125,7 @@ export class UsersTestService {
         password: 'Dani456#',
         createdAt: '2024-04-20T11:40:20',
         isActive: true,
+        phoneNumber: '8094982835',
       },
       {
         userId: 71,
@@ -1071,6 +1141,7 @@ export class UsersTestService {
         password: 'Alberto123$',
         createdAt: '2024-07-25T12:15:48',
         isActive: true,
+        phoneNumber: '3475896066',
       },
       {
         userId: 72,
@@ -1086,6 +1157,7 @@ export class UsersTestService {
         password: 'Vero456%',
         createdAt: '2024-03-10T13:30:22',
         isActive: true,
+        phoneNumber: '3308138192',
       },
       {
         userId: 73,
@@ -1101,6 +1173,7 @@ export class UsersTestService {
         password: 'Fran2024!',
         createdAt: '2024-06-05T14:45:15',
         isActive: true,
+        phoneNumber: '7930447965',
       },
       {
         userId: 74,
@@ -1116,6 +1189,7 @@ export class UsersTestService {
         password: 'Isa123&',
         createdAt: '2024-04-25T15:20:40',
         isActive: true,
+        phoneNumber: '6971924195',
       },
       {
         userId: 75,
@@ -1131,6 +1205,7 @@ export class UsersTestService {
         password: 'Gab456$',
         createdAt: '2024-07-30T08:35:33',
         isActive: true,
+        phoneNumber: '4811820786',
       },
       {
         userId: 76,
@@ -1146,6 +1221,7 @@ export class UsersTestService {
         password: 'Adri123#',
         createdAt: '2024-03-15T09:50:18',
         isActive: false,
+        phoneNumber: '7076674160',
       },
       {
         userId: 77,
@@ -1161,6 +1237,7 @@ export class UsersTestService {
         password: 'Hec2024%',
         createdAt: '2024-06-10T10:15:45',
         isActive: true,
+        phoneNumber: '5375018662',
       },
       {
         userId: 78,
@@ -1176,6 +1253,7 @@ export class UsersTestService {
         password: 'Clau456!',
         createdAt: '2024-05-05T11:30:30',
         isActive: true,
+        phoneNumber: '2622897218',
       },
       {
         userId: 79,
@@ -1191,6 +1269,7 @@ export class UsersTestService {
         password: 'Jorge123&',
         createdAt: '2024-08-01T12:45:22',
         isActive: true,
+        phoneNumber: '6166897903',
       },
       {
         userId: 80,
@@ -1206,6 +1285,7 @@ export class UsersTestService {
         password: 'Ali456$',
         createdAt: '2024-03-20T13:15:48',
         isActive: true,
+        phoneNumber: '1795142796',
       },
       {
         userId: 81,
@@ -1221,6 +1301,7 @@ export class UsersTestService {
         password: 'Ern2024#',
         createdAt: '2024-06-25T14:30:15',
         isActive: true,
+        phoneNumber: '4283618015',
       },
       {
         userId: 82,
@@ -1236,6 +1317,7 @@ export class UsersTestService {
         password: 'Nat123%',
         createdAt: '2024-05-10T15:45:33',
         isActive: true,
+        phoneNumber: '8097874070',
       },
       {
         userId: 83,
@@ -1251,6 +1333,7 @@ export class UsersTestService {
         password: 'Oscar456!',
         createdAt: '2024-08-05T08:20:40',
         isActive: true,
+        phoneNumber: '4341503952',
       },
       {
         userId: 84,
@@ -1266,6 +1349,7 @@ export class UsersTestService {
         password: 'Bea123&',
         createdAt: '2024-03-25T09:35:22',
         isActive: true,
+        phoneNumber: '7008976156',
       },
       {
         userId: 85,
@@ -1281,6 +1365,7 @@ export class UsersTestService {
         password: 'Man2024$',
         createdAt: '2024-06-30T10:50:48',
         isActive: true,
+        phoneNumber: '6232294422',
       },
       {
         userId: 86,
@@ -1296,6 +1381,7 @@ export class UsersTestService {
         password: 'Diana456#',
         createdAt: '2024-05-15T11:15:15',
         isActive: true,
+        phoneNumber: '3315997604',
       },
       {
         userId: 87,
@@ -1311,6 +1397,7 @@ export class UsersTestService {
         password: 'Julio789$',
         createdAt: '2024-08-10T12:30:33',
         isActive: false,
+        phoneNumber: '7419557175',
       },
       {
         userId: 88,
@@ -1326,6 +1413,7 @@ export class UsersTestService {
         password: 'Val123%',
         createdAt: '2024-03-30T13:45:20',
         isActive: true,
+        phoneNumber: '5366174964',
       },
       {
         userId: 89,
@@ -1341,6 +1429,7 @@ export class UsersTestService {
         password: 'Ram2024!',
         createdAt: '2024-07-05T14:20:45',
         isActive: true,
+        phoneNumber: '3760871121',
       },
       {
         userId: 90,
@@ -1356,6 +1445,7 @@ export class UsersTestService {
         password: 'Cris456&',
         createdAt: '2024-05-20T15:35:18',
         isActive: true,
+        phoneNumber: '4210319148',
       },
       {
         userId: 91,
@@ -1371,6 +1461,7 @@ export class UsersTestService {
         password: 'Mart123#',
         createdAt: '2024-08-15T08:50:33',
         isActive: true,
+        phoneNumber: '5505943588',
       },
       {
         userId: 92,
@@ -1386,6 +1477,7 @@ export class UsersTestService {
         password: 'Lore456$',
         createdAt: '2024-03-05T09:15:48',
         isActive: true,
+        phoneNumber: '4373865954',
       },
       {
         userId: 93,
@@ -1401,6 +1493,7 @@ export class UsersTestService {
         password: 'Rafa2024%',
         createdAt: '2024-07-10T10:30:22',
         isActive: true,
+        phoneNumber: '7835374479',
       },
       {
         userId: 94,
@@ -1416,6 +1509,7 @@ export class UsersTestService {
         password: 'Sus123!',
         createdAt: '2024-05-25T11:45:15',
         isActive: true,
+        phoneNumber: '4023695853',
       },
       {
         userId: 95,
@@ -1431,6 +1525,7 @@ export class UsersTestService {
         password: 'Fer456&',
         createdAt: '2024-08-20T12:20:40',
         isActive: true,
+        phoneNumber: '5390160697',
       },
       {
         userId: 96,
@@ -1446,6 +1541,7 @@ export class UsersTestService {
         password: 'Martha123#',
         createdAt: '2024-03-10T13:35:33',
         isActive: true,
+        phoneNumber: '5886212780',
       },
       {
         userId: 97,
@@ -1461,6 +1557,7 @@ export class UsersTestService {
         password: 'Art2024$',
         createdAt: '2024-07-15T14:50:18',
         isActive: true,
+        phoneNumber: '7526797782',
       },
       {
         userId: 98,
@@ -1476,6 +1573,7 @@ export class UsersTestService {
         password: 'Raq456%',
         createdAt: '2024-05-30T15:15:45',
         isActive: false,
+        phoneNumber: '5951330757',
       },
       {
         userId: 99,
@@ -1491,6 +1589,7 @@ export class UsersTestService {
         password: 'Simon123!',
         createdAt: '2024-08-25T08:30:33',
         isActive: true,
+        phoneNumber: '6145431110',
       },
       {
         userId: 100,
@@ -1506,6 +1605,7 @@ export class UsersTestService {
         password: 'Oli123&',
         createdAt: '2024-03-15T09:45:20',
         isActive: true,
+        phoneNumber: '5322704954',
       },
       {
         userId: 101,
@@ -1521,6 +1621,7 @@ export class UsersTestService {
         password: 'CarlosL24#',
         createdAt: '2024-07-20T10:20:48',
         isActive: true,
+        phoneNumber: '1631612377',
       },
       {
         userId: 102,
@@ -1536,6 +1637,7 @@ export class UsersTestService {
         password: 'MariaG56$',
         createdAt: '2024-06-05T11:35:15',
         isActive: true,
+        phoneNumber: '9481663910',
       },
       {
         userId: 103,
@@ -1551,6 +1653,7 @@ export class UsersTestService {
         password: 'JuanM24%',
         createdAt: '2024-08-30T12:50:33',
         isActive: true,
+        phoneNumber: '1331631183',
       },
     ];
   }
