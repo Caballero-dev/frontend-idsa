@@ -92,7 +92,6 @@ export class CampusesComponent implements OnInit {
       };
 
       this.campuses = [...this.campuses, campus];
-      this.campusDialogVisible = false;
       this.clearCampusForm();
       this.showToast('success', 'Campus creado', 'El campus ha sido creado correctamente');
     } else {
@@ -111,7 +110,6 @@ export class CampusesComponent implements OnInit {
       };
 
       this.campuses = this.campuses.map((c: Campus) => (c.campusId === campus.campusId ? campus : c));
-      this.campusDialogVisible = false;
       this.clearCampusForm();
       this.showToast('success', 'Campus actualizado', 'El campus ha sido actualizado correctamente');
     } else {
@@ -154,12 +152,12 @@ export class CampusesComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.campusDialogVisible = false;
     this.clearCampusForm();
     this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
   }
 
   clearCampusForm(): void {
+    this.campusDialogVisible = false;
     this.campusForm.reset();
     this.selectedCampus = null;
     this.isCreateCampus = true;
