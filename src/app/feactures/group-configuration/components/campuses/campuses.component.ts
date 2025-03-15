@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Column, TableUtils } from '../../../utils/table.utils';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Campus } from '../../models/campus.model';
+import { Campus, CampusRequest } from '../../models/campus.model';
 import { CampusesTestService } from '../../tests/campuses-test.service';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -84,13 +84,14 @@ export class CampusesComponent implements OnInit {
 
   saveCampus(): void {
     if (this.campusForm.valid) {
+      let campusRequest: CampusRequest = this.getCampusFormData();
+
       let campus: Campus = {
         campusId: Math.random(),
-        name: this.campusForm.value.name as string,
+        name: campusRequest.name,
       };
 
       this.campuses = [...this.campuses, campus];
-      this.campusDialogVisible = false;
       this.clearCampusForm();
       this.showToast('success', 'Campus creado', 'El campus ha sido creado correctamente');
     } else {
@@ -100,13 +101,15 @@ export class CampusesComponent implements OnInit {
 
   updateCampus(): void {
     if (this.campusForm.valid && this.selectedCampus) {
+      let campusRequest: CampusRequest = this.getCampusFormData();
+
+      // en la petición a la api se envia el id por la url
       let campus: Campus = {
         campusId: this.selectedCampus.campusId,
-        name: this.campusForm.value.name as string,
+        name: campusRequest.name,
       };
 
       this.campuses = this.campuses.map((c: Campus) => (c.campusId === campus.campusId ? campus : c));
-      this.campusDialogVisible = false;
       this.clearCampusForm();
       this.showToast('success', 'Campus actualizado', 'El campus ha sido actualizado correctamente');
     } else {
@@ -149,15 +152,21 @@ export class CampusesComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.campusDialogVisible = false;
     this.clearCampusForm();
     this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
   }
 
   clearCampusForm(): void {
+    this.campusDialogVisible = false;
     this.campusForm.reset();
     this.selectedCampus = null;
     this.isCreateCampus = true;
+  }
+
+  getCampusFormData(): CampusRequest {
+    return {
+      name: this.campusForm.value.name as string,
+    };
   }
 
   showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {

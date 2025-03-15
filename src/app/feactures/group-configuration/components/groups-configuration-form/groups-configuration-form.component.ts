@@ -127,7 +127,6 @@ export class GroupsConfigurationFormComponent implements OnInit {
   ];
   generations: Generation[] = [
     {
-      // 2023-01-01 / 2023-12-31
       generationId: 2023,
       yearStart: '2023-01-01',
       yearEnd: '2023-12-31',
@@ -204,7 +203,6 @@ export class GroupsConfigurationFormComponent implements OnInit {
 
       this.defaultChangeGroupConfigurationDialog.emit({ isOpen: false, message: 'save', groupConfiguration: gcSaved });
     } else {
-      console.log(this.groupConfigurationForm.value);
       this.groupConfigurationForm.markAllAsTouched();
     }
   }

@@ -11,7 +11,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Column, TableUtils } from '../../../utils/table.utils';
-import { Specialty } from '../../models/specialty.model';
+import { Specialty, SpecialtyRequest } from '../../models/specialty.model';
 import { FormUtils } from '../../../../utils/form.utils';
 import { SpecialtyTestService } from '../../tests/specialty-test.service';
 
@@ -96,14 +96,15 @@ export class SpecialtiesComponent implements OnInit {
 
   saveSpecialty(): void {
     if (this.specialtyForm.valid) {
+      let specialtyRequest: SpecialtyRequest = this.getSpecialtyFormData();
+
       let specialty: Specialty = {
         specialtyId: Math.random(),
-        name: this.specialtyForm.value.name as string,
-        shortName: this.specialtyForm.value.shortName as string,
+        name: specialtyRequest.name,
+        shortName: specialtyRequest.shortName,
       };
 
       this.specialties = [...this.specialties, specialty];
-      this.specialtyDialogVisible = false;
       this.clearSpecialtyForm();
       this.showToast('success', 'Especialidad creada', 'La especialidad ha sido creada correctamente');
     } else {
@@ -113,16 +114,17 @@ export class SpecialtiesComponent implements OnInit {
 
   updateSpecialty(): void {
     if (this.specialtyForm.valid && this.selectedSpecialty) {
+      let specialtyResquest: SpecialtyRequest = this.getSpecialtyFormData();
+
       let specialty: Specialty = {
         specialtyId: this.selectedSpecialty.specialtyId,
-        name: this.specialtyForm.value.name as string,
-        shortName: this.specialtyForm.value.shortName as string,
+        name: specialtyResquest.name,
+        shortName: specialtyResquest.shortName,
       };
 
       this.specialties = this.specialties.map((s: Specialty) =>
         s.specialtyId === specialty.specialtyId ? specialty : s
       );
-      this.specialtyDialogVisible = false;
       this.clearSpecialtyForm();
       this.showToast('success', 'Especialidad actualizada', 'La especialidad ha sido actualizada correctamente');
     } else {
@@ -166,15 +168,22 @@ export class SpecialtiesComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.specialtyDialogVisible = false;
     this.clearSpecialtyForm();
     this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
   }
 
   clearSpecialtyForm(): void {
+    this.specialtyDialogVisible = false;
     this.specialtyForm.reset();
     this.selectedSpecialty = null;
     this.isCreateSpecialty = true;
+  }
+
+  getSpecialtyFormData(): SpecialtyRequest {
+    return {
+      name: this.specialtyForm.value.name as string,
+      shortName: this.specialtyForm.value.shortName as string,
+    };
   }
 
   showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
