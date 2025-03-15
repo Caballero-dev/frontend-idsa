@@ -19,7 +19,7 @@
         severity="secondary"
         class="btn text-xl"
         [class.button-active]="!viewMyProfile"
-        (click)="viewMyProfile = false;"
+        (click)="viewMyProfile = false"
       >
         <span pButtonLabel>Actualizar contraseña</span>
       </button>
@@ -31,7 +31,9 @@
 
         <div class="mb-5 grid grid-cols-12 gap-4">
           <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Nombre:</label>
-          <div class="col-span-12 text-xl md:col-span-8"> {{ user.name }} {{ user.firstSurname }} {{ user.secondSurname }} </div>
+          <div class="col-span-12 text-xl md:col-span-8">
+            {{ user.name }} {{ user.firstSurname }} {{ user.secondSurname }}
+          </div>
         </div>
 
         <div class="mb-5 grid grid-cols-12 gap-4">
@@ -43,27 +45,23 @@
 
         <div class="mb-5 grid grid-cols-12 gap-4">
           <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Numero de telefono:</label>
-          <div class="col-span-12 text-xl md:col-span-8"> {{ user.phone }} </div>
+          <div class="col-span-12 text-xl md:col-span-8">{{ user.phone }}</div>
         </div>
 
         <div class="mb-5 grid grid-cols-12 gap-4">
           <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Fecha creación:</label>
-          <div class="col-span-12 text-xl md:col-span-8"> {{ getCreadtedAt() }} </div>
+          <div class="col-span-12 text-xl md:col-span-8">{{ getCreadtedAt() }}</div>
         </div>
 
         @if (user.roleName === 'Tutor') {
           <div class="mb-5 grid grid-cols-12 gap-4">
-            <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">
-              Número de empleado:
-            </label>
-            <div class="col-span-12 text-xl md:col-span-8"> {{ user.key }} </div>
+            <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Número de empleado:</label>
+            <div class="col-span-12 text-xl md:col-span-8">{{ user.key }}</div>
           </div>
-        } @else if (user.roleName === 'Estudiante' ) {
+        } @else if (user.roleName === 'Estudiante') {
           <div class="mb-5 grid grid-cols-12 gap-4">
-            <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">
-              Matrícula:
-            </label>
-            <div class="col-span-12 text-xl md:col-span-8"> {{ user.key }} </div>
+            <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Matrícula:</label>
+            <div class="col-span-12 text-xl md:col-span-8">{{ user.key }}</div>
           </div>
         }
       }
@@ -140,9 +138,7 @@
               variant="outlined"
               size="large"
               helpTextType="error"
-              [helpText]="
-                updatePasswordForm.errors && updatePasswordForm.touched ? 'Las contraseñas no son iguales' : null
-              "
+              [helpText]="getHelpTextPassword()"
             ></idsa-input-text>
           </div>
 
