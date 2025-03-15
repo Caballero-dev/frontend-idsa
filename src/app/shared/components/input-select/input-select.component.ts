@@ -12,7 +12,7 @@ import { SelectChangeEvent, SelectModule } from 'primeng/select';
   styleUrl: './input-select.component.scss',
 })
 export class InputSelectComponent implements OnInit {
-  @Input() type: 'valueObject' | 'valueString' = 'valueString';
+  @Input() type: 'valueObject' | 'valueObjectLabels' | 'valueString' = 'valueString';
   @Input() selectId: string = '';
   @Input() label: string = '';
   @Input() labelFontSize: 'text-xs' | 'text-sm' | 'text-base' | 'text-lg' | 'text-xl' = 'text-xl';
@@ -20,6 +20,7 @@ export class InputSelectComponent implements OnInit {
   @Input() customFormControl: FormControl = new FormControl();
   @Input() options: any[] = [];
   @Input() optionLabel: string = '';
+  @Input() optionLabels: string[] = [];
   @Input() optionValue: string = '';
   @Input() showClear: boolean = false;
   @Input() placeholder: string = '';

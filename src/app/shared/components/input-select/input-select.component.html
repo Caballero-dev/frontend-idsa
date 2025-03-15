@@ -10,37 +10,93 @@
 
   <div [ngClass]="getClassContainerInput()">
     @if (type === 'valueString') {
-      <p-select
-        fluid
-        [id]="selectId"
-        [formControl]="customFormControl"
-        [placeholder]="placeholder"
-        [options]="options"
-        [optionLabel]="optionLabel"
-        [optionValue]="optionValue"
-        [showClear]="showClear"
-        [size]="size"
-        [attr.aria-label]="label"
-        [attr.aria-required]="required"
-        [attr.aria-describedby]="getAriaDescribedBy()"
-        (onChange)="onChange.emit($event)"
-      ></p-select>
+      <span class="p-float-label">
+        <p-select
+          fluid
+          [id]="selectId"
+          [formControl]="customFormControl"
+          [placeholder]="placeholder"
+          [options]="options"
+          [optionLabel]="optionLabel"
+          [optionValue]="optionValue"
+          [showClear]="showClear"
+          [size]="size"
+          [appendTo]="'body'"
+          [attr.aria-label]="label"
+          [attr.aria-required]="required"
+          [attr.aria-describedby]="getAriaDescribedBy()"
+          (onChange)="onChange.emit($event)"
+        ></p-select>
+      </span>
     }
 
     @if (type === 'valueObject') {
-      <p-select
-        [id]="selectId"
-        [formControl]="customFormControl"
-        [placeholder]="placeholder"
-        [options]="options"
-        [optionLabel]="optionLabel"
-        [showClear]="showClear"
-        [size]="size"
-        [attr.aria-label]="label"
-        [attr.aria-required]="required"
-        [attr.aria-describedby]="getAriaDescribedBy()"
-        (onChange)="onChange.emit($event)"
-      ></p-select>
+      <span class="p-float-label">
+        <p-select
+          fluid
+          [id]="selectId"
+          [formControl]="customFormControl"
+          [placeholder]="placeholder"
+          [options]="options"
+          [optionLabel]="optionLabel"
+          [showClear]="showClear"
+          [size]="size"
+          [appendTo]="'body'"
+          [attr.aria-label]="label"
+          [attr.aria-required]="required"
+          [attr.aria-describedby]="getAriaDescribedBy()"
+          (onChange)="onChange.emit($event)"
+        ></p-select>
+      </span>
+    }
+
+    @if (type === 'valueObjectLabels') {
+      <span class="p-float-label">
+        <p-select
+          fluid
+          [id]="selectId"
+          [formControl]="customFormControl"
+          [placeholder]="placeholder"
+          [options]="options"
+          [showClear]="showClear"
+          [size]="size"
+          [appendTo]="'body'"
+          [attr.aria-label]="label"
+          [attr.aria-required]="required"
+          [attr.aria-describedby]="getAriaDescribedBy()"
+          (onChange)="onChange.emit($event)"
+        >
+          <ng-template
+            #selectedItem
+            let-selectedOption
+          >
+            <div
+              class="flex items-center gap-2"
+              *ngIf="selectedOption"
+            >
+              @for (optLabel of optionLabels; track $index) {
+                @if ($index !== 0 && $index !== optionLabels.length) {
+                  <span>/</span>
+                }
+                <span>{{ selectedOption[optLabel] }}</span>
+              }
+            </div>
+          </ng-template>
+          <ng-template
+            let-options
+            #item
+          >
+            <div class="flex items-center gap-2">
+              @for (optLabel of optionLabels; track $index) {
+                @if ($index !== 0 && $index !== optionLabels.length) {
+                  <span>/</span>
+                }
+                <span>{{ options[optLabel] }}</span>
+              }
+            </div>
+          </ng-template>
+        </p-select>
+      </span>
     }
 
     @if (formUtils.isInvalidValidField(customFormControl)) {
