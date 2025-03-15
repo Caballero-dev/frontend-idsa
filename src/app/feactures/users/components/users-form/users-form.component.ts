@@ -8,7 +8,7 @@ import { CheckboxChangeEvent, CheckboxModule } from 'primeng/checkbox';
 import { SelectChangeEvent } from 'primeng/select';
 import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
 import { InputSelectComponent } from '../../../../shared/components/input-select/input-select.component';
-import { EmitterDialogUser, Role, User } from '../../models/user.model';
+import { EmitterDialogUser, Role, User, UserRequest } from '../../models/user.model';
 
 @Component({
   selector: 'users-form',
@@ -37,6 +37,7 @@ export class UsersFormComponent implements OnInit {
   ];
   selectedRole: Role | null = null;
   formUtils = FormUtils;
+  isEditPassword: boolean = false;
   fb: FormBuilder = inject(FormBuilder);
 
   userForm = this.fb.group({
@@ -133,10 +134,10 @@ export class UsersFormComponent implements OnInit {
     });
 
     if (user.role.roleId === 'ROLE_ESTUDIANTE') {
-      this.userForm.patchValue({ studentCode: user.studentCode });
+      this.userForm.patchValue({ studentCode: user.key });
       this.userForm.controls.studentCode.enable();
     } else {
-      this.userForm.patchValue({ employeeCode: user.employeeCode });
+      this.userForm.patchValue({ employeeCode: user.key });
       this.userForm.controls.employeeCode.enable();
     }
   }
@@ -158,9 +159,9 @@ export class UsersFormComponent implements OnInit {
   }
 
   toggleEditPassword(event: CheckboxChangeEvent) {
-    const isEditPassword: boolean = event.checked;
+    this.isEditPassword = event.checked;
     const passwordControl = this.userForm.controls.password;
-    if (isEditPassword) {
+    if (this.isEditPassword) {
       passwordControl.enable();
     } else {
       passwordControl.disable();
@@ -181,11 +182,13 @@ export class UsersFormComponent implements OnInit {
 
   saveUser() {
     if (this.userForm.valid) {
-      // Cuando se implemente api se debe enviar el objeto getUserData() y quitar ?? ''
+      // esto se envia a la api
+      let userRequest: UserRequest = this.getUserData();
+
       // Simula la respuesta del servidor
       let user: User = {
         userId: Math.floor(Math.random() * 1000),
-        ...this.getUserData(),
+        ...userRequest,
         createdAt: new Date().toLocaleString(),
         isActive: true,
       };
@@ -198,9 +201,13 @@ export class UsersFormComponent implements OnInit {
 
   editUser() {
     if (this.userForm.valid && this.selectedUser) {
+      let userRequest: UserRequest = this.getUserData();
+
+      // en la api pasar en la url isUpdatePassword si se actualiza la contraseña
       let user: User = {
         userId: this.selectedUser.userId,
-        ...this.getUserData(),
+        ...userRequest,
+        password: this.isEditPassword ? this.userForm.value.password : null,
         createdAt: this.selectedUser?.createdAt,
         isActive: this.selectedUser.isActive,
       };
@@ -211,26 +218,18 @@ export class UsersFormComponent implements OnInit {
     }
   }
 
-  getUserData() {
-    let user = {
+  getUserData(): UserRequest {
+    return {
+      role: this.selectedRole as Role,
       email: this.userForm.value.email as string,
-      phoneNumber: this.userForm.value.phoneNumber as string,
-      role: this.userForm.value.role as Role,
       name: this.userForm.value.name as string,
       firstSurname: this.userForm.value.firstSurname as string,
       secondSurname: this.userForm.value.secondSurname as string,
+      phoneNumber: this.userForm.value.phoneNumber as string,
+      key:
+        this.selectedRole?.roleId === 'ROLE_TUTOR'
+          ? (this.userForm.value.employeeCode as string)
+          : (this.userForm.value.studentCode as string),
     };
-
-    if (this.selectedRole?.roleId === 'ROLE_ESTUDIANTE') {
-      return {
-        ...user,
-        studentCode: this.userForm.value.studentCode as string,
-      };
-    } else {
-      return {
-        ...user,
-        employeeCode: this.userForm.value.employeeCode as string,
-      };
-    }
   }
 }

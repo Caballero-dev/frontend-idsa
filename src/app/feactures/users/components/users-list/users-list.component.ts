@@ -101,30 +101,11 @@ export class UsersListComponent implements OnInit {
         label: 'Aceptar',
       },
       accept: () => {
-        this.messageToast(
-          'success',
-          'pi pi-verified',
-          true,
-          'pi pi-times',
-          false,
-          'Usuario eliminado',
-          'El usuario ha sido eliminado correctamente',
-          3000
-        );
-
+        this.showToast('success', 'Usuario eliminado', 'El usuario ha sido eliminado correctamente');
         this.users = this.users.filter((u: User) => u.userId !== user.userId);
       },
       reject: () => {
-        this.messageToast(
-          'error',
-          'pi pi-times-circle',
-          true,
-          'pi pi-times',
-          false,
-          'Eliminación cancelada',
-          'Has cancelado la eliminación del usuario',
-          3000
-        );
+        this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación del usuario');
       },
     });
   }
@@ -147,30 +128,11 @@ export class UsersListComponent implements OnInit {
         label: 'Aceptar',
       },
       accept: () => {
-        this.messageToast(
-          'success',
-          'pi pi-verified',
-          true,
-          'pi pi-times',
-          false,
-          'Usuarios eliminados',
-          'Los usuarios han sido eliminados correctamente',
-          3000
-        );
-
+        this.showToast('success', 'Usuarios eliminados', 'Los usuarios han sido eliminados correctamente');
         this.users = this.users.filter((u: User) => !this.selectedUsers?.includes(u));
       },
       reject: () => {
-        this.messageToast(
-          'error',
-          'pi pi-times-circle',
-          true,
-          'pi pi-times',
-          false,
-          'Eliminación cancelada',
-          'Has cancelado la eliminación de los usuarios',
-          3000
-        );
+        this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación de los usuarios');
       },
     });
   }
@@ -178,63 +140,30 @@ export class UsersListComponent implements OnInit {
   changeUserDialog(event: EmitterDialogUser): void {
     this.userDialogVisible = event.isOpen;
     if (event.message === 'save') {
-      this.messageToast(
-        'success',
-        'pi pi-verified',
-        true,
-        'pi pi-times',
-        false,
-        'Usuario guardado',
-        'El usuario ha sido guardado correctamente',
-        3000
-      );
-      if (event.user) this.users.push(event.user);
+      this.showToast('success', 'Usuario guardado', 'El usuario ha sido guardado correctamente');
+      if (event.user) this.users = [...this.users, event.user];
     } else if (event.message === 'edit') {
-      this.messageToast(
-        'success',
-        'pi pi-verified',
-        true,
-        'pi pi-times',
-        false,
-        'Usuario editado',
-        'El usuario ha sido editado correctamente',
-        3000
-      );
+      this.showToast('success', 'Usuario actualizado', 'El usuario ha sido actualizado correctamente');
       if (event.user !== null) {
         this.users = this.users.map((usr: User) => (usr.userId === event.user?.userId ? event.user : usr));
       }
     } else if (event.message === 'close') {
-      this.messageToast(
-        'error',
-        'pi pi-times-circle',
-        true,
-        'pi pi-times',
-        false,
-        'Operación cancelada',
-        'Has cancelado la operación'
-      );
+      this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
     }
   }
 
-  messageToast(
-    severity?: 'success' | 'info' | 'warn' | 'error' | 'secondary' | 'contrast',
-    icon?: string,
-    closable?: boolean,
-    closeIcon?: string,
-    sticky?: boolean,
-    summary?: string,
-    detail?: string,
-    life?: number
-  ): void {
+  showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
     this.messageService.add({
-      severity: severity,
-      icon: icon,
-      closable: closable,
-      closeIcon: closeIcon,
-      sticky: sticky,
-      summary: summary,
-      detail: detail,
-      life: life,
+      severity,
+      icon:
+        severity === 'success'
+          ? 'pi pi-check-circle'
+          : severity === 'error'
+            ? 'pi pi-times-circle'
+            : 'pi pi-info-circle',
+      summary,
+      detail,
+      life: 3000,
     });
   }
 }
