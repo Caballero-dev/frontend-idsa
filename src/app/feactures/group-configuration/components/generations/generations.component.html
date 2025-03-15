@@ -140,7 +140,7 @@
               [readonly]="false"
               variant="outlined"
               size="large"
-              (onSelectDate)="startDateGen = $event; generationForm.controls.yearEnd.enable()"
+              (onSelectDate)="changeYearStart($event)"
             ></idsa-input-date>
           </span>
         </div>

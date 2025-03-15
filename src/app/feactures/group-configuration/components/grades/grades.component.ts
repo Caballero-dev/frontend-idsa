@@ -12,7 +12,7 @@ import { InputTextComponent } from '../../../../shared/components/input-text/inp
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Column, TableUtils } from '../../../utils/table.utils';
 import { FormUtils } from '../../../../utils/form.utils';
-import { Grade } from '../../models/grade.model';
+import { Grade, GradeRequest } from '../../models/grade.model';
 import { GradeTestService } from '../../tests/grade-test.service';
 
 @Component({
@@ -84,13 +84,14 @@ export class GradesComponent implements OnInit {
 
   saveGrade(): void {
     if (this.gradeForm.valid) {
+      let gradeRequest: GradeRequest = this.getGradeFormData();
+
       let grade: Grade = {
         gradeId: Math.random(),
-        name: this.gradeForm.value.name as string,
+        name: gradeRequest.name,
       };
 
       this.grades = [...this.grades, grade];
-      this.gradeDialogVisible = false;
       this.clearGradeForm();
       this.showToast('success', 'Grado creado', 'El grado ha sido creado correctamente');
     } else {
@@ -100,13 +101,14 @@ export class GradesComponent implements OnInit {
 
   updateGrade(): void {
     if (this.gradeForm.valid && this.selectedGrade) {
+      let gradesRequest: GradeRequest = this.getGradeFormData();
+
       let grade: Grade = {
         gradeId: this.selectedGrade.gradeId,
-        name: this.gradeForm.value.name as string,
+        name: gradesRequest.name,
       };
 
       this.grades = this.grades.map((g: Grade) => (g.gradeId === grade.gradeId ? grade : g));
-      this.gradeDialogVisible = false;
       this.clearGradeForm();
       this.showToast('success', 'Grado actualizado', 'El grado ha sido actualizado correctamente');
     } else {
@@ -147,15 +149,21 @@ export class GradesComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.gradeDialogVisible = false;
     this.clearGradeForm();
     this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
   }
 
   clearGradeForm(): void {
+    this.gradeDialogVisible = false;
     this.gradeForm.reset();
     this.selectedGrade = null;
     this.isCreateGrade = true;
+  }
+
+  getGradeFormData(): GradeRequest {
+    return {
+      name: this.gradeForm.value.name as string,
+    };
   }
 
   showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {

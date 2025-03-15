@@ -7,10 +7,10 @@ import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Column, TableUtils } from '../../../utils/table.utils';
-import { Generation } from '../../models/generation.model';
+import { Generation, GenerationRequest } from '../../models/generation.model';
 import { FormUtils } from '../../../../utils/form.utils';
 import { GenerationTestService } from '../../tests/generation-test.service';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -51,7 +51,7 @@ export class GenerationsComponent implements OnInit {
   generations!: Generation[];
   selectedGeneration: Generation | null = null;
   minDate: Date = new Date('2021-01-01');
-  startDateGen!: Date;
+  startDateGen: Date | null = null;
 
   tableUtils = TableUtils;
   formUtils = FormUtils;
@@ -62,8 +62,8 @@ export class GenerationsComponent implements OnInit {
   private generationTestService = inject(GenerationTestService);
 
   generationForm = this.fb.group({
-    yearStart: ['', [Validators.required]],
-    yearEnd: [{ value: '', disabled: true }, [Validators.required]],
+    yearStart: new FormControl<Date | null>(null, [Validators.required]),
+    yearEnd: new FormControl<Date | null>({ value: null, disabled: true }, [Validators.required]),
   });
 
   ngOnInit(): void {
@@ -71,14 +71,16 @@ export class GenerationsComponent implements OnInit {
   }
 
   loadGenerations(): void {
-    this.generations = this.generationTestService.getData().map((gen: Generation) => {
-      return {
-        ...gen,
-        yearStart: formatDate(gen.yearStart, 'yyyy-MM-dd', 'en'),
-        yearEnd: formatDate(gen.yearEnd, 'yyyy-MM-dd', 'en'),
-      };
-    });
+    this.generations = this.generationTestService.getData();
     this.isLoading = false;
+  }
+
+  changeYearStart(event: Date): void {
+    this.generationForm.controls.yearEnd.enable();
+    this.startDateGen = event;
+    if (this.generationForm.value.yearEnd && event > this.generationForm.value.yearEnd) {
+      this.generationForm.controls.yearEnd.setValue(null);
+    }
   }
 
   saveOrUpdateGeneration(): void {
@@ -91,14 +93,15 @@ export class GenerationsComponent implements OnInit {
 
   saveGeneration(): void {
     if (this.generationForm.valid) {
+      let generationRequest: GenerationRequest = this.getGenerationFormData();
+
       let generation: Generation = {
         generationId: Math.random(),
-        yearStart: formatDate(this.generationForm.value.yearStart as string, 'yyyy-MM-dd', 'en'),
-        yearEnd: formatDate(this.generationForm.value.yearEnd as string, 'yyyy-MM-dd', 'en'),
+        yearStart: generationRequest.yearStart,
+        yearEnd: generationRequest.yearEnd,
       };
 
       this.generations = [...this.generations, generation];
-      this.generationDialogVisible = false;
       this.clearGenerationForm();
       this.showToast('success', 'Generación creada', 'La generación ha sido creada correctamente');
     } else {
@@ -108,25 +111,32 @@ export class GenerationsComponent implements OnInit {
 
   updateGeneration(): void {
     if (this.generationForm.valid && this.selectedGeneration) {
+      let generationRequest: GenerationRequest = this.getGenerationFormData();
+
       let generation: Generation = {
         generationId: this.selectedGeneration.generationId,
-        yearStart: formatDate(this.selectedGeneration.yearStart, 'yyyy-MM-dd', 'en'),
-        yearEnd: formatDate(this.selectedGeneration.yearEnd, 'yyyy-MM-dd', 'en'),
+        yearStart: generationRequest.yearStart,
+        yearEnd: generationRequest.yearEnd,
       };
 
-      this.generations = this.generations.map((g) => (g.generationId === generation.generationId ? generation : g));
-      this.generationDialogVisible = false;
+      this.generations = this.generations.map(
+        (g: Generation): Generation => (g.generationId === generation.generationId ? generation : g)
+      );
       this.clearGenerationForm();
       this.showToast('success', 'Generación actualizada', 'La generación ha sido actualizada correctamente');
+    } else {
+      this.generationForm.markAllAsTouched();
     }
   }
 
   editGeneration(generation: Generation): void {
     this.selectedGeneration = generation;
     this.isCreateGeneration = false;
+    this.startDateGen = new Date(generation.yearStart);
+    this.generationForm.controls.yearEnd.enable();
     this.generationForm.patchValue({
-      yearStart: generation.yearStart,
-      yearEnd: generation.yearEnd,
+      yearStart: new Date(generation.yearStart),
+      yearEnd: new Date(generation.yearEnd),
     });
     this.generationDialogVisible = true;
   }
@@ -147,7 +157,7 @@ export class GenerationsComponent implements OnInit {
         label: 'Aceptar',
       },
       accept: () => {
-        this.generations = this.generations.filter((g) => g.generationId !== generation.generationId);
+        this.generations = this.generations.filter((g: Generation) => g.generationId !== generation.generationId);
         this.showToast('success', 'Generación eliminada', 'La generación ha sido eliminada correctamente');
       },
       reject: () => {
@@ -157,15 +167,24 @@ export class GenerationsComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.generationDialogVisible = false;
     this.clearGenerationForm();
     this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
   }
 
   clearGenerationForm(): void {
+    this.generationDialogVisible = false;
+    this.startDateGen = null;
     this.generationForm.reset();
+    this.generationForm.controls.yearEnd.disable();
     this.selectedGeneration = null;
     this.isCreateGeneration = true;
+  }
+
+  getGenerationFormData(): GenerationRequest {
+    return {
+      yearStart: formatDate(this.generationForm.value.yearStart as Date, 'yyyy-MM-dd', 'en'),
+      yearEnd: formatDate(this.generationForm.value.yearEnd as Date, 'yyyy-MM-dd', 'en'),
+    };
   }
 
   showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {

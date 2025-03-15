@@ -11,7 +11,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
 import { Column, TableUtils } from '../../../utils/table.utils';
 import { FormUtils } from '../../../../utils/form.utils';
-import { Modality } from '../../models/modality.model';
+import { Modality, ModalityRequest } from '../../models/modality.model';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ModalityTestService } from '../../tests/modality-test.service';
 
@@ -84,13 +84,14 @@ export class ModalitiesComponent implements OnInit {
 
   saveModality(): void {
     if (this.modalityForm.valid) {
+      let modalityRequest: ModalityRequest = this.getModalityFormData();
+
       let modality: Modality = {
         modalityId: Math.random(),
-        name: this.modalityForm.value.name as string,
+        name: modalityRequest.name,
       };
 
       this.modalities = [...this.modalities, modality];
-      this.modalityDialogVisible = false;
       this.clearModalityForm();
       this.showToast('success', 'Modalidad creada', 'La modalidad ha sido creada correctamente');
     } else {
@@ -100,13 +101,14 @@ export class ModalitiesComponent implements OnInit {
 
   updateModality(): void {
     if (this.modalityForm.valid && this.selectedModality) {
+      let modalityRequest: ModalityRequest = this.getModalityFormData();
+
       let modality: Modality = {
         modalityId: this.selectedModality.modalityId,
-        name: this.modalityForm.value.name as string,
+        name: modalityRequest.name,
       };
 
       this.modalities = this.modalities.map((m: Modality) => (m.modalityId === modality.modalityId ? modality : m));
-      this.modalityDialogVisible = false;
       this.clearModalityForm();
       this.showToast('success', 'Modalidad actualizada', 'La modalidad ha sido actualizada correctamente');
     }
@@ -145,15 +147,21 @@ export class ModalitiesComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.modalityDialogVisible = false;
     this.clearModalityForm();
     this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
   }
 
   clearModalityForm(): void {
+    this.modalityDialogVisible = false;
     this.modalityForm.reset();
     this.selectedModality = null;
     this.isCreateModality = true;
+  }
+
+  getModalityFormData(): ModalityRequest {
+    return {
+      name: this.modalityForm.value.name as string,
+    };
   }
 
   showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
