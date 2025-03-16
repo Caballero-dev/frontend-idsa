@@ -28,7 +28,7 @@ export class GroupListComponent implements OnInit {
   groups!: GroupConfigurationView[];
 
   tableUtils = TableUtils;
-  groupDataViewService = inject(GroupConfigurationViewTestService);
+  private groupDataViewService = inject(GroupConfigurationViewTestService);
 
   ngOnInit(): void {
     this.loadGroupData();

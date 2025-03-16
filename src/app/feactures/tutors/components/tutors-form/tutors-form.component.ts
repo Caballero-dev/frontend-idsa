@@ -21,7 +21,7 @@ export class TutorsFormComponent implements OnInit {
   @Output() defaultChangeTutorDialog: EventEmitter<EmitterDialogTutor> = new EventEmitter<EmitterDialogTutor>();
 
   formUtils = FormUtils;
-  fb: FormBuilder = inject(FormBuilder);
+  private fb: FormBuilder = inject(FormBuilder);
 
   tutorForm = this.fb.group({
     employeeCode: [

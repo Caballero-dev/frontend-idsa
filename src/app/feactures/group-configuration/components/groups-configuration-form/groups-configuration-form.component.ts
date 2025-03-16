@@ -149,7 +149,7 @@ export class GroupsConfigurationFormComponent implements OnInit {
   ];
 
   formUtils = FormUtils;
-  fb: FormBuilder = inject(FormBuilder);
+  private fb: FormBuilder = inject(FormBuilder);
 
   groupConfigurationForm = this.fb.group({
     tutor: new FormControl<Tutor | null>(null, [Validators.required]),
