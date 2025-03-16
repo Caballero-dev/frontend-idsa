@@ -36,9 +36,10 @@ export class UsersFormComponent implements OnInit {
     { roleId: 'ROLE_ESTUDIANTE', roleName: 'Estudiante' },
   ];
   selectedRole: Role | null = null;
-  formUtils = FormUtils;
   isEditPassword: boolean = false;
-  fb: FormBuilder = inject(FormBuilder);
+
+  formUtils = FormUtils;
+  private fb: FormBuilder = inject(FormBuilder);
 
   userForm = this.fb.group({
     email: [

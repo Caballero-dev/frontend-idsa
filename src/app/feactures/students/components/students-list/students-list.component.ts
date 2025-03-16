@@ -1,44 +1,36 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TableModule } from 'primeng/table';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
-import { TagModule } from 'primeng/tag';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { StudentsFormComponent } from '../students-form/students-form.component';
 import { Column, TableUtils } from '../../../utils/table.utils';
-
-interface Student {
-  studentId: string;
-  name: string;
-  paternalSurname: string;
-  maternalSurname: string;
-  phoneNumber: string;
-  email: string;
-  consumptionState: string;
-}
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { FormsModule } from '@angular/forms';
+import { StudentsTestService } from '../../tests/students-test.service';
+import { EmitterDialogStudent, Student } from '../../models/student.model';
 
 @Component({
   selector: 'app-students-list',
   standalone: true,
   imports: [
     CommonModule,
-    TableModule,
-    ButtonModule,
-    ToastModule,
     ToolbarModule,
+    ButtonModule,
+    TableModule,
+    InputGroupModule,
     InputTextModule,
-    InputIconModule,
-    IconFieldModule,
     DialogModule,
-    TagModule,
     ConfirmDialogModule,
+    ToastModule,
+    FormsModule,
+    RouterLink,
     StudentsFormComponent,
   ],
   templateUrl: './students-list.component.html',
@@ -46,88 +38,57 @@ interface Student {
   providers: [ConfirmationService, MessageService],
 })
 export class StudentsListComponent implements OnInit {
-  student!: Student;
+  searchStudentValue: string = '';
+  isLoading: boolean = true;
   cols: Column[] = [
-    { field: 'studentId', header: 'Matricula', sortable: true },
+    { field: 'studentCode', header: 'Matricula', sortable: true },
     { field: 'name', header: 'Nombre', sortable: true },
-    { field: 'paternalSurname', header: 'Apellido Paterno', sortable: true },
-    { field: 'maternalSurname', header: 'Apellido Materno', sortable: true },
+    { field: 'firstSurname', header: 'Apellido Paterno', sortable: true },
+    { field: 'secondSurname', header: 'Apellido Materno', sortable: true },
     { field: 'phoneNumber', header: 'Telefono', sortable: true },
     { field: 'email', header: 'Correo', sortable: true },
-    { field: 'consumptionState', header: 'Estado de consumo', sortable: true },
+    { field: 'predictionResult', header: 'Prob. consumo', sortable: true },
   ];
   students!: Student[];
   selectedStudents!: Student[] | null;
+  isCreateStudent: boolean = true;
+  selectedStudent!: Student | null;
   studentDialogVisible: boolean = false;
+  idGroupConfiguration: string | null = null;
 
   tableUtils = TableUtils;
-
-  constructor(
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService
-  ) {}
+  private confirmationService: ConfirmationService = inject(ConfirmationService);
+  private messageService: MessageService = inject(MessageService);
+  private activeRoute: ActivatedRoute = inject(ActivatedRoute);
+  private studentTestService = inject(StudentsTestService);
 
   ngOnInit(): void {
-    this.students = [
-      {
-        studentId: 'A01234568',
-        name: 'Juan',
-        paternalSurname: 'Perez',
-        maternalSurname: 'Gonzalez',
-        phoneNumber: '1234567890',
-        email: 'juan@gmail.com',
-        consumptionState: 'No consumidor',
-      },
-      {
-        studentId: 'A01234569',
-        name: 'Maria',
-        paternalSurname: 'Garcia',
-        maternalSurname: 'Lopez',
-        phoneNumber: '0987654321',
-        email: 'mr@gmail.com',
-        consumptionState: 'Probable consumidor',
-      },
-      {
-        studentId: 'A01234570',
-        name: 'Pedro',
-        paternalSurname: 'Gomez',
-        maternalSurname: 'Hernandez',
-        phoneNumber: '0987688321',
-        email: 'gh@gmail.com',
-        consumptionState: 'Consumidor',
-      },
-      {
-        studentId: 'A01234571',
-        name: 'Ana',
-        paternalSurname: 'Martinez',
-        maternalSurname: 'Jimenez',
-        phoneNumber: '0987677321',
-        email: 'am@gmail.com',
-        consumptionState: 'No consumidor',
-      },
-      {
-        studentId: 'A01234572',
-        name: 'Carlos',
-        paternalSurname: 'Rodriguez',
-        maternalSurname: 'Perez',
-        phoneNumber: '0987657721',
-        email: 'rp@gmail.com',
-        consumptionState: 'Consumidor',
-      },
-    ];
+    this.idGroupConfiguration = this.activeRoute.snapshot.paramMap.get('grupoId');
+    this.loadStudentData();
+  }
+
+  loadStudentData(): void {
+    this.students = this.studentTestService.getData();
+    this.isLoading = false;
   }
 
   createStudent() {
+    this.isCreateStudent = true;
+    this.selectedStudent = null;
     this.studentDialogVisible = true;
   }
 
   editStudent(student: Student) {
-    console.log('Edit student', student);
+    this.isCreateStudent = false;
+    this.selectedStudent = student;
+    this.studentDialogVisible = true;
   }
 
   deleteStudent(student: Student) {
     this.confirmationService.confirm({
-      message: '¿Estás seguro de que quieres eliminar ' + student.name + '?',
+      message: `¿Estás seguro de que quieres eliminar el estudiante seleccionado?<br>
+        <br><b>Nombre:</b> ${student.name} ${student.firstSurname} ${student.secondSurname}
+        <br><b>Correo:</b> ${student.email}`,
       header: 'Confirmar',
       closable: false,
       closeOnEscape: false,
@@ -141,68 +102,73 @@ export class StudentsListComponent implements OnInit {
         label: 'Aceptar',
       },
       accept: () => {
-        this.students = this.students.filter((val) => val.studentId !== student.studentId);
-        this.student = {
-          studentId: '',
-          name: '',
-          paternalSurname: '',
-          maternalSurname: '',
-          phoneNumber: '',
-          email: '',
-          consumptionState: '',
-        };
-
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Exitoso',
-          detail: 'Estudiante eliminado',
-          life: 3000,
-        });
+        this.showToast('success', 'Estudiante eliminado', 'El estudiante ha sido eliminado correctamente');
+        this.students = this.students.filter((st: Student) => st.studentId !== student.studentId);
+        this.selectedStudents = null;
       },
       reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Rechazado',
-          detail: 'Has rechazado la eliminación del estudiante',
-          life: 3000,
-        });
+        this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación del estudiante');
       },
     });
   }
 
-  deleteSelectedStudents() {
-    console.log('Delete selected students', this.selectedStudents);
+  deleteSelectedStudents(): void {
+    this.confirmationService.confirm({
+      header: 'Confirmar',
+      message: `¿Estás seguro de que quieres eliminar los estudiantes seleccionados?
+        <br><br>${this.selectedStudents?.length} estudiantes serán eliminados.
+        <br><br>Correos:<br>- ${this.selectedStudents?.map((student) => student.email).join('<br>- ')}`,
+      closable: false,
+      closeOnEscape: false,
+      icon: 'pi pi-exclamation-triangle',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Aceptar',
+      },
+      accept: () => {
+        this.showToast('success', 'Estudiantes eliminados', 'Los estudiantes han sido eliminados correctamente');
+        this.students = this.students.filter((st: Student) => !this.selectedStudents?.includes(st));
+        this.selectedStudents = null;
+      },
+      reject: () => {
+        this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación de los estudiantes');
+      },
+    });
   }
 
-  changeStudentDialog(event: { isOpen: boolean; message: string }) {
+  changeStudentDialog(event: EmitterDialogStudent) {
     this.studentDialogVisible = event.isOpen;
     if (event.message === 'save') {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Exitoso',
-        detail: 'Estudiante guardado',
-        life: 3000,
-      });
+      this.showToast('success', 'Estudiante guardado', 'El estudiante ha sido guardado correctamente');
+      if (event.student) this.students = [...this.students, event.student];
+    } else if (event.message === 'edit') {
+      this.showToast('success', 'Estudiante editado', 'El estudiante ha sido editado correctamente');
+      if (event.student !== null) {
+        this.students = this.students.map((st: Student) =>
+          st.studentId === event.student?.studentId ? event.student : st
+        );
+      }
     } else if (event.message === 'close') {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Cancelado',
-        detail: 'Has cancelado la operación',
-        life: 3000,
-      });
+      this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
     }
   }
 
-  getSeverity(status: string) {
-    switch (status) {
-      case 'No consumidor':
-        return 'success';
-      case 'Probable consumidor':
-        return 'warn';
-      case 'Consumidor':
-        return 'danger';
-      default:
-        return 'info';
-    }
+  showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
+    this.messageService.add({
+      severity,
+      icon:
+        severity === 'success'
+          ? 'pi pi-check-circle'
+          : severity === 'error'
+            ? 'pi pi-times-circle'
+            : 'pi pi-info-circle',
+      summary,
+      detail,
+      life: 3000,
+    });
   }
 }

@@ -1,3 +1,19 @@
+<div class="mb-4 flex items-center justify-between">
+  <span class="text-2xl font-bold sm:text-3xl">Gestión de alumnos</span>
+  <p-button
+    icon="pi pi-arrow-left"
+    variant="outlined"
+    severity="contrast"
+    rounded
+    [routerLink]="['/panel/alumnos']"
+  ></p-button>
+</div>
+
+<div class="mb-6 text-justify text-lg">
+  En esta sección puedes gestionar la información de los estudiantes, incluyendo la creación, edición y eliminación de
+  registros. También puedes buscar y filtrar alumnos para una mejor administración.
+</div>
+
 <p-toolbar styleClass="mb-6">
   <ng-template #start>
     <p-button
@@ -22,6 +38,11 @@
   #dt
   [value]="students"
   [rows]="15"
+  [scrollable]="true"
+  scrollHeight="500px"
+  [resizableColumns]="true"
+  [showGridlines]="true"
+  [loading]="isLoading"
   [columns]="cols"
   [paginator]="true"
   [globalFilterFields]="tableUtils.getGlobalFilterFields(cols)"
@@ -29,22 +50,32 @@
   [(selection)]="selectedStudents"
   [rowHover]="true"
   dataKey="studentId"
-  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
+  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
   [showCurrentPageReport]="true"
   [rowsPerPageOptions]="[15, 30, 45]"
 >
   <ng-template #caption>
-    <div class="flex items-center justify-between">
-      <h5 class="m-0">Administrar estudiantes</h5>
-      <p-iconfield>
-        <p-inputicon styleClass="pi pi-search" />
-        <input
-          pInputText
-          type="text"
-          (input)="tableUtils.onGlobalFilter(dt, $event)"
-          placeholder="Buscar..."
-        />
-      </p-iconfield>
+    <div class="flex flex-col items-center justify-between xs:flex-row">
+      <p-button
+        label="Limpiar"
+        [outlined]="true"
+        icon="pi pi-filter-slash"
+        (click)="dt.reset(); searchStudentValue = ''; selectedStudents = []"
+      />
+      <div class="mb-3 mt-3 xs:mb-0 xs:mt-0">
+        <p-inputgroup>
+          <input
+            pInputText
+            type="text"
+            [(ngModel)]="searchStudentValue"
+            placeholder="Buscar..."
+          />
+          <p-button
+            icon="pi pi-search"
+            (click)="dt.filterGlobal(searchStudentValue.trim(), 'contains')"
+          />
+        </p-inputgroup>
+      </div>
     </div>
   </ng-template>
   <ng-template
@@ -58,7 +89,7 @@
       @for (col of columns; track $index) {
         <th
           [pSortableColumn]="col.sortable ? col.field : null"
-          style="min-width: 16rem"
+          pResizableColumn
         >
           {{ col.header }}
           @if (col.sortable) {
@@ -66,7 +97,7 @@
           }
         </th>
       }
-      <th style="min-width: 12rem"></th>
+      <th style="min-width: 10rem"></th>
     </tr>
   </ng-template>
   <ng-template
@@ -79,27 +110,36 @@
         <p-tableCheckbox [value]="student" />
       </td>
       @for (col of columns; track $index) {
-        @if (col.field !== 'consumptionState') {
-          <td style="min-width: 12rem">{{ student[col.field] }}</td>
+        @if (col.field === 'predictionResult') {
+          @if (student.predictionResult) {
+            <td style="justify-content: space-between; display: flex; align-items: center">
+              {{ student.predictionResult + '%' }}
+              <p-button
+                icon="pi pi-eye"
+                severity="info"
+                size="large"
+                [rounded]="true"
+                [routerLink]="['/panel/alumnos/grupo', idGroupConfiguration, 'alumno', student.studentId, 'dictamen']"
+              />
+            </td>
+          } @else {
+            <td>No disponible</td>
+          }
         } @else {
-          <td>
-            <p-tag
-              [value]="student[col.field]"
-              [severity]="getSeverity(student[col.field])"
-            />
-          </td>
+          <td>{{ tableUtils.getNestedValue(student, col.field) }}</td>
         }
       }
-      <td>
+      <td style="text-align: center; min-width: 10rem">
         <p-button
           icon="pi pi-pencil"
-          class="mr-2"
+          class="mr-3"
           [rounded]="true"
           [outlined]="true"
           (click)="editStudent(student)"
         />
         <p-button
           icon="pi pi-trash"
+          class="ml-3"
           severity="danger"
           [rounded]="true"
           [outlined]="true"
@@ -108,14 +148,26 @@
       </td>
     </tr>
   </ng-template>
+  <ng-template #emptymessage>
+    <tr>
+      <td [attr.colspan]="cols.length + 2">No se encontraron registros</td>
+    </tr>
+  </ng-template>
+  <ng-template #loadingbody>
+    <tr>
+      <td [attr.colspan]="cols.length + 2">Cargando datos. Por favor espere.</td>
+    </tr>
+  </ng-template>
 </p-table>
 
 @if (studentDialogVisible) {
   <students-form
+    [isCreateStudent]="isCreateStudent"
+    [selectedStudent]="selectedStudent"
     [studentDialog]="studentDialogVisible"
     (defaultChangeStudentDialog)="changeStudentDialog($event)"
   ></students-form>
 }
 
 <p-toast />
-<p-confirmdialog [style]="{ width: '450px' }" />
+<p-confirmDialog [style]="{ width: '450px' }" />
