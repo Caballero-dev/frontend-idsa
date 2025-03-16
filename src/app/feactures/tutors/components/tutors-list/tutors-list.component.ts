@@ -61,28 +61,25 @@ export class TutorsListComponent implements OnInit {
     this.loadTutors();
   }
 
-  loadTutors() {
-    setTimeout(() => {
-      this.tutors = this.tutorTestService.getData();
-      this.isLoading = false;
-    }, 500);
+  loadTutors(): void {
+    this.tutors = this.tutorTestService.getData();
+    this.isLoading = false;
   }
 
-  createTutor() {
+  createTutor(): void {
     this.isCreateTutor = true;
     this.selectedTutor = null;
     this.tutorDialogVisible = true;
   }
 
-  editTutor(tutor: Tutor) {
+  editTutor(tutor: Tutor): void {
     this.isCreateTutor = false;
     this.selectedTutor = tutor;
     this.tutorDialogVisible = true;
   }
 
-  deleteTutor(tutor: Tutor) {
+  deleteTutor(tutor: Tutor): void {
     this.confirmationService.confirm({
-      // message: '¿Estas seguro de que deseas eliminar ' + tutor.name + '?',
       message: `¿Estas seguro de que deseas eliminar al tutor seleccionado?<br><br>Nombre: ${tutor.name} ${tutor.firstSurname} ${tutor.secondSurname} <br>Correo: ${tutor.email}`,
       header: 'Confirmar',
       closable: false,
@@ -97,35 +94,17 @@ export class TutorsListComponent implements OnInit {
         label: 'Aceptar',
       },
       accept: () => {
-        this.messageToast(
-          'success',
-          'pi pi-verified',
-          false,
-          'pi pi-times',
-          false,
-          'Tutor eliminado',
-          'El tutor ha sido eliminado correctamente',
-          3000
-        );
+        this.showToast('success', 'Tutor eliminado', 'El tutor ha sido eliminado correctamente');
 
         this.tutors = this.tutors.filter((t: Tutor) => t.tutorId !== tutor.tutorId);
       },
       reject: () => {
-        this.messageToast(
-          'error',
-          'pi pi-times-circle',
-          false,
-          'pi pi-times',
-          false,
-          'Eliminación cancelada',
-          'Has cancelado la eliminación del tutor',
-          3000
-        );
+        this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación del tutor');
       },
     });
   }
 
-  deleteSelectedTutors() {
+  deleteSelectedTutors(): void {
     this.confirmationService.confirm({
       header: 'Confirmar',
       message: `¿Estas seguro de que deseas eliminar los tutores seleccionados?
@@ -143,97 +122,45 @@ export class TutorsListComponent implements OnInit {
         label: 'Aceptar',
       },
       accept: () => {
-        this.messageToast(
-          'success',
-          'pi pi-verified',
-          true,
-          'pi pi-times',
-          false,
-          'Tutores eliminados',
-          'Los tutores han sido eliminados correctamente',
-          3000
-        );
+        this.showToast('success', 'Tutores eliminados', 'Los tutores han sido eliminados correctamente');
 
         this.tutors = this.tutors.filter((t: Tutor) => !this.selectedTutors?.includes(t));
       },
       reject: () => {
-        this.messageToast(
-          'error',
-          'pi pi-times-circle',
-          true,
-          'pi pi-times',
-          false,
-          'Eliminación cancelada',
-          'Has cancelado la eliminación de los tutores',
-          3000
-        );
+        this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación de los tutores');
       },
     });
   }
 
-  changeTutorDialog(event: EmitterDialogTutor) {
+  changeTutorDialog(event: EmitterDialogTutor): void {
     this.tutorDialogVisible = event.isOpen;
     if (event.message === 'save') {
-      this.messageToast(
-        'success',
-        'pi pi-verified',
-        false,
-        'pi pi-times',
-        false,
-        'Tutor guardado',
-        'El tutor ha sido guardado correctamente',
-        3000
-      );
+      this.showToast('success', 'Tutor guardado', 'El tutor ha sido guardado correctamente');
 
-      if (event.tutor) this.tutors.push(event.tutor);
+      if (event.tutor) this.tutors = [...this.tutors, event.tutor];
     } else if (event.message === 'edit') {
-      this.messageToast(
-        'success',
-        'pi pi-verified',
-        false,
-        'pi pi-times',
-        false,
-        'Tutor editado',
-        'El tutor ha sido editado correctamente',
-        3000
-      );
+      this.showToast('success', 'Tutor actualizado', 'El tutor ha sido actualizado correctamente');
 
       if (event.tutor) {
         this.tutors = this.tutors.map((t: Tutor) => (t.tutorId === event.tutor?.tutorId ? event.tutor : t));
       }
     } else if (event.message === 'close') {
-      this.messageToast(
-        'error',
-        'pi pi-times-circle',
-        false,
-        'pi pi-times',
-        false,
-        'Operación cancelada',
-        'Has cancelado la operación',
-        3000
-      );
+      this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
     }
   }
 
-  messageToast(
-    severity?: 'success' | 'info' | 'warn' | 'error' | 'secondary' | 'contrast',
-    icon?: string,
-    closable?: boolean,
-    closeIcon?: string,
-    sticky?: boolean,
-    summary?: string,
-    detail?: string,
-    life?: number
-  ): void {
+  showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
     this.messageService.add({
-      severity: severity,
-      icon: icon,
-      closable: closable,
-      closeIcon: closeIcon,
-      sticky: sticky,
-      summary: summary,
-      detail: detail,
-      life: life,
+      severity,
+      icon:
+        severity === 'success'
+          ? 'pi pi-check-circle'
+          : severity === 'error'
+            ? 'pi pi-times-circle'
+            : 'pi pi-info-circle',
+      summary,
+      detail,
+      life: 3000,
     });
   }
 }

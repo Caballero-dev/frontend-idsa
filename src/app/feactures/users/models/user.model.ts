@@ -10,12 +10,21 @@ export interface User {
   name: string;
   firstSurname: string;
   secondSurname: string;
-  studentCode?: string;
-  employeeCode?: string;
+  key: string;
   phoneNumber: string;
-  password?: string;
   createdAt: string;
   isActive: boolean;
+}
+
+export interface UserRequest {
+  role: Role;
+  email: string;
+  password?: string;
+  name: string;
+  firstSurname: string;
+  secondSurname: string;
+  phoneNumber: string;
+  key: string;
 }
 
 export interface EmitterDialogUser {

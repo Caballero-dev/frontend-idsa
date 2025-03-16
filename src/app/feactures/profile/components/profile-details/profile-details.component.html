@@ -8,7 +8,7 @@
         severity="secondary"
         class="btn text-xl"
         [class.button-active]="viewMyProfile"
-        (click)="viewUpdatePassword = false; viewMyProfile = true"
+        (click)="viewMyProfile = true"
       >
         <span pButtonLabel>Mi perfil</span>
       </button>
@@ -18,8 +18,8 @@
         fluid
         severity="secondary"
         class="btn text-xl"
-        [class.button-active]="viewUpdatePassword"
-        (click)="viewMyProfile = false; viewUpdatePassword = true"
+        [class.button-active]="!viewMyProfile"
+        (click)="viewMyProfile = false"
       >
         <span pButtonLabel>Actualizar contraseña</span>
       </button>
@@ -31,28 +31,42 @@
 
         <div class="mb-5 grid grid-cols-12 gap-4">
           <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Nombre:</label>
-          <div class="col-span-12 text-xl md:col-span-8">John Doe Jr.</div>
+          <div class="col-span-12 text-xl md:col-span-8">
+            {{ user.name }} {{ user.firstSurname }} {{ user.secondSurname }}
+          </div>
         </div>
 
         <div class="mb-5 grid grid-cols-12 gap-4">
           <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Correo electrónico:</label>
           <div class="col-span-12 text-xl md:col-span-8">
-            {{ 'john.doe@gamil.com' }}
+            {{ user.email }}
           </div>
         </div>
 
         <div class="mb-5 grid grid-cols-12 gap-4">
           <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Numero de telefono:</label>
-          <div class="col-span-12 text-xl md:col-span-8">123456789</div>
+          <div class="col-span-12 text-xl md:col-span-8">{{ user.phone }}</div>
         </div>
 
         <div class="mb-5 grid grid-cols-12 gap-4">
           <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Fecha creación:</label>
-          <div class="col-span-12 text-xl md:col-span-8">2021-01-01</div>
+          <div class="col-span-12 text-xl md:col-span-8">{{ getCreadtedAt() }}</div>
         </div>
+
+        @if (user.roleName === 'Tutor') {
+          <div class="mb-5 grid grid-cols-12 gap-4">
+            <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Número de empleado:</label>
+            <div class="col-span-12 text-xl md:col-span-8">{{ user.key }}</div>
+          </div>
+        } @else if (user.roleName === 'Estudiante') {
+          <div class="mb-5 grid grid-cols-12 gap-4">
+            <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Matrícula:</label>
+            <div class="col-span-12 text-xl md:col-span-8">{{ user.key }}</div>
+          </div>
+        }
       }
 
-      @if (viewUpdatePassword) {
+      @if (!viewMyProfile) {
         <div class="mb-5 text-2xl font-semibold">Actualizar contraseña</div>
 
         @if (errorUpdatePassword) {
@@ -124,9 +138,7 @@
               variant="outlined"
               size="large"
               helpTextType="error"
-              [helpText]="
-                updatePasswordForm.errors && updatePasswordForm.touched ? 'Las contraseñas no son iguales' : null
-              "
+              [helpText]="getHelpTextPassword()"
             ></idsa-input-text>
           </div>
 
