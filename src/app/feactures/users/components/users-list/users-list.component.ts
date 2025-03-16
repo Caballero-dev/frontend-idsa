@@ -53,24 +53,22 @@ export class UsersListComponent implements OnInit {
   userDialogVisible: boolean = false;
 
   tableUtils = TableUtils;
-  confirmationService: ConfirmationService = inject(ConfirmationService);
-  messageService: MessageService = inject(MessageService);
-  userTestService = inject(UsersTestService);
+  private confirmationService: ConfirmationService = inject(ConfirmationService);
+  private messageService: MessageService = inject(MessageService);
+  private userTestService = inject(UsersTestService);
 
   ngOnInit(): void {
     this.loadUsers();
   }
 
   loadUsers(): void {
-    setTimeout(() => {
-      this.users = this.userTestService.getData().map((usr) => {
-        return {
-          ...usr,
-          createdAt: new Date(usr.createdAt).toLocaleString(),
-        };
-      });
-      this.isLoading = false;
-    }, 1000);
+    this.users = this.userTestService.getData().map((usr) => {
+      return {
+        ...usr,
+        createdAt: new Date(usr.createdAt).toLocaleString(),
+      };
+    });
+    this.isLoading = false;
   }
 
   createUser(): void {
@@ -87,7 +85,9 @@ export class UsersListComponent implements OnInit {
 
   deleteUser(user: User): void {
     this.confirmationService.confirm({
-      message: `¿Está seguro que quieres eliminar el usuario seleccionado?<br><br>Nombre: ${user.name} ${user.firstSurname} ${user.secondSurname} <br>Correo: ${user.email}`,
+      message: `¿Está seguro que quieres eliminar el usuario seleccionado?<br>
+        <br><b>Nombre:</b> ${user.name} ${user.firstSurname} ${user.secondSurname}
+        <br><b>Correo:</b> ${user.email}`,
       header: 'Confirmar',
       closable: false,
       closeOnEscape: false,
@@ -103,6 +103,7 @@ export class UsersListComponent implements OnInit {
       accept: () => {
         this.showToast('success', 'Usuario eliminado', 'El usuario ha sido eliminado correctamente');
         this.users = this.users.filter((u: User) => u.userId !== user.userId);
+        this.selectedUsers = null;
       },
       reject: () => {
         this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación del usuario');
@@ -130,6 +131,7 @@ export class UsersListComponent implements OnInit {
       accept: () => {
         this.showToast('success', 'Usuarios eliminados', 'Los usuarios han sido eliminados correctamente');
         this.users = this.users.filter((u: User) => !this.selectedUsers?.includes(u));
+        this.selectedUsers = null;
       },
       reject: () => {
         this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación de los usuarios');

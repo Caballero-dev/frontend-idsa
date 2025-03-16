@@ -53,9 +53,9 @@ export class TutorsListComponent implements OnInit {
   tutorDialogVisible: boolean = false;
 
   tableUtils = TableUtils;
-  confirmationService: ConfirmationService = inject(ConfirmationService);
-  messageService: MessageService = inject(MessageService);
-  tutorTestService = inject(TutorsTestService);
+  private confirmationService: ConfirmationService = inject(ConfirmationService);
+  private messageService: MessageService = inject(MessageService);
+  private tutorTestService = inject(TutorsTestService);
 
   ngOnInit(): void {
     this.loadTutors();
@@ -80,7 +80,9 @@ export class TutorsListComponent implements OnInit {
 
   deleteTutor(tutor: Tutor): void {
     this.confirmationService.confirm({
-      message: `¿Estas seguro de que deseas eliminar al tutor seleccionado?<br><br>Nombre: ${tutor.name} ${tutor.firstSurname} ${tutor.secondSurname} <br>Correo: ${tutor.email}`,
+      message: `¿Estas seguro de que deseas eliminar al tutor seleccionado?<br>
+        <br><b>Nombre:</b> ${tutor.name} ${tutor.firstSurname} ${tutor.secondSurname}
+        <br><b>Correo:</b> ${tutor.email}`,
       header: 'Confirmar',
       closable: false,
       closeOnEscape: false,
@@ -95,8 +97,8 @@ export class TutorsListComponent implements OnInit {
       },
       accept: () => {
         this.showToast('success', 'Tutor eliminado', 'El tutor ha sido eliminado correctamente');
-
         this.tutors = this.tutors.filter((t: Tutor) => t.tutorId !== tutor.tutorId);
+        this.selectedTutors = null;
       },
       reject: () => {
         this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación del tutor');
@@ -123,8 +125,8 @@ export class TutorsListComponent implements OnInit {
       },
       accept: () => {
         this.showToast('success', 'Tutores eliminados', 'Los tutores han sido eliminados correctamente');
-
         this.tutors = this.tutors.filter((t: Tutor) => !this.selectedTutors?.includes(t));
+        this.selectedTutors = null;
       },
       reject: () => {
         this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación de los tutores');

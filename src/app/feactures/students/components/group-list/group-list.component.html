@@ -1,0 +1,135 @@
+<div class="mb-4 flex items-center justify-between">
+  <span class="text-2xl font-bold sm:text-3xl">Lista de grupos</span>
+</div>
+
+<div class="mb-6 text-justify text-lg">
+  En esta sección se pueden visualizar los grupos registrados en el sistema, así como poder acceder a la lista de
+  alumnos pertenecientes a cada uno de ellos.
+</div>
+
+<p-table
+  #dt
+  [value]="groups"
+  [rows]="15"
+  [scrollable]="true"
+  scrollHeight="500px"
+  [resizableColumns]="true"
+  [showGridlines]="true"
+  [loading]="isLoading"
+  [columns]="cols"
+  [paginator]="true"
+  [globalFilterFields]="[
+    'tutor',
+    'campus',
+    'specialty',
+    'specialtyShortName',
+    'modality',
+    'grade',
+    'group',
+    'generation',
+    'students',
+  ]"
+  [tableStyle]="{ 'min-width': '50rem' }"
+  [rowHover]="true"
+  dataKey="id"
+  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+  [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="[15, 30, 45]"
+>
+  <ng-template #caption>
+    <div class="flex flex-col items-center justify-between xs:flex-row">
+      <p-button
+        label="Limpiar"
+        [outlined]="true"
+        icon="pi pi-filter-slash"
+        (click)="dt.reset(); searchGroupValue = ''"
+      />
+      <div class="mb-3 mt-3 xs:mb-0 xs:mt-0">
+        <p-inputgroup>
+          <input
+            pInputText
+            type="text"
+            [(ngModel)]="searchGroupValue"
+            placeholder="Buscar..."
+          />
+          <p-button
+            icon="pi pi-search"
+            (click)="dt.filterGlobal(searchGroupValue.trim(), 'contains')"
+          />
+        </p-inputgroup>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template
+    #header
+    let-columns
+  >
+    <tr>
+      @for (col of columns; track $index) {
+        <th pResizableColumn>
+          {{ col.header }}
+        </th>
+      }
+      <th style="min-width: 5rem"></th>
+    </tr>
+  </ng-template>
+  <ng-template
+    #body
+    let-groupdt
+    let-columns="columns"
+  >
+    <tr>
+      @for (col of columns; track $index) {
+        @switch (col.field) {
+          @case ('name') {
+            <td>{{ groupdt.grade }} - {{ groupdt.group }} - {{ groupdt.specialtyShortName }}</td>
+          }
+          @case ('description') {
+            <td>
+              <b>Especialidad:</b>
+              {{ groupdt.specialty }}
+              <br />
+              <b>Modalidad:</b>
+              {{ groupdt.modality }}
+              <br />
+              <b>Campus:</b>
+              {{ groupdt.campus }}
+              <br />
+              <b>Generación:</b>
+              {{ groupdt.generation }}
+              <br />
+              <b>Tutor:</b>
+              {{ groupdt.tutor }}
+              <br />
+            </td>
+          }
+          @case ('students') {
+            <td style="text-align: center">
+              {{ groupdt.students }}
+            </td>
+          }
+        }
+      }
+      <td style="text-align: center; min-width: 5rem">
+        <p-button
+          icon="pi pi-address-book"
+          iconPos="top"
+          label="Ver grupo"
+          size="large"
+          [outlined]="true"
+          [routerLink]="['./grupo/' + groupdt.id]"
+        />
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template #emptymessage>
+    <tr>
+      <td [attr.colspan]="cols.length + 2">No se encontraron registros</td>
+    </tr>
+  </ng-template>
+  <ng-template #loadingbody>
+    <tr>
+      <td [attr.colspan]="cols.length + 2">Cargando datos. Por favor espere.</td>
+    </tr>
+  </ng-template>
+</p-table>

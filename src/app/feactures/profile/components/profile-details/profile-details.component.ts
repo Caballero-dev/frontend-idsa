@@ -33,9 +33,8 @@ export class ProfileDetailsComponent implements OnInit {
   };
 
   formUtils = FormUtils;
-
-  fb: FormBuilder = inject(FormBuilder);
-  messageService: MessageService = inject(MessageService);
+  private fb: FormBuilder = inject(FormBuilder);
+  private messageService: MessageService = inject(MessageService);
 
   updatePasswordForm = this.fb.group(
     {

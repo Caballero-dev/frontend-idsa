@@ -57,9 +57,9 @@ export class GroupsConfigurationListComponent implements OnInit {
 
   tableUtils = TableUtils;
 
-  confirmationService: ConfirmationService = inject(ConfirmationService);
-  messageService: MessageService = inject(MessageService);
-  groupConfigurationTestService = inject(GroupConfigurationService);
+  private confirmationService: ConfirmationService = inject(ConfirmationService);
+  private messageService: MessageService = inject(MessageService);
+  private groupConfigurationTestService = inject(GroupConfigurationService);
 
   ngOnInit(): void {
     this.loadGroupConfigurations();
