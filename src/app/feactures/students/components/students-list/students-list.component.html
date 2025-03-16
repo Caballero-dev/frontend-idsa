@@ -111,9 +111,20 @@
       </td>
       @for (col of columns; track $index) {
         @if (col.field === 'predictionResult') {
-          <td>
-            {{ student.predictionResult ? student.predictionResult + '%' : 'No disponible' }}
-          </td>
+          @if (student.predictionResult) {
+            <td style="justify-content: space-between; display: flex; align-items: center">
+              {{ student.predictionResult + '%' }}
+              <p-button
+                icon="pi pi-eye"
+                severity="info"
+                size="large"
+                [rounded]="true"
+                [routerLink]="['/panel/alumnos/grupo', idGroupConfiguration, 'alumno', student.studentId, 'dictamen']"
+              />
+            </td>
+          } @else {
+            <td>No disponible</td>
+          }
         } @else {
           <td>{{ tableUtils.getNestedValue(student, col.field) }}</td>
         }

@@ -63,7 +63,7 @@ export class StudentsListComponent implements OnInit {
   private studentTestService = inject(StudentsTestService);
 
   ngOnInit(): void {
-    this.idGroupConfiguration = this.activeRoute.snapshot.paramMap.get('id');
+    this.idGroupConfiguration = this.activeRoute.snapshot.paramMap.get('grupoId');
     this.loadStudentData();
   }
 
