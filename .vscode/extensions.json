@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "angular.ng-template",
+    "cyrilletuzi.angular-schematics",
+    "johnpapa.angular2",
+    "aaron-bond.better-comments",
+    "usernamehw.errorlens",
+    "wayou.vscode-todo-highlight",
+    "esbenp.prettier-vscode",
+    "yoavbls.pretty-ts-errors",
+  ]
+}
