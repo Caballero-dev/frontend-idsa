@@ -8,12 +8,12 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule, RouterModule, ButtonModule],
   templateUrl: './confirm-email-change.component.html',
-  styleUrl: './confirm-email-change.component.scss'
+  styleUrl: './confirm-email-change.component.scss',
 })
 export class ConfirmEmailChangeComponent implements OnInit {
   router: Router = inject(Router);
   route: ActivatedRoute = inject(ActivatedRoute);
-  
+
   token: string | null = null;
   isTokenValid = false;
 
@@ -28,7 +28,7 @@ export class ConfirmEmailChangeComponent implements OnInit {
     // Validar el token (en una aplicación real, harías una llamada a la API para verificar el token)
     // Aquí simulamos que el token es válido si existe
     this.isTokenValid = true;
-    
+
     // En un caso real, llamarías a un servicio para confirmar el cambio de correo electrónico
     // Ejemplo:
     // this.authService.confirmEmailChange(this.token).subscribe({
@@ -53,7 +53,7 @@ export class ConfirmEmailChangeComponent implements OnInit {
   requestNewVerificationEmail(): void {
     // En una aplicación real, harías una llamada a la API para solicitar un nuevo correo de verificación
     console.log('Solicitando nuevo correo de verificación para cambio de email');
-    
+
     // Ejemplo de llamada a servicio:
     // this.authService.requestEmailChangeVerification(this.token).subscribe({
     //   next: () => {
@@ -64,7 +64,7 @@ export class ConfirmEmailChangeComponent implements OnInit {
     //     console.error('Error al solicitar nuevo correo:', error);
     //   }
     // });
-    
+
     // Puedes mostrar un mensaje de éxito al usuario
     alert('Se ha enviado un nuevo correo de verificación a tu dirección de correo electrónico.');
   }

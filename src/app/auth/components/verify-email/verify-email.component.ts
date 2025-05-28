@@ -88,7 +88,6 @@ export class VerifyEmailComponent implements OnInit {
     } else {
       this.verifyEmailForm.markAllAsTouched();
     }
-
   }
 
   requestNewVerificationEmail(): void {

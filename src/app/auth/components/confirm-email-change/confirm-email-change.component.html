@@ -27,9 +27,7 @@
 
         @if (isTokenValid) {
           <div class="flex flex-col gap-4 md:w-[30rem]">
-            <p class="mb-4 text-center text-muted-color">
-              ¡Has confirmado exitosamente tu nuevo correo electrónico!
-            </p>
+            <p class="mb-4 text-center text-muted-color">¡Has confirmado exitosamente tu nuevo correo electrónico!</p>
             <p-button
               label="Volver al inicio de sesión"
               styleClass="w-full"
@@ -38,12 +36,11 @@
               (click)="goToLogin()"
             ></p-button>
           </div>
-        }
-
-        @else {
+        } @else {
           <div class="flex flex-col gap-4 md:w-[30rem]">
             <p class="mb-4 text-center text-muted-color">
-              El enlace ha expirado o no es válido. Por favor, solicita un nuevo correo de verificación para confirmar tu cambio de email.
+              El enlace ha expirado o no es válido. Por favor, solicita un nuevo correo de verificación para confirmar
+              tu cambio de email.
             </p>
             <p-button
               label="Solicitar nuevo correo"

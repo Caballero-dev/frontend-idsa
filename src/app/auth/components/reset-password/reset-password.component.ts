@@ -11,7 +11,7 @@ import { InputTextComponent } from '../../../shared/components/input-text/input-
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonModule, InputTextComponent],
   templateUrl: './reset-password.component.html',
-  styleUrl: './reset-password.component.scss'
+  styleUrl: './reset-password.component.scss',
 })
 export class ResetPasswordComponent implements OnInit {
   fb: FormBuilder = inject(FormBuilder);
@@ -77,7 +77,7 @@ export class ResetPasswordComponent implements OnInit {
   submitPasswordReset(): void {
     if (this.resetPasswordForm.valid) {
       const password = this.resetPasswordForm.get('password')?.value;
-      
+
       // En una aplicación real, harías una llamada a la API para restablecer la contraseña con el token
       console.log('Enviando nueva contraseña con token', {
         token: this.token,
@@ -106,7 +106,7 @@ export class ResetPasswordComponent implements OnInit {
   requestNewResetEmail(): void {
     // En una aplicación real, harías una llamada a la API para solicitar un nuevo correo de restablecimiento
     console.log('Solicitando nuevo correo para restablecer contraseña');
-    
+
     // Redireccionar a la página de forgot-password
     this.router.navigate(['/auth/forgot-password']);
   }
