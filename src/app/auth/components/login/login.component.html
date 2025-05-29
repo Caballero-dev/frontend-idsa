@@ -67,6 +67,8 @@
                 styleClass="w-full"
                 type="submit"
                 rounded="true"
+                [loading]="loading"
+                [disabled]="loading || loginForm.invalid"
               ></p-button>
 
               <p-button
@@ -75,7 +77,7 @@
                 type="button"
                 rounded="true"
                 variant="text"
-                (click)="router.navigate(['/auth/forgot-password'])"
+                (click)="forgotPassword()"
               ></p-button>
             </div>
           </form>
@@ -84,3 +86,5 @@
     </div>
   </div>
 </div>
+
+<p-toast />
