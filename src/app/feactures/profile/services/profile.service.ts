@@ -24,8 +24,8 @@ export class ProfileService {
   public profile = computed(() => this.#state().profile);
   public isLoading = computed(() => this.#state().isLoading);
 
-  getProfileByEmail(email: string): Observable<ApiResponse<UserProfileResponse>> {
-    return this.http.get<ApiResponse<UserProfileResponse>>(`${this.API_URL}/${email}`).pipe(
+  getProfileByEmail(): Observable<ApiResponse<UserProfileResponse>> {
+    return this.http.get<ApiResponse<UserProfileResponse>>(`${this.API_URL}`).pipe(
       tap((response: ApiResponse<UserProfileResponse>) => {
         this.setProfile(response.data);
       })

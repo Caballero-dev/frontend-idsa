@@ -26,14 +26,14 @@ export class TopbarComponent implements OnInit {
   }
 
   loadProfile() {
-    const session: { isValid: boolean; email?: string } = this.authService.isValidSession();
+    const isValidSession: boolean = this.authService.isValidSession();
 
-    if (!session.isValid || !session.email) {
+    if (!isValidSession) {
       this.authService.logout();
       return;
     }
 
-    this.profileService.getProfileByEmail(session.email).subscribe({
+    this.profileService.getProfileByEmail().subscribe({
       error: (err: ApiError) => {
         if (err.statusCode === 404 && err.message.includes('user_not_found')) {
           this.authService.logout();

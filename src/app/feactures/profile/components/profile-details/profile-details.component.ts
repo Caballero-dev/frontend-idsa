@@ -7,8 +7,10 @@ import { FormUtils } from '../../../../utils/form.utils';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { UserProfileResponse } from '../../models/UserProfile.model';
 import { UpdatePasswordRequest } from '../../models/UpdatePassword.model';
+import { ProfileService } from '../../services/profile.service';
+import { ApiError } from '../../../../core/models/ApiError.model';
+import { AuthService } from '../../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-profile-details',
@@ -19,23 +21,15 @@ import { UpdatePasswordRequest } from '../../models/UpdatePassword.model';
   providers: [MessageService],
 })
 export class ProfileDetailsComponent implements OnInit {
-  viewMyProfile: boolean = true;
-  errorUpdatePassword: boolean = false;
-  // Simulación de carga de datos de usuario (get url: email)
-  user: UserProfileResponse = {
-    userId: '1',
-    name: 'John',
-    firstSurname: 'Doe',
-    secondSurname: 'Jr',
-    email: 'john.doe@gamil.com',
-    phone: '1234567890',
-    roleName: 'Administrador',
-    createdAt: '2024-05-30T15:15:45',
-  };
-
-  formUtils = FormUtils;
   private fb: FormBuilder = inject(FormBuilder);
   private messageService: MessageService = inject(MessageService);
+  private authService: AuthService = inject(AuthService);
+  public profileService: ProfileService = inject(ProfileService);
+
+  formUtils = FormUtils;
+  viewMyProfile: boolean = true;
+  errorUpdatePassword: boolean = false;
+  loading: boolean = false;
 
   updatePasswordForm = this.fb.group(
     {
@@ -74,8 +68,8 @@ export class ProfileDetailsComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  getCreadtedAt(): string {
-    return formatDate(this.user.createdAt, 'dd/MM/yyyy hh:mm a', 'en');
+  getCreadtedAt(fecha: string): string {
+    return formatDate(fecha, 'dd/MM/yyyy hh:mm a', 'en');
   }
 
   getHelpTextPassword(): string | null {
@@ -86,11 +80,28 @@ export class ProfileDetailsComponent implements OnInit {
 
   updatePassword(): void {
     if (this.updatePasswordForm.valid) {
-      // En la respuesta verificar la actualización correcta
-      let updatePasswordRequest: UpdatePasswordRequest = this.getUpdatePasswordForm();
-      this.showToast('success', 'Contraseña actualizada', 'La contraseña ha sido actualizada correctamente');
-      this.errorUpdatePassword = false;
-      this.updatePasswordForm.reset();
+      this.loading = true;
+      const updatePasswordRequest: UpdatePasswordRequest = this.getUpdatePasswordForm();
+
+      this.profileService.updatePassword(updatePasswordRequest).subscribe({
+        next: () => {
+          this.showToast('success', 'Contraseña actualizada', 'La contraseña ha sido actualizada correctamente');
+          this.errorUpdatePassword = false;
+          this.loading = false;
+          this.updatePasswordForm.reset();
+        },
+        error: (error: ApiError) => {
+          if (error.statusCode === 404 && error.message.includes('user_not_found')) {
+            this.authService.logout();
+          } else if (error.message.includes('current_password_incorrect')) {
+            this.showToast('error', 'Error', 'La contraseña actual es incorrecta');
+          } else if (error.message.includes('new_password_equal_to_current')) {
+            this.showToast('error', 'Error', 'La nueva contraseña no puede ser igual a la contraseña actual');
+          }
+          this.loading = false;
+          this.errorUpdatePassword = true;
+        },
+      });
     } else {
       this.errorUpdatePassword = true;
       this.updatePasswordForm.markAllAsTouched();
@@ -99,7 +110,7 @@ export class ProfileDetailsComponent implements OnInit {
 
   getUpdatePasswordForm(): UpdatePasswordRequest {
     return {
-      password: this.updatePasswordForm.value.password as string,
+      currentPassword: this.updatePasswordForm.value.password as string,
       newPassword: this.updatePasswordForm.value.newPassword as string,
     };
   }
@@ -107,15 +118,22 @@ export class ProfileDetailsComponent implements OnInit {
   showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
     this.messageService.add({
       severity,
-      icon:
-        severity === 'success'
-          ? 'pi pi-check-circle'
-          : severity === 'error'
-            ? 'pi pi-times-circle'
-            : 'pi pi-info-circle',
+      icon: this.getToastIcon(severity),
       summary,
       detail,
-      life: 3000,
+      life: 5000,
     });
   }
+
+  private getToastIcon(severity: 'success' | 'error' | 'info'): string {
+    switch (severity) {
+      case 'success':
+        return 'pi pi-check-circle';
+      case 'error':
+        return 'pi pi-times-circle';
+      default:
+        return 'pi pi-info-circle';
+    }
+  }
 }
+

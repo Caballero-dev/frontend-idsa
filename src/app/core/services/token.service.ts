@@ -30,18 +30,15 @@ export class TokenService {
     return this.getAccessToken() !== null && this.getRefreshToken() !== null;
   }
 
-  isValidSession(): { isValid: boolean; email?: string } {
+  isValidSession(): boolean {
     const accessToken: string | null = this.getAccessToken();
     const refreshToken: string | null = this.getRefreshToken();
 
     if (!accessToken || !refreshToken) {
-      return { isValid: false };
+      return false;
     }
 
     const email: string | null = JwtUtils.getEmailFromToken(accessToken);
-    return {
-      isValid: email !== null,
-      email: email !== null ? email : undefined,
-    };
+    return email !== null;
   }
 }

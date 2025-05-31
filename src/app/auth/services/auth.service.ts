@@ -48,7 +48,7 @@ export class AuthService {
     return this.tokenService.isAuthenticated();
   }
 
-  isValidSession(): { isValid: boolean; email?: string } {
+  isValidSession(): boolean {
     return this.tokenService.isValidSession();
   }
 
