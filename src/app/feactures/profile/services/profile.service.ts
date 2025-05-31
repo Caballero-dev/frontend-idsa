@@ -38,15 +38,15 @@ export class ProfileService {
 
   setProfile(profile: UserProfileResponse) {
     this.#state.set({
-      profile: profile,
       isLoading: false,
+      profile: profile,
     });
   }
 
   clearProfile() {
     this.#state.set({
+      isLoading: true,
       profile: null,
-      isLoading: false,
     });
   }
 }
