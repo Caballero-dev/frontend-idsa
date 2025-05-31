@@ -9,7 +9,6 @@ import { AuthService } from '../../services/auth.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ApiError } from '../../../core/models/ApiError.model';
-import { TokenService } from '../../../core/services/token.service';
 import { LoginRequest } from '../../models/Login.model';
 
 @Component({
@@ -24,7 +23,6 @@ export class LoginComponent implements OnInit {
   private fb: FormBuilder = inject(FormBuilder);
   private router: Router = inject(Router);
   private authService: AuthService = inject(AuthService);
-  private tokenService: TokenService = inject(TokenService);
   private messageService: MessageService = inject(MessageService);
   formUtils = FormUtils;
   loading = false;
@@ -51,7 +49,7 @@ export class LoginComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    if (this.tokenService.isAuthenticated()) {
+    if (this.authService.isAuthenticated()) {
       this.router.navigate(['/panel/inicio']);
     }
   }

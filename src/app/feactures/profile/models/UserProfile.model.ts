@@ -1,4 +1,4 @@
-export interface UserProfile {
+export interface UserProfileResponse {
   userId: string;
   name: string;
   firstSurname: string;
@@ -8,9 +8,4 @@ export interface UserProfile {
   roleName: string;
   key?: string | null;
   createdAt: string;
-}
-
-export interface UpdatePasswordRequest {
-  password: string;
-  newPassword: string;
 }

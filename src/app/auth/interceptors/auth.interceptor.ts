@@ -2,7 +2,6 @@ import { HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/h
 import { inject } from '@angular/core';
 import { TokenService } from '../../core/services/token.service';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
 import { catchError, EMPTY, switchMap, throwError } from 'rxjs';
 import { ApiError } from '../../core/models/ApiError.model';
 import { ApiResponse } from '../../core/models/ApiResponse.model';
@@ -16,12 +15,7 @@ const addToken = (req: HttpRequest<any>, accessToken: string) => {
   });
 };
 
-const handleLogout = (tokenService: TokenService, router: Router): void => {
-  tokenService.clearTokens();
-  router.navigate(['/auth/login']);
-};
-
-const handleRefreshError = (error: ApiError, tokenService: TokenService, router: Router) => {
+const handleRefreshError = (error: ApiError, authService: AuthService) => {
   const logoutErrors: string[] = [
     'invalid_token_type',
     'invalid_refresh_token',
@@ -32,10 +26,10 @@ const handleRefreshError = (error: ApiError, tokenService: TokenService, router:
   ];
 
   if (error.message.includes('access_token_valid')) {
-    return throwError(() => error);
+    return EMPTY;
   }
   if (logoutErrors.some((errorCode: string) => error.message.includes(errorCode))) {
-    handleLogout(tokenService, router);
+    authService.logout();
     return EMPTY;
   }
 
@@ -47,9 +41,7 @@ const handle401Error = (
   next: HttpHandlerFn,
   accessToken: string,
   refreshToken: string,
-  tokenService: TokenService,
-  authService: AuthService,
-  router: Router
+  authService: AuthService
 ) => {
   return authService.refreshToken({ accessToken, refreshToken }).pipe(
     switchMap((response: ApiResponse<RefreshTokenResponse>) => {
@@ -57,7 +49,7 @@ const handle401Error = (
       return next(newReq);
     }),
     catchError((error: ApiError) => {
-      return handleRefreshError(error, tokenService, router);
+      return handleRefreshError(error, authService);
     })
   );
 };
@@ -65,7 +57,6 @@ const handle401Error = (
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenService = inject(TokenService);
   const authService = inject(AuthService);
-  const router = inject(Router);
   const accessToken = tokenService.getAccessToken();
   const refreshToken = tokenService.getRefreshToken();
   let authReq = req;
@@ -82,9 +73,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: ApiError) => {
       if (error.statusCode === 401 && error.message.includes('token_expired')) {
         if (accessToken && refreshToken) {
-          return handle401Error(req, next, accessToken, refreshToken, tokenService, authService, router);
+          return handle401Error(req, next, accessToken, refreshToken, authService);
         } else {
-          handleLogout(tokenService, router);
+          authService.logout();
           return EMPTY;
         }
       }

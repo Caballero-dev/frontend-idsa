@@ -7,7 +7,8 @@ import { FormUtils } from '../../../../utils/form.utils';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { UpdatePasswordRequest, UserProfile } from '../../models/profile.model';
+import { UserProfileResponse } from '../../models/UserProfile.model';
+import { UpdatePasswordRequest } from '../../models/UpdatePassword.model';
 
 @Component({
   selector: 'app-profile-details',
@@ -21,7 +22,7 @@ export class ProfileDetailsComponent implements OnInit {
   viewMyProfile: boolean = true;
   errorUpdatePassword: boolean = false;
   // Simulación de carga de datos de usuario (get url: email)
-  user: UserProfile = {
+  user: UserProfileResponse = {
     userId: '1',
     name: 'John',
     firstSurname: 'Doe',

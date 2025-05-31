@@ -20,9 +20,20 @@
   </div>
 
   <div class="layout-topbar-actions">
-    <div class="user-container">
+    <div
+      class="user-container"
+      *ngIf="!profileService.isLoading()"
+    >
       @if (isDesktop()) {
-        <span class="username">{{ userName }}</span>
+        <span class="username">
+          {{
+            profileService.profile()?.name +
+              ' ' +
+              profileService.profile()?.firstSurname +
+              ' ' +
+              profileService.profile()?.secondSurname
+          }}
+        </span>
       }
       <button
         class="layout-topbar-menu-button layout-topbar-action"
@@ -34,7 +45,15 @@
         [hideOnOutsideClick]="true"
       >
         <p-avatar
-          [label]="getInitials()"
+          [label]="
+            getInitials(
+              profileService.profile()?.name +
+                ' ' +
+                profileService.profile()?.firstSurname +
+                ' ' +
+                profileService.profile()?.secondSurname
+            )
+          "
           shape="circle"
         />
       </button>

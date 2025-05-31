@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { JwtUtils } from '../../utils/jwt.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -27,5 +28,20 @@ export class TokenService {
 
   isAuthenticated(): boolean {
     return this.getAccessToken() !== null && this.getRefreshToken() !== null;
+  }
+
+  isValidSession(): { isValid: boolean; email?: string } {
+    const accessToken: string | null = this.getAccessToken();
+    const refreshToken: string | null = this.getRefreshToken();
+
+    if (!accessToken || !refreshToken) {
+      return { isValid: false };
+    }
+
+    const email: string | null = JwtUtils.getEmailFromToken(accessToken);
+    return {
+      isValid: email !== null,
+      email: email !== null ? email : undefined,
+    };
   }
 }
