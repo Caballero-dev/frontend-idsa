@@ -11,6 +11,7 @@ import { UpdatePasswordRequest } from '../../models/UpdatePassword.model';
 import { ProfileService } from '../../services/profile.service';
 import { ApiError } from '../../../../core/models/ApiError.model';
 import { AuthService } from '../../../../auth/services/auth.service';
+import { Role } from '../../../../core/models/Role.enum';
 
 @Component({
   selector: 'app-profile-details',
@@ -26,6 +27,7 @@ export class ProfileDetailsComponent implements OnInit {
   private authService: AuthService = inject(AuthService);
   public profileService: ProfileService = inject(ProfileService);
 
+  Role = Role;
   formUtils = FormUtils;
   viewMyProfile: boolean = true;
   errorUpdatePassword: boolean = false;

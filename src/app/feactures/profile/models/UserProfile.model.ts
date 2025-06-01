@@ -1,3 +1,5 @@
+import { Role } from '../../../core/models/Role.enum';
+
 export interface UserProfileResponse {
   userId: string;
   name: string;
@@ -5,7 +7,7 @@ export interface UserProfileResponse {
   secondSurname: string;
   email: string;
   phone: string;
-  roleName: string;
-  key?: string | null;
+  roleName: Role;
+  key: string | null;
   createdAt: string;
 }

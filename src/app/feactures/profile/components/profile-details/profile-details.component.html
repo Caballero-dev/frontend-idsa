@@ -54,7 +54,7 @@
           <div class="col-span-12 text-xl md:col-span-8">{{ getCreadtedAt(profileService.profile()!.createdAt) }}</div>
         </div>
 
-        @if (profileService.profile()!.roleName === 'ROLE_TUTOR') {
+        @if (profileService.profile()!.roleName === Role.TUTOR) {
           <div class="mb-5 grid grid-cols-12 gap-4">
             <label class="col-span-12 flex items-center text-xl font-semibold md:col-span-4">Número de empleado:</label>
             <div class="col-span-12 text-xl md:col-span-8">{{ profileService.profile()!.key }}</div>
