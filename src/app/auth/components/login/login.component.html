@@ -67,10 +67,11 @@
                 type="submit"
                 rounded="true"
                 [loading]="loading"
-                [disabled]="loading || loginForm.invalid"
+                [disabled]="loading"
               ></p-button>
 
               <p-button
+                *ngIf="!loading"
                 label="¿Olvidaste tu contraseña?"
                 styleClass="w-full"
                 type="button"
