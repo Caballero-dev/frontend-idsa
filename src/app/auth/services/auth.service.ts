@@ -11,6 +11,7 @@ import { VerifyEmailRequest } from '../models/VerifyEmail.model';
 import { ForgotPasswordRequest } from '../models/ForgotPassword.model';
 import { ResetPasswordRequest } from '../models/ResetPassword.model';
 import { ProfileService } from '../../feactures/profile/services/profile.service';
+import { ResendEmailRequest } from '../models/ResendEmail.model';
 
 @Injectable({
   providedIn: 'root',
@@ -66,5 +67,9 @@ export class AuthService {
 
   confirmEmailChange(token: string): Observable<void> {
     return this.http.get<void>(`${this.API_URL}/confirm-email-change`, { params: { token } });
+  }
+
+  resendEmail(resendEmailRequest: ResendEmailRequest): Observable<void> {
+    return this.http.post<void>(`${this.API_URL}/resend-email`, resendEmailRequest);
   }
 }
