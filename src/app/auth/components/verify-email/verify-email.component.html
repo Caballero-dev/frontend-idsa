@@ -17,92 +17,146 @@
             src="/img/icon.png"
             alt="Logo"
           />
-          <div class="mb-4 text-3xl font-medium text-surface-900">Identifi Adicc</div>
-          @if (isTokenValid) {
-            <span class="font-medium text-muted-color">Establecer nueva contraseña</span>
-          } @else {
-            <span class="font-medium text-muted-color">Token inválido o expirado</span>
+          @switch (verificationState) {
+            @case (VerificationState.VALID_TOKEN) {
+              <span class="mb-4 text-2xl font-semibold">Verifica tu correo electrónico</span>
+            }
+            @case (VerificationState.ALREADY_VERIFIED) {
+              <span class="mb-4 text-2xl font-semibold">Correo electrónico ya ha sido verificado</span>
+            }
+            @case (VerificationState.VERIFIED) {
+              <span class="mb-4 text-2xl font-semibold">Correo electrónico verificado correctamente</span>
+            }
+            @case (VerificationState.INVALID_TOKEN) {
+              <span class="mb-4 text-2xl font-semibold">Enlace expirado o no válido</span>
+            }
           }
         </div>
 
-        @if (isTokenValid) {
-          <form
-            [formGroup]="verifyEmailForm"
-            (ngSubmit)="submitPasswordReset()"
-          >
-            <div class="mb-8 md:w-[30rem]">
-              <div class="mb-4">
-                <idsa-input-text
-                  type="password"
-                  inputId="password"
-                  label="Nueva contraseña"
-                  labelPosition="top"
-                  [customFormControl]="verifyEmailForm.controls.password"
-                  placeholder="Ingresa tu nueva contraseña"
-                  [required]="true"
-                  [disabled]="false"
-                  [readonly]="false"
-                  [maxLength]="20"
-                  [minLength]="8"
-                  variant="outlined"
-                  size="large"
-                ></idsa-input-text>
+        @switch (verificationState) {
+          @case (VerificationState.VALID_TOKEN) {
+            <form
+              [formGroup]="verifyEmailForm"
+              (ngSubmit)="verifyEmailAndSetPassword()"
+            >
+              <div class="mb-8 md:w-[30rem]">
+                <div class="mb-4">
+                  <idsa-input-text
+                    type="password"
+                    inputId="password"
+                    label="Nueva contraseña"
+                    labelPosition="top"
+                    [customFormControl]="verifyEmailForm.controls.password"
+                    placeholder="Ingresa tu nueva contraseña"
+                    [required]="true"
+                    [disabled]="false"
+                    [readonly]="false"
+                    [maxLength]="20"
+                    [minLength]="8"
+                    variant="outlined"
+                    size="large"
+                  ></idsa-input-text>
+                </div>
+
+                <div>
+                  <idsa-input-text
+                    type="password"
+                    inputId="confirmPassword"
+                    label="Confirmar contraseña"
+                    labelPosition="top"
+                    [customFormControl]="verifyEmailForm.controls.confirmPassword"
+                    placeholder="Confirma tu nueva contraseña"
+                    [required]="true"
+                    [disabled]="false"
+                    [readonly]="false"
+                    [maxLength]="20"
+                    [minLength]="8"
+                    variant="outlined"
+                    size="large"
+                    helpTextType="error"
+                    [helpText]="getHelpTextPassword()"
+                  ></idsa-input-text>
+                </div>
               </div>
 
-              <div>
-                <idsa-input-text
-                  type="password"
-                  inputId="confirmPassword"
-                  label="Confirmar contraseña"
-                  labelPosition="top"
-                  [customFormControl]="verifyEmailForm.controls.confirmPassword"
-                  placeholder="Confirma tu nueva contraseña"
-                  [required]="true"
-                  [disabled]="false"
-                  [readonly]="false"
-                  [maxLength]="20"
-                  [minLength]="8"
+              <div class="flex flex-col gap-4">
+                <p-button
+                  label="Verificar correo electrónico"
+                  styleClass="w-full"
+                  type="submit"
+                  rounded="true"
+                  [loading]="loading"
+                  [disabled]="loading"
+                ></p-button>
+              </div>
+            </form>
+          }
+          @case (VerificationState.ALREADY_VERIFIED) {
+            <div class="max-md:w-[20rem] md:w-[30rem]">
+              <div class="mb-8 text-center">
+                <p class="mt-4">
+                  Tu correo electrónico ya ha sido verificado anteriormente. Si deseas cambiar tu contraseña, por favor
+                  utiliza la opción "¿Olvidaste tu contraseña?" en la página de inicio de sesión.
+                </p>
+              </div>
+              <div class="flex flex-col gap-4">
+                <p-button
+                  label="Volver al inicio de sesión"
+                  styleClass="w-full"
+                  type="button"
+                  rounded="true"
                   variant="outlined"
-                  size="large"
-                  helpTextType="error"
-                  [helpText]="getHelpTextPassword()"
-                ></idsa-input-text>
+                  (click)="goToLogin()"
+                ></p-button>
               </div>
             </div>
-
-            <div class="flex flex-col gap-4">
-              <p-button
-                label="Establecer contraseña"
-                styleClass="w-full"
-                type="submit"
-                rounded="true"
-              ></p-button>
+          }
+          @case (VerificationState.VERIFIED) {
+            <div class="max-md:w-[20rem] md:w-[30rem]">
+              <div class="mb-8 text-center">
+                <p class="mt-4">
+                  Tu correo electrónico ha sido verificado y tu contraseña ha sido establecida exitosamente. Ahora
+                  puedes iniciar sesión con tu nueva contraseña.
+                </p>
+              </div>
+              <div class="flex flex-col gap-4">
+                <p-button
+                  label="Volver al inicio de sesión"
+                  styleClass="w-full"
+                  type="button"
+                  rounded="true"
+                  variant="outlined"
+                  (click)="goToLogin()"
+                ></p-button>
+              </div>
             </div>
-          </form>
-        } @else {
-          <div class="flex flex-col gap-4 md:w-[30rem]">
-            <p class="mb-4 text-center text-muted-color">
-              El enlace ha expirado o no es válido. Por favor, solicita un nuevo correo de verificación.
-            </p>
-            <p-button
-              label="Solicitar nuevo correo"
-              styleClass="w-full"
-              type="button"
-              rounded="true"
-              (click)="requestNewVerificationEmail()"
-            ></p-button>
-
-            <p-button
-              label="Volver al inicio de sesión"
-              styleClass="w-full"
-              type="button"
-              rounded="true"
-              variant="text"
-              (click)="goToLogin()"
-            ></p-button>
-          </div>
+          }
+          @case (VerificationState.INVALID_TOKEN) {
+            <div class="max-md:w-[20rem] md:w-[30rem]">
+              <div class="mb-8 text-center">
+                <p class="mt-4">
+                  El enlace de verificación ha expirado o no es válido. Por favor, solicita un nuevo correo de
+                  verificación.
+                </p>
+              </div>
+              <div class="flex flex-col gap-4">
+                <p-button
+                  label="Solicitar reenvío de correo"
+                  styleClass="w-full"
+                  type="button"
+                  rounded="true"
+                  (click)="requestResendEmail()"
+                ></p-button>
+              </div>
+            </div>
+          }
+          @case (VerificationState.RESEND_EMAIL) {
+            <app-resend-email [resendEmailType]="'EMAIL_VERIFICATION'" />
+          }
         }
       </div>
     </div>
   </div>
 </div>
+
+<p-toast />

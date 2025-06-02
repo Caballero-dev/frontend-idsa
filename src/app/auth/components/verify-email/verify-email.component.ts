@@ -5,22 +5,49 @@ import { ButtonModule } from 'primeng/button';
 import { FormUtils } from '../../../utils/form.utils';
 import { CommonModule } from '@angular/common';
 import { InputTextComponent } from '../../../shared/components/input-text/input-text.component';
+import { ResendEmailComponent } from '../resend-email/resend-email.component';
+import { VerifyEmailRequest } from '../../models/VerifyEmail.model';
+import { AuthService } from '../../services/auth.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ApiError } from '../../../core/models/ApiError.model';
+
+enum VerificationState {
+  INITIAL = 'INITIAL',
+  VALID_TOKEN = 'VALID_TOKEN',
+  INVALID_TOKEN = 'INVALID_TOKEN',
+  ALREADY_VERIFIED = 'ALREADY_VERIFIED',
+  VERIFIED = 'VERIFIED',
+  RESEND_EMAIL = 'RESEND_EMAIL',
+}
 
 @Component({
   selector: 'app-verify-email',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonModule, InputTextComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    InputTextComponent,
+    ResendEmailComponent,
+    ToastModule,
+  ],
   templateUrl: './verify-email.component.html',
   styleUrl: './verify-email.component.scss',
+  providers: [MessageService],
 })
 export class VerifyEmailComponent implements OnInit {
-  fb: FormBuilder = inject(FormBuilder);
-  router: Router = inject(Router);
-  route: ActivatedRoute = inject(ActivatedRoute);
+  private fb: FormBuilder = inject(FormBuilder);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
+  private authService: AuthService = inject(AuthService);
+  private messageService: MessageService = inject(MessageService);
   formUtils = FormUtils;
-
-  token: string | null = null;
-  isTokenValid = false;
+  token: string = '';
+  verificationState = VerificationState.INITIAL;
+  VerificationState = VerificationState;
+  loading = false;
 
   verifyEmailForm = this.fb.group(
     {
@@ -50,21 +77,56 @@ export class VerifyEmailComponent implements OnInit {
 
   ngOnInit(): void {
     this.getTokenFromUrlParams();
-
-    if (!this.token) {
-      this.isTokenValid = false;
-      return;
-    }
-
-    // Validate token (in a real app, you would make an API call to verify the token)
-    this.isTokenValid = true;
   }
 
   getTokenFromUrlParams(): void {
-    // Get token from URL params
     this.route.queryParamMap.subscribe((params) => {
-      this.token = params.get('token');
+      if (params.get('token')) {
+        this.token = params.get('token')!;
+        this.verificationState = VerificationState.VALID_TOKEN;
+      } else {
+        this.router.navigate(['/auth/login']);
+      }
     });
+  }
+
+  verifyEmailAndSetPassword(): void {
+    if (this.verifyEmailForm.valid) {
+      this.loading = true;
+      const verifyEmailRequest: VerifyEmailRequest = this.getVerifyEmailFormData();
+      this.authService.verifyEmailAndSetPassword(verifyEmailRequest).subscribe({
+        next: () => {
+          this.verificationState = VerificationState.VERIFIED;
+          this.loading = false;
+        },
+        error: (error: ApiError) => {
+          if (
+            (error.statusCode === 401 || error.statusCode === 400) &&
+            (error.message.includes('invalid_verification_token') ||
+              error.message.includes('expired_verification_token'))
+          ) {
+            this.verificationState = VerificationState.INVALID_TOKEN;
+          } else if (error.statusCode === 400 && error.message.includes('verified_email')) {
+            this.verificationState = VerificationState.ALREADY_VERIFIED;
+          } else if (error.status === 'Unknown Error' && error.statusCode === 0) {
+            this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
+          } else {
+            this.showToast('error', 'Error', 'Ha ocurrido un error inesperado, por favor intente más tarde');
+          }
+          this.loading = false;
+        },
+      });
+    } else {
+      this.verifyEmailForm.markAllAsTouched();
+    }
+  }
+
+  requestResendEmail(): void {
+    this.verificationState = VerificationState.RESEND_EMAIL;
+  }
+
+  goToLogin(): void {
+    this.router.navigate(['/auth/login']);
   }
 
   getHelpTextPassword(): string | null {
@@ -73,31 +135,31 @@ export class VerifyEmailComponent implements OnInit {
       : null;
   }
 
-  submitPasswordReset(): void {
-    if (this.verifyEmailForm.valid) {
-      const password = this.verifyEmailForm.get('password')?.value;
-      // In a real app, you would make an API call to reset the password with the token
-      console.log('Enviando nueva contraseña con token', {
-        token: this.token,
-        password,
-      });
+  getVerifyEmailFormData(): VerifyEmailRequest {
+    return {
+      token: this.token,
+      password: this.verifyEmailForm.value.password as string,
+    };
+  }
 
-      // Redirect to login after successful password reset
-      // For now, just redirect
-      this.router.navigate(['/auth/login']);
-    } else {
-      this.verifyEmailForm.markAllAsTouched();
+  showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
+    this.messageService.add({
+      severity,
+      icon: this.getToastIcon(severity),
+      summary,
+      detail,
+      life: 5000,
+    });
+  }
+
+  private getToastIcon(severity: 'success' | 'error' | 'info'): string {
+    switch (severity) {
+      case 'success':
+        return 'pi pi-check-circle';
+      case 'error':
+        return 'pi pi-times-circle';
+      default:
+        return 'pi pi-info-circle';
     }
-  }
-
-  requestNewVerificationEmail(): void {
-    // In a real app, you would make an API call to request a new verification email
-    console.log('Solicitando nuevo correo de verificación');
-
-    // You might want to show a success message here
-  }
-
-  goToLogin(): void {
-    this.router.navigate(['/auth/login']);
   }
 }
