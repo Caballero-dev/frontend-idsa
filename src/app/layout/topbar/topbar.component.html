@@ -20,25 +20,29 @@
   </div>
 
   <div class="layout-topbar-actions">
-    <div class="user-container">
-      @if (isDesktop()) {
-        <span class="username">{{ userName }}</span>
-      }
-      <button
-        class="layout-topbar-menu-button layout-topbar-action"
-        pStyleClass="#menuContainer"
-        enterFromClass="hidden"
-        enterActiveClass="animate-scalein"
-        leaveToClass="hidden"
-        leaveActiveClass="animate-fadeout"
-        [hideOnOutsideClick]="true"
-      >
-        <p-avatar
-          [label]="getInitials()"
-          shape="circle"
-        />
-      </button>
-    </div>
+    @if (!profileService.isLoading()) {
+      <div class="user-container">
+        @if (isDesktop()) {
+          <span class="username">
+            {{ getFullName() }}
+          </span>
+        }
+        <button
+          class="layout-topbar-menu-button layout-topbar-action"
+          pStyleClass="#menuContainer"
+          enterFromClass="hidden"
+          enterActiveClass="animate-scalein"
+          leaveToClass="hidden"
+          leaveActiveClass="animate-fadeout"
+          [hideOnOutsideClick]="true"
+        >
+          <p-avatar
+            [label]="getInitials()"
+            shape="circle"
+          />
+        </button>
+      </div>
+    }
 
     <div
       class="layout-topbar-menu hidden"
@@ -61,7 +65,7 @@
         <button
           type="button"
           class="layout-topbar-action"
-          [routerLink]="['/auth/login']"
+          (click)="logout()"
         >
           <i class="pi pi-sign-out"></i>
           <span>Cerrar sesión</span>
@@ -70,3 +74,7 @@
     </div>
   </div>
 </div>
+
+@if (profileService.isLoading()) {
+  <idsa-spinner />
+}

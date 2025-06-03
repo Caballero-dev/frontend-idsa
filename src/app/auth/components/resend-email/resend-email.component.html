@@ -1,0 +1,60 @@
+@if (!isEmailSent) {
+  <div class="mb-8 text-center">
+    <span class="text-2xl font-bold">Solicitar reenvío de correo</span>
+  </div>
+  <form
+    [formGroup]="resendEmailForm"
+    (ngSubmit)="resendEmail()"
+  >
+    <div class="flex flex-col gap-4">
+      <idsa-input-text
+        type="email"
+        inputId="email"
+        label="Correo electrónico"
+        labelPosition="top"
+        [customFormControl]="resendEmailForm.controls.email"
+        placeholder="Ingresa tu correo electrónico"
+        [required]="true"
+        [disabled]="false"
+        [readonly]="false"
+        [maxLength]="100"
+        [minLength]="6"
+        variant="outlined"
+        size="large"
+      ></idsa-input-text>
+    </div>
+
+    <div class="mt-8">
+      <p-button
+        label="Reenviar correo electrónico"
+        styleClass="w-full"
+        type="submit"
+        rounded="true"
+        [loading]="loading"
+        [disabled]="loading"
+      ></p-button>
+    </div>
+  </form>
+} @else {
+  <div class="mb-8 text-center">
+    <span class="text-2xl font-bold">Correo electrónico reenviado</span>
+  </div>
+  <div class="text-center">
+    <p>
+      Recibirás un correo electrónico para realizar la verificación correspondiente si tienes una cuenta. Revisa tu
+      correo electrónico y sigue las instrucciones.
+    </p>
+  </div>
+
+  <div class="mt-8">
+    <p-button
+      label="Volver al inicio de sesión"
+      styleClass="w-full"
+      type="button"
+      rounded="true"
+      variant="outlined"
+      (click)="goToLogin()"
+    ></p-button>
+  </div>
+}
+<p-toast />
