@@ -66,7 +66,7 @@ export class AuthService {
   }
 
   confirmEmailChange(token: string): Observable<void> {
-    return this.http.get<void>(`${this.API_URL}/confirm-email-change`, { params: { token } });
+    return this.http.post<void>(`${this.API_URL}/confirm-email-change`, null, { params: { token } });
   }
 
   resendEmail(resendEmailRequest: ResendEmailRequest): Observable<void> {

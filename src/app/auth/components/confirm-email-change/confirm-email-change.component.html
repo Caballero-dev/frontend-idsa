@@ -17,50 +17,124 @@
             src="/img/icon.png"
             alt="Logo"
           />
-          <div class="mb-4 text-3xl font-medium text-surface-900">Identifi Adicc</div>
-          @if (isTokenValid) {
-            <span class="font-medium text-muted-color">Cambio de correo confirmado</span>
-          } @else {
-            <span class="font-medium text-muted-color">Token inválido o expirado</span>
-          }
         </div>
 
-        @if (isTokenValid) {
-          <div class="flex flex-col gap-4 md:w-[30rem]">
-            <p class="mb-4 text-center text-muted-color">¡Has confirmado exitosamente tu nuevo correo electrónico!</p>
-            <p-button
-              label="Volver al inicio de sesión"
-              styleClass="w-full"
-              type="button"
-              rounded="true"
-              (click)="goToLogin()"
-            ></p-button>
-          </div>
-        } @else {
-          <div class="flex flex-col gap-4 md:w-[30rem]">
-            <p class="mb-4 text-center text-muted-color">
-              El enlace ha expirado o no es válido. Por favor, solicita un nuevo correo de verificación para confirmar
-              tu cambio de email.
-            </p>
-            <p-button
-              label="Solicitar nuevo correo"
-              styleClass="w-full"
-              type="button"
-              rounded="true"
-              (click)="requestNewVerificationEmail()"
-            ></p-button>
-
-            <p-button
-              label="Volver al inicio de sesión"
-              styleClass="w-full"
-              type="button"
-              rounded="true"
-              variant="text"
-              (click)="goToLogin()"
-            ></p-button>
-          </div>
-        }
+        <div class="max-md:w-[20rem] md:w-[30rem]">
+          @switch (confirmEmailChangeState) {
+            @case (ConfirmEmailChangeState.VALID_TOKEN) {
+              <div class="mb-8 text-center">
+                <span class="text-2xl font-semibold">Confirmación de correo electrónico</span>
+              </div>
+              @if (!isError) {
+                <div class="text-center">
+                  <p>Verificando correo electrónico...</p>
+                </div>
+              }
+              @if (isError) {
+                <div class="mt-8">
+                  <p-button
+                    label="Volver al inicio de sesión"
+                    styleClass="w-full"
+                    type="button"
+                    rounded="true"
+                    variant="outlined"
+                    (click)="goToLogin()"
+                  ></p-button>
+                </div>
+              }
+            }
+            @case (ConfirmEmailChangeState.ALREADY_VERIFIED) {
+              <div class="mb-8 text-center">
+                <span class="text-2xl font-semibold">Correo electrónico ya ha sido verificado</span>
+              </div>
+              <div class="text-center">
+                <p>
+                  Tu correo electrónico ya ha sido verificado anteriormente. Ahora puedes iniciar sesión con tu nuevo
+                  correo electrónico.
+                </p>
+              </div>
+              <div class="mt-8">
+                <p-button
+                  label="Volver al inicio de sesión"
+                  styleClass="w-full"
+                  type="button"
+                  rounded="true"
+                  variant="outlined"
+                  (click)="goToLogin()"
+                ></p-button>
+              </div>
+            }
+            @case (ConfirmEmailChangeState.VERIFIED) {
+              <div class="mb-8 text-center">
+                <span class="text-2xl font-semibold">Correo electrónico verificado correctamente</span>
+              </div>
+              <div class="text-center">
+                <p>
+                  Tu cambio de correo electrónico ha sido confirmado exitosamente. Ahora puedes iniciar sesión con tu
+                  nuevo correo electrónico.
+                </p>
+              </div>
+              <div class="mt-8">
+                <p-button
+                  label="Volver al inicio de sesión"
+                  styleClass="w-full"
+                  type="button"
+                  rounded="true"
+                  variant="outlined"
+                  (click)="goToLogin()"
+                ></p-button>
+              </div>
+            }
+            @case (ConfirmEmailChangeState.INVALID_TOKEN) {
+              <div class="mb-8 text-center">
+                <span class="text-2xl font-semibold">Enlace expirado o no válido</span>
+              </div>
+              <div class="text-center">
+                <p>
+                  El enlace de verificación ha expirado o no es válido. Por favor, solicita un nuevo correo de
+                  verificación.
+                </p>
+              </div>
+              <div class="mt-8">
+                <p-button
+                  label="Solicitar reenvío de correo"
+                  styleClass="w-full"
+                  type="button"
+                  rounded="true"
+                  (click)="requestResendEmail()"
+                ></p-button>
+              </div>
+            }
+            @case (ConfirmEmailChangeState.ACCOUNT_INACTIVE) {
+              <div class="mb-8 text-center">
+                <span class="text-2xl font-semibold">Cuenta inactiva</span>
+              </div>
+              <div class="text-center">
+                <p>Tu cuenta está inactiva. Por favor, contacta al administrador para activarla.</p>
+              </div>
+              <div class="mt-8">
+                <p-button
+                  label="Volver al inicio de sesión"
+                  styleClass="w-full"
+                  type="button"
+                  rounded="true"
+                  variant="outlined"
+                  (click)="goToLogin()"
+                ></p-button>
+              </div>
+            }
+            @case (ConfirmEmailChangeState.RESEND_EMAIL) {
+              <app-resend-email [resendEmailType]="'EMAIL_VERIFICATION'" />
+            }
+          }
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+@if (loading) {
+  <idsa-spinner />
+}
+
+<p-toast />
