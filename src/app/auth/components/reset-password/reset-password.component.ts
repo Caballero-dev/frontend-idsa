@@ -5,22 +5,43 @@ import { ButtonModule } from 'primeng/button';
 import { FormUtils } from '../../../utils/form.utils';
 import { CommonModule } from '@angular/common';
 import { InputTextComponent } from '../../../shared/components/input-text/input-text.component';
+import { AuthService } from '../../services/auth.service';
+import { MessageService } from 'primeng/api';
+import { ResetPasswordRequest } from '../../models/ResetPassword.model';
+import { ApiError } from '../../../core/models/ApiError.model';
+import { ResendEmailComponent } from '../resend-email/resend-email.component';
+
+enum ResetPasswordState {
+  INITIAL = 'INITIAL',
+  VALID_TOKEN = 'VALID_TOKEN',
+  RESET_SUCCESS = 'RESET_SUCCESS',
+  INVALID_TOKEN = 'INVALID_TOKEN',
+  ACCOUNT_INACTIVE = 'ACCOUNT_INACTIVE',
+  NEW_ACCOUNT_UNVERIFIED = 'NEW_ACCOUNT_UNVERIFIED',
+  EMAIL_CHANGE_UNVERIFIED = 'EMAIL_CHANGE_UNVERIFIED',
+  RESEND_EMAIL_VERIFICATION = 'RESEND_EMAIL_VERIFICATION',
+  RESEND_EMAIL_CHANGE = 'RESEND_EMAIL_CHANGE',
+}
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonModule, InputTextComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonModule, InputTextComponent, ResendEmailComponent],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.scss',
+  providers: [MessageService],
 })
 export class ResetPasswordComponent implements OnInit {
-  fb: FormBuilder = inject(FormBuilder);
-  router: Router = inject(Router);
-  route: ActivatedRoute = inject(ActivatedRoute);
+  private fb: FormBuilder = inject(FormBuilder);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
+  private authService: AuthService = inject(AuthService);
+  private messageService: MessageService = inject(MessageService);
   formUtils = FormUtils;
-
-  token: string | null = null;
-  isTokenValid = false;
+  token: string = '';
+  resetPasswordState = ResetPasswordState.INITIAL;
+  ResetPasswordState = ResetPasswordState;
+  loading = false;
 
   resetPasswordForm = this.fb.group(
     {
@@ -50,22 +71,65 @@ export class ResetPasswordComponent implements OnInit {
 
   ngOnInit(): void {
     this.getTokenFromUrlParams();
-
-    if (!this.token) {
-      this.isTokenValid = false;
-      return;
-    }
-
-    // Validar el token (en una aplicación real, harías una llamada a la API para verificar el token)
-    // Aquí simulamos que el token es válido si existe
-    this.isTokenValid = true;
   }
 
   getTokenFromUrlParams(): void {
-    // Obtener el token de los parámetros de la URL
     this.route.queryParamMap.subscribe((params) => {
-      this.token = params.get('token');
+      if (params.get('token')) {
+        this.token = params.get('token')!;
+        this.resetPasswordState = ResetPasswordState.VALID_TOKEN;
+      } else {
+        this.router.navigate(['/auth/login']);
+      }
     });
+  }
+
+  submitPasswordReset(): void {
+    if (this.resetPasswordForm.valid) {
+      this.loading = true;
+      const resetPasswordRequest: ResetPasswordRequest = this.getResetPasswordFormData();
+      this.authService.resetPassword(resetPasswordRequest).subscribe({
+        next: () => {
+          this.resetPasswordState = ResetPasswordState.RESET_SUCCESS;
+          this.loading = false;
+        },
+        error: (error: ApiError) => {
+          if (
+            (error.statusCode === 401 || error.statusCode === 400) &&
+            (error.message.includes('invalid_reset_token') || error.message.includes('expired_reset_token'))
+          ) {
+            this.resetPasswordState = ResetPasswordState.INVALID_TOKEN;
+          } else if (error.statusCode === 403 && error.message.includes('new_account_unverified')) {
+            this.resetPasswordState = ResetPasswordState.NEW_ACCOUNT_UNVERIFIED;
+          } else if (error.statusCode === 403 && error.message.includes('email_change_unverified')) {
+            this.resetPasswordState = ResetPasswordState.EMAIL_CHANGE_UNVERIFIED;
+          } else if (error.statusCode === 403 && error.message.includes('account_inactive')) {
+            this.resetPasswordState = ResetPasswordState.ACCOUNT_INACTIVE;
+          } else if (error.status === 'Unknown Error' && error.statusCode === 0) {
+            this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
+          } else {
+            this.showToast('error', 'Error', 'Ha ocurrido un error inesperado, por favor intente más tarde');
+          }
+          this.loading = false;
+        },
+      });
+    } else {
+      this.resetPasswordForm.markAllAsTouched();
+    }
+  }
+
+  requestResendEmail(typeResendEmail: 'newAccountUnverified' | 'emailChangeUnverified' | 'resetPassword'): void {
+    if (typeResendEmail === 'newAccountUnverified') {
+      this.resetPasswordState = ResetPasswordState.RESEND_EMAIL_VERIFICATION;
+    } else if (typeResendEmail === 'emailChangeUnverified') {
+      this.resetPasswordState = ResetPasswordState.RESEND_EMAIL_CHANGE;
+    } else if (typeResendEmail === 'resetPassword') {
+      this.router.navigate(['/auth/forgot-password']);
+    }
+  }
+
+  goToLogin(): void {
+    this.router.navigate(['/auth/login']);
   }
 
   getHelpTextPassword(): string | null {
@@ -74,44 +138,31 @@ export class ResetPasswordComponent implements OnInit {
       : null;
   }
 
-  submitPasswordReset(): void {
-    if (this.resetPasswordForm.valid) {
-      const password = this.resetPasswordForm.get('password')?.value;
+  getResetPasswordFormData(): ResetPasswordRequest {
+    return {
+      token: this.token,
+      newPassword: this.resetPasswordForm.value.password as string,
+    };
+  }
 
-      // En una aplicación real, harías una llamada a la API para restablecer la contraseña con el token
-      console.log('Enviando nueva contraseña con token', {
-        token: this.token,
-        password,
-      });
+  showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
+    this.messageService.add({
+      severity,
+      icon: this.getToastIcon(severity),
+      summary,
+      detail,
+      life: 5000,
+    });
+  }
 
-      // Ejemplo de cómo podría ser la llamada a la API:
-      // this.authService.resetPassword(this.token, password).subscribe({
-      //   next: () => {
-      //     // Mostrar mensaje de éxito
-      //     this.router.navigate(['/auth/login']);
-      //   },
-      //   error: (error) => {
-      //     // Manejar error
-      //     console.error('Error al restablecer contraseña', error);
-      //   }
-      // });
-
-      // Por ahora, simplemente redireccionamos al login
-      this.router.navigate(['/auth/login']);
-    } else {
-      this.resetPasswordForm.markAllAsTouched();
+  private getToastIcon(severity: 'success' | 'error' | 'info'): string {
+    switch (severity) {
+      case 'success':
+        return 'pi pi-check-circle';
+      case 'error':
+        return 'pi pi-times-circle';
+      default:
+        return 'pi pi-info-circle';
     }
-  }
-
-  requestNewResetEmail(): void {
-    // En una aplicación real, harías una llamada a la API para solicitar un nuevo correo de restablecimiento
-    console.log('Solicitando nuevo correo para restablecer contraseña');
-
-    // Redireccionar a la página de forgot-password
-    this.router.navigate(['/auth/forgot-password']);
-  }
-
-  goToLogin(): void {
-    this.router.navigate(['/auth/login']);
   }
 }
