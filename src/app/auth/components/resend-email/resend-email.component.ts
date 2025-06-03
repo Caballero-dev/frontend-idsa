@@ -1,5 +1,5 @@
-import { Component, inject, Input } from '@angular/core';
-import { ResendEmailRequest, ResendEmailType } from '../../models/ResendEmail.model';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { ResendEmailRequest } from '../../models/ResendEmail.model';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -19,11 +19,11 @@ import { ApiError } from '../../../core/models/ApiError.model';
   providers: [MessageService],
 })
 export class ResendEmailComponent {
-  @Input({ required: true }) resendEmailType!: ResendEmailType;
   private fb: FormBuilder = inject(FormBuilder);
   private router: Router = inject(Router);
   private authService: AuthService = inject(AuthService);
   private messageService: MessageService = inject(MessageService);
+  @Output() backToLogin: EventEmitter<void> = new EventEmitter<void>();
   formUtils = FormUtils;
   loading = false;
   isEmailSent = false;
@@ -65,13 +65,13 @@ export class ResendEmailComponent {
   }
 
   goToLogin(): void {
+    this.backToLogin.emit();
     this.router.navigate(['/auth/login']);
   }
 
   getResendEmailFormData(): ResendEmailRequest {
     return {
       email: this.resendEmailForm.value.email as string,
-      // type: this.resendEmailType,
     };
   }
 

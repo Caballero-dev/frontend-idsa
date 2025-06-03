@@ -19,8 +19,7 @@ enum ResetPasswordState {
   ACCOUNT_INACTIVE = 'ACCOUNT_INACTIVE',
   NEW_ACCOUNT_UNVERIFIED = 'NEW_ACCOUNT_UNVERIFIED',
   EMAIL_CHANGE_UNVERIFIED = 'EMAIL_CHANGE_UNVERIFIED',
-  RESEND_EMAIL_VERIFICATION = 'RESEND_EMAIL_VERIFICATION',
-  RESEND_EMAIL_CHANGE = 'RESEND_EMAIL_CHANGE',
+  RESEND_EMAIL = 'RESEND_EMAIL',
 }
 
 @Component({
@@ -118,13 +117,11 @@ export class ResetPasswordComponent implements OnInit {
     }
   }
 
-  requestResendEmail(typeResendEmail: 'newAccountUnverified' | 'emailChangeUnverified' | 'resetPassword'): void {
-    if (typeResendEmail === 'newAccountUnverified') {
-      this.resetPasswordState = ResetPasswordState.RESEND_EMAIL_VERIFICATION;
-    } else if (typeResendEmail === 'emailChangeUnverified') {
-      this.resetPasswordState = ResetPasswordState.RESEND_EMAIL_CHANGE;
-    } else if (typeResendEmail === 'resetPassword') {
+  requestResendEmail(isForgotPassword: boolean): void {
+    if (isForgotPassword) {
       this.router.navigate(['/auth/forgot-password']);
+    } else {
+      this.resetPasswordState = ResetPasswordState.RESEND_EMAIL;
     }
   }
 

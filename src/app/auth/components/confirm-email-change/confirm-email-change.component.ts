@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
@@ -27,7 +27,7 @@ enum ConfirmEmailChangeState {
   styleUrl: './confirm-email-change.component.scss',
   providers: [MessageService],
 })
-export class ConfirmEmailChangeComponent implements OnInit, AfterViewInit {
+export class ConfirmEmailChangeComponent implements OnInit {
   private route: ActivatedRoute = inject(ActivatedRoute);
   private router: Router = inject(Router);
   private authService: AuthService = inject(AuthService);
@@ -40,9 +40,6 @@ export class ConfirmEmailChangeComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getTokenFromUrlParams();
-  }
-
-  ngAfterViewInit(): void {
     this.verifyEmailChange();
   }
 
