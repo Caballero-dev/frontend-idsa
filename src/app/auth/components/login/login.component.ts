@@ -10,11 +10,26 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ApiError } from '../../../core/models/ApiError.model';
 import { LoginRequest } from '../../models/Login.model';
+import { ResendEmailComponent } from '../resend-email/resend-email.component';
+
+enum LoginState {
+  INITIAL = 'INITIAL',
+  UNVERIFIED_EMAIL = 'UNVERIFIED_EMAIL',
+  RESEND_EMAIL = 'RESEND_EMAIL',
+}
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonModule, InputTextComponent, ToastModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    InputTextComponent,
+    ToastModule,
+    ResendEmailComponent,
+  ],
   providers: [MessageService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -25,6 +40,8 @@ export class LoginComponent implements OnInit {
   private authService: AuthService = inject(AuthService);
   private messageService: MessageService = inject(MessageService);
   formUtils = FormUtils;
+  loginState = LoginState.INITIAL;
+  LoginState = LoginState;
   loading = false;
 
   loginForm = this.fb.group({
@@ -66,7 +83,8 @@ export class LoginComponent implements OnInit {
         },
         error: (error: ApiError) => {
           if (error.message.includes('unverified_email')) {
-            this.showToast('error', 'Error', 'Correo electrónico no verificado');
+            // this.showToast('error', 'Error', 'Correo electrónico no verificado');
+            this.loginState = LoginState.UNVERIFIED_EMAIL;
           } else if (error.message.includes('account_inactive')) {
             this.showToast('error', 'Error', 'Cuenta de usuario deshabilitada');
           } else if (error.message.includes('registration_incomplete')) {
@@ -97,6 +115,14 @@ export class LoginComponent implements OnInit {
 
   forgotPassword(): void {
     this.router.navigate(['/auth/forgot-password']);
+  }
+
+  resendEmail(): void {
+    this.loginState = LoginState.RESEND_EMAIL;
+  }
+
+  resetLoginState(): void {
+    this.loginState = LoginState.INITIAL;
   }
 
   getLoginFormData(): LoginRequest {
