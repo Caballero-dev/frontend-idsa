@@ -17,30 +17,19 @@
             src="/img/icon.png"
             alt="Logo"
           />
-          @switch (verificationState) {
-            @case (VerificationState.VALID_TOKEN) {
-              <span class="mb-4 text-2xl font-semibold">Verifica tu correo electrónico</span>
-            }
-            @case (VerificationState.ALREADY_VERIFIED) {
-              <span class="mb-4 text-2xl font-semibold">Correo electrónico ya ha sido verificado</span>
-            }
-            @case (VerificationState.VERIFIED) {
-              <span class="mb-4 text-2xl font-semibold">Correo electrónico verificado correctamente</span>
-            }
-            @case (VerificationState.INVALID_TOKEN) {
-              <span class="mb-4 text-2xl font-semibold">Enlace expirado o no válido</span>
-            }
-          }
         </div>
 
-        @switch (verificationState) {
-          @case (VerificationState.VALID_TOKEN) {
-            <form
-              [formGroup]="verifyEmailForm"
-              (ngSubmit)="verifyEmailAndSetPassword()"
-            >
-              <div class="mb-8 md:w-[30rem]">
-                <div class="mb-4">
+        <div class="max-md:w-[20rem] md:w-[30rem]">
+          @switch (verificationState) {
+            @case (VerificationState.VALID_TOKEN) {
+              <div class="mb-8 text-center">
+                <span class="text-2xl font-semibold">Verifica tu correo electrónico</span>
+              </div>
+              <form
+                [formGroup]="verifyEmailForm"
+                (ngSubmit)="verifyEmailAndSetPassword()"
+              >
+                <div class="flex flex-col gap-4">
                   <idsa-input-text
                     type="password"
                     inputId="password"
@@ -56,9 +45,7 @@
                     variant="outlined"
                     size="large"
                   ></idsa-input-text>
-                </div>
 
-                <div>
                   <idsa-input-text
                     type="password"
                     inputId="confirmPassword"
@@ -77,29 +64,30 @@
                     [helpText]="getHelpTextPassword()"
                   ></idsa-input-text>
                 </div>
-              </div>
 
-              <div class="flex flex-col gap-4">
-                <p-button
-                  label="Verificar correo electrónico"
-                  styleClass="w-full"
-                  type="submit"
-                  rounded="true"
-                  [loading]="loading"
-                  [disabled]="loading"
-                ></p-button>
-              </div>
-            </form>
-          }
-          @case (VerificationState.ALREADY_VERIFIED) {
-            <div class="max-md:w-[20rem] md:w-[30rem]">
+                <div class="mt-8">
+                  <p-button
+                    label="Verificar correo electrónico"
+                    styleClass="w-full"
+                    type="submit"
+                    rounded="true"
+                    [loading]="loading"
+                    [disabled]="loading"
+                  ></p-button>
+                </div>
+              </form>
+            }
+            @case (VerificationState.ALREADY_VERIFIED) {
               <div class="mb-8 text-center">
-                <p class="mt-4">
+                <span class="text-2xl font-semibold">Correo electrónico ya ha sido verificado</span>
+              </div>
+              <div class="text-center">
+                <p>
                   Tu correo electrónico ya ha sido verificado anteriormente. Si deseas cambiar tu contraseña, por favor
                   utiliza la opción "¿Olvidaste tu contraseña?" en la página de inicio de sesión.
                 </p>
               </div>
-              <div class="flex flex-col gap-4">
+              <div class="mt-8">
                 <p-button
                   label="Volver al inicio de sesión"
                   styleClass="w-full"
@@ -109,17 +97,18 @@
                   (click)="goToLogin()"
                 ></p-button>
               </div>
-            </div>
-          }
-          @case (VerificationState.VERIFIED) {
-            <div class="max-md:w-[20rem] md:w-[30rem]">
+            }
+            @case (VerificationState.VERIFIED) {
               <div class="mb-8 text-center">
-                <p class="mt-4">
+                <span class="text-2xl font-semibold">Correo electrónico verificado correctamente</span>
+              </div>
+              <div class="text-center">
+                <p>
                   Tu correo electrónico ha sido verificado y tu contraseña ha sido establecida exitosamente. Ahora
                   puedes iniciar sesión con tu nueva contraseña.
                 </p>
               </div>
-              <div class="flex flex-col gap-4">
+              <div class="mt-8">
                 <p-button
                   label="Volver al inicio de sesión"
                   styleClass="w-full"
@@ -129,17 +118,18 @@
                   (click)="goToLogin()"
                 ></p-button>
               </div>
-            </div>
-          }
-          @case (VerificationState.INVALID_TOKEN) {
-            <div class="max-md:w-[20rem] md:w-[30rem]">
+            }
+            @case (VerificationState.INVALID_TOKEN) {
               <div class="mb-8 text-center">
-                <p class="mt-4">
+                <span class="text-2xl font-semibold">Enlace expirado o no válido</span>
+              </div>
+              <div class="text-center">
+                <p>
                   El enlace de verificación ha expirado o no es válido. Por favor, solicita un nuevo correo de
                   verificación.
                 </p>
               </div>
-              <div class="flex flex-col gap-4">
+              <div class="mt-8">
                 <p-button
                   label="Solicitar reenvío de correo"
                   styleClass="w-full"
@@ -148,12 +138,12 @@
                   (click)="requestResendEmail()"
                 ></p-button>
               </div>
-            </div>
+            }
+            @case (VerificationState.RESEND_EMAIL) {
+              <app-resend-email [resendEmailType]="'EMAIL_VERIFICATION'" />
+            }
           }
-          @case (VerificationState.RESEND_EMAIL) {
-            <app-resend-email [resendEmailType]="'EMAIL_VERIFICATION'" />
-          }
-        }
+        </div>
       </div>
     </div>
   </div>
