@@ -1,34 +1,34 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { ResendEmailRequest } from '../../models/ResendEmail.model';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { FormUtils } from '../../../utils/form.utils';
-import { CommonModule } from '@angular/common';
-import { InputTextComponent } from '../../../shared/components/input-text/input-text.component';
 import { AuthService } from '../../services/auth.service';
+import { FormUtils } from '../../../utils/form.utils';
 import { MessageService } from 'primeng/api';
-import { ForgotPasswordRequest } from '../../models/ForgotPassword.model';
-import { ApiError } from '../../../core/models/ApiError.model';
+import { CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
+import { InputTextComponent } from '../../../shared/components/input-text/input-text.component';
 import { ToastModule } from 'primeng/toast';
+import { ApiError } from '../../../core/models/ApiError.model';
 
 @Component({
-  selector: 'app-forgot-password',
+  selector: 'app-resend-email',
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonModule, InputTextComponent, ToastModule],
-  templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.scss',
+  templateUrl: './resend-email.component.html',
   providers: [MessageService],
 })
-export class ForgotPasswordComponent implements OnInit {
+export class ResendEmailComponent {
   private fb: FormBuilder = inject(FormBuilder);
   private router: Router = inject(Router);
   private authService: AuthService = inject(AuthService);
   private messageService: MessageService = inject(MessageService);
+  @Output() backToLogin: EventEmitter<void> = new EventEmitter<void>();
   formUtils = FormUtils;
   loading = false;
   isEmailSent = false;
 
-  forgotPasswordForm = this.fb.group({
+  resendEmailForm = this.fb.group({
     email: [
       '',
       [
@@ -40,14 +40,11 @@ export class ForgotPasswordComponent implements OnInit {
     ],
   });
 
-  ngOnInit(): void {}
-
-  requestPasswordReset(): void {
-    if (this.forgotPasswordForm.valid) {
+  resendEmail(): void {
+    if (this.resendEmailForm.valid) {
       this.loading = true;
-      const forgotPasswordRequest: ForgotPasswordRequest = this.getForgotPasswordFormData();
-
-      this.authService.requestPasswordReset(forgotPasswordRequest).subscribe({
+      const resendEmailRequest: ResendEmailRequest = this.getResendEmailFormData();
+      this.authService.resendEmail(resendEmailRequest).subscribe({
         next: () => {
           this.isEmailSent = true;
           this.loading = false;
@@ -63,17 +60,18 @@ export class ForgotPasswordComponent implements OnInit {
         },
       });
     } else {
-      this.forgotPasswordForm.markAllAsTouched();
+      this.resendEmailForm.markAllAsTouched();
     }
   }
 
-  cancel(): void {
+  goToLogin(): void {
+    this.backToLogin.emit();
     this.router.navigate(['/auth/login']);
   }
 
-  getForgotPasswordFormData(): ForgotPasswordRequest {
+  getResendEmailFormData(): ResendEmailRequest {
     return {
-      email: this.forgotPasswordForm.value.email as string,
+      email: this.resendEmailForm.value.email as string,
     };
   }
 

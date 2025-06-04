@@ -11,12 +11,12 @@ import { isPlatformBrowser } from '@angular/common';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
+  private platformId = inject(PLATFORM_ID);
+
   pieData: any;
   barData: any;
   pieOptions: any;
   barOptions: any;
-
-  platformId = inject(PLATFORM_ID);
 
   ngOnInit() {
     this.initCharts();

@@ -17,70 +17,99 @@
             src="/img/icon.png"
             alt="Logo"
           />
-          <div class="mb-4 text-3xl font-medium text-surface-900">Identifi Adicc</div>
-          <span class="font-medium text-muted-color">Inicia sesión para continuar</span>
         </div>
 
-        <div>
-          <form
-            [formGroup]="loginForm"
-            (ngSubmit)="login()"
-          >
-            <div class="mb-8 md:w-[30rem]">
-              <div class="mb-4">
-                <idsa-input-text
-                  type="email"
-                  inputId="email"
-                  label="Correo electrónico"
-                  labelPosition="top"
-                  [customFormControl]="loginForm.controls.email"
-                  placeholder="Ingresa tu correo electrónico"
-                  [required]="true"
-                  [disabled]="false"
-                  [readonly]="false"
-                  [maxLength]="100"
-                  [minLength]="6"
-                  variant="outlined"
-                  size="large"
-                ></idsa-input-text>
+        <div class="max-md:w-[20rem] md:w-[30rem]">
+          @switch (loginState) {
+            @case (LoginState.INITIAL) {
+              <div class="mb-8 text-center">
+                <span class="text-2xl font-semibold">Iniciar sesión</span>
               </div>
+              <form
+                [formGroup]="loginForm"
+                (ngSubmit)="login()"
+              >
+                <div class="flex flex-col gap-4">
+                  <idsa-input-text
+                    type="email"
+                    inputId="email"
+                    label="Correo electrónico"
+                    labelPosition="top"
+                    [customFormControl]="loginForm.controls.email"
+                    placeholder="Ingresa tu correo electrónico"
+                    [required]="true"
+                    [disabled]="false"
+                    [readonly]="false"
+                    [maxLength]="100"
+                    [minLength]="6"
+                    variant="outlined"
+                    size="large"
+                  ></idsa-input-text>
 
-              <div>
-                <idsa-input-text
-                  type="password"
-                  inputId="password"
-                  label="Contraseña"
-                  labelPosition="top"
-                  [customFormControl]="loginForm.controls.password"
-                  placeholder="Ingresa tu contraseña"
-                  [minLength]="8"
-                  [maxLength]="20"
-                  variant="outlined"
-                  size="large"
-                ></idsa-input-text>
+                  <idsa-input-text
+                    type="password"
+                    inputId="password"
+                    label="Contraseña"
+                    labelPosition="top"
+                    [customFormControl]="loginForm.controls.password"
+                    placeholder="Ingresa tu contraseña"
+                    [minLength]="8"
+                    [maxLength]="20"
+                    variant="outlined"
+                    size="large"
+                  ></idsa-input-text>
+                </div>
+
+                <div class="mt-8 flex flex-col gap-4">
+                  <p-button
+                    label="Iniciar sesión"
+                    styleClass="w-full"
+                    type="submit"
+                    rounded="true"
+                    [loading]="loading"
+                    [disabled]="loading"
+                  ></p-button>
+
+                  <p-button
+                    *ngIf="!loading"
+                    label="¿Olvidaste tu contraseña?"
+                    styleClass="w-full"
+                    type="button"
+                    rounded="true"
+                    variant="text"
+                    (click)="forgotPassword()"
+                  ></p-button>
+                </div>
+              </form>
+            }
+            @case (LoginState.UNVERIFIED_EMAIL) {
+              <div class="mb-8 text-center">
+                <span class="text-2xl font-semibold">Correo electrónico no verificado</span>
               </div>
-            </div>
-
-            <div class="flex flex-col gap-4">
-              <p-button
-                label="Iniciar sesión"
-                styleClass="w-full"
-                type="submit"
-                rounded="true"
-              ></p-button>
-
-              <p-button
-                label="¿Olvidaste tu contraseña?"
-                styleClass="w-full"
-                type="button"
-                rounded="true"
-                variant="text"
-                (click)="router.navigate(['/auth/forgot-password'])"
-              ></p-button>
-            </div>
-          </form>
+              <div class="text-center">
+                <p>
+                  Tu correo electrónico no ha sido verificado. Por favor, verifica tu correo electrónico para continuar.
+                </p>
+              </div>
+              <div class="mt-8">
+                <p-button
+                  label="Solicitar reenvío de correo"
+                  styleClass="w-full"
+                  type="button"
+                  rounded="true"
+                  variant="outlined"
+                  (click)="resendEmail()"
+                ></p-button>
+              </div>
+            }
+            @case (LoginState.RESEND_EMAIL) {
+              <app-resend-email (backToLogin)="resetLoginState()" />
+            }
+          }
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<p-toast />

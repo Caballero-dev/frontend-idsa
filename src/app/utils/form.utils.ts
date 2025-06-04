@@ -16,7 +16,7 @@ export class FormUtils {
     'Enter',
   ];
   static namePattern = '([a-zA-Z]+) ([a-zA-Z]+)';
-  static emailPattern: RegExp = /^[a-zA-Z0-9.]+@[a-z0-9.]+\.[a-z]{2,4}$/;
+  static emailPattern: RegExp = /^[a-zA-Z0-9.-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
   static passwordPattern: RegExp = /^[a-zA-Z0-9ñÑ!@#$%^&*()_+\-=\[\]{}|;:'"\\,.<>\/?~`]+$/;
   static onlyLettersPattern: RegExp = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
   static onlyPlainLettersPattern: RegExp = /^[a-zA-Z]+$/;

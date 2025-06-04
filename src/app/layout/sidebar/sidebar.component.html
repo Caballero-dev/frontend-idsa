@@ -1,22 +1,39 @@
 <div class="layout-sidebar">
   <ul class="layout-menu">
-    @for (item of menuItem; track $index) {
-      @if (item.separator) {
-        <li class="divider-list"></li>
+    @if (!profileService.isLoading()) {
+      @for (item of menuItem; track $index) {
+        @if (item.separator) {
+          <li class="divider-list"></li>
+        }
+        @if (item['Roles'].includes(profileService.profile()!.roleName)) {
+          <li>
+            @if (item.routerLink) {
+              <a
+                pRipple
+                [routerLink]="[item.routerLink]"
+                routerLinkActive="active-route"
+              >
+                <i
+                  class="layout-menuitem-icon"
+                  [ngClass]="[item.icon]"
+                ></i>
+                <span class="layout-menuitem-text">{{ item.label }}</span>
+              </a>
+            } @else if (item.onClick) {
+              <a
+                pRipple
+                (click)="item.onClick()"
+              >
+                <i
+                  class="layout-menuitem-icon"
+                  [ngClass]="[item.icon]"
+                ></i>
+                <span class="layout-menuitem-text">{{ item.label }}</span>
+              </a>
+            }
+          </li>
+        }
       }
-      <li>
-        <a
-          pRipple
-          [routerLink]="[item.routerLink]"
-          routerLinkActive="active-route"
-        >
-          <i
-            class="layout-menuitem-icon"
-            [ngClass]="[item.icon]"
-          ></i>
-          <span class="layout-menuitem-text">{{ item.label }}</span>
-        </a>
-      </li>
     }
   </ul>
 </div>
