@@ -1,14 +1,29 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormUtils } from '../../../../utils/form.utils';
-import { DialogModule } from 'primeng/dialog';
+
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxChangeEvent, CheckboxModule } from 'primeng/checkbox';
+import { DialogModule } from 'primeng/dialog';
 import { SelectChangeEvent } from 'primeng/select';
-import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
+import { ToastModule } from 'primeng/toast';
+
+import { RoleService } from '../../services/role.service';
+import { UserService } from '../../services/user.service';
+
+import { ApiError } from '../../../../core/models/ApiError.model';
+import { ApiResponse } from '../../../../core/models/ApiResponse.model';
+import { Role } from '../../../../core/models/Role.enum';
+
+import { DialogState } from '../../../../shared/types/dialog.types';
+import { FormUtils } from '../../../../utils/form.utils';
+
 import { InputSelectComponent } from '../../../../shared/components/input-select/input-select.component';
-import { EmitterDialogUser, Role, User, UserRequest } from '../../models/user.model';
+import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
+
+import { RoleResponse } from '../../models/Role.model';
+import { UserRequest, UserResponse } from '../../models/user.model';
 
 @Component({
   selector: 'users-form',
@@ -16,30 +31,34 @@ import { EmitterDialogUser, Role, User, UserRequest } from '../../models/user.mo
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    DialogModule,
     ButtonModule,
     CheckboxModule,
-    InputTextComponent,
+    DialogModule,
+    ToastModule,
     InputSelectComponent,
+    InputTextComponent,
   ],
   templateUrl: './users-form.component.html',
   styleUrl: './users-form.component.scss',
+  providers: [MessageService],
 })
-export class UsersFormComponent implements OnInit {
-  @Input() userDialog: boolean = false;
+export class UsersFormComponent implements OnInit, AfterViewInit {
+  @Input() isUserDialogVisible: boolean = false;
   @Input() isCreateUser: boolean = true;
-  @Input() selectedUser: User | null = null;
-  @Output() defaultChangeUserDialog: EventEmitter<EmitterDialogUser> = new EventEmitter<EmitterDialogUser>();
+  @Input() selectedUser: UserResponse | null = null;
+  @Output() userDialogChange: EventEmitter<DialogState<UserResponse>> = new EventEmitter<DialogState<UserResponse>>();
 
-  roles: Role[] = [
-    { roleId: 'ROLE_TUTOR', roleName: 'Tutor' },
-    { roleId: 'ROLE_ESTUDIANTE', roleName: 'Estudiante' },
-  ];
-  selectedRole: Role | null = null;
+  private fb: FormBuilder = inject(FormBuilder);
+  private roleService: RoleService = inject(RoleService);
+  private userService: UserService = inject(UserService);
+  private messageService: MessageService = inject(MessageService);
+
+  isLoading: boolean = false;
   isEditPassword: boolean = false;
+  selectedRole: RoleResponse | null = null;
+  roles!: RoleResponse[];
 
   formUtils = FormUtils;
-  private fb: FormBuilder = inject(FormBuilder);
 
   userForm = this.fb.group({
     email: [
@@ -60,7 +79,7 @@ export class UsersFormComponent implements OnInit {
         Validators.pattern(this.formUtils.onlyNumbersPattern),
       ],
     ],
-    role: new FormControl<Role | null>(null, [Validators.required]),
+    role: new FormControl<RoleResponse | null>(null, [Validators.required]),
     name: [
       '',
       [
@@ -88,15 +107,6 @@ export class UsersFormComponent implements OnInit {
         Validators.pattern(this.formUtils.onlyLettersPattern),
       ],
     ],
-    studentCode: [
-      { value: '', disabled: true },
-      [
-        Validators.required,
-        Validators.minLength(10),
-        Validators.maxLength(20),
-        Validators.pattern(this.formUtils.alphanumericPattern),
-      ],
-    ],
     employeeCode: [
       { value: '', disabled: true },
       [
@@ -117,13 +127,25 @@ export class UsersFormComponent implements OnInit {
     ],
   });
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.loadRoles();
+  }
+
+  ngAfterViewInit(): void {
     if (this.selectedUser) {
-      this.setValuesToForm(this.selectedUser);
+      this.setFormValues(this.selectedUser);
     }
   }
 
-  setValuesToForm(user: User) {
+  loadRoles(): void {
+    this.roleService.getRoles().subscribe({
+      next: (response: ApiResponse<RoleResponse[]>) => {
+        this.roles = response.data;
+      },
+    });
+  }
+
+  setFormValues(user: UserResponse): void {
     this.selectedRole = user.role;
     this.userForm.patchValue({
       email: user.email,
@@ -133,33 +155,23 @@ export class UsersFormComponent implements OnInit {
       firstSurname: user.firstSurname,
       secondSurname: user.secondSurname,
     });
-
-    if (user.role.roleId === 'ROLE_ESTUDIANTE') {
-      this.userForm.patchValue({ studentCode: user.key });
-      this.userForm.controls.studentCode.enable();
-    } else {
-      this.userForm.patchValue({ employeeCode: user.key });
+    if (user.role.roleId === Role.TUTOR) {
+      this.userForm.controls.employeeCode.setValue(user.key);
       this.userForm.controls.employeeCode.enable();
     }
   }
 
-  roleChange(event: SelectChangeEvent) {
+  onRoleChange(event: SelectChangeEvent): void {
     this.selectedRole = event.value;
-    const studentCodeControl = this.userForm.controls.studentCode;
     const employeeCodeControl = this.userForm.controls.employeeCode;
-    if (this.selectedRole?.roleId === 'ROLE_ESTUDIANTE') {
-      studentCodeControl.enable();
-      employeeCodeControl.disable();
-    } else if (this.selectedRole?.roleId === 'ROLE_TUTOR') {
+    if (this.selectedRole?.roleId === Role.TUTOR) {
       employeeCodeControl.enable();
-      studentCodeControl.disable();
     } else {
-      studentCodeControl.disable();
       employeeCodeControl.disable();
     }
   }
 
-  toggleEditPassword(event: CheckboxChangeEvent) {
+  onToggleEditPassword(event: CheckboxChangeEvent): void {
     this.isEditPassword = event.checked;
     const passwordControl = this.userForm.controls.password;
     if (this.isEditPassword) {
@@ -169,11 +181,11 @@ export class UsersFormComponent implements OnInit {
     }
   }
 
-  closeDialog() {
-    this.defaultChangeUserDialog.emit({ isOpen: false, message: 'close', user: null });
+  closeDialog(): void {
+    this.userDialogChange.emit({ isOpen: false, message: 'close', data: null });
   }
 
-  saveOrUpdateUser() {
+  saveOrUpdateUser(): void {
     if (this.isCreateUser) {
       this.saveUser();
     } else {
@@ -181,59 +193,121 @@ export class UsersFormComponent implements OnInit {
     }
   }
 
-  saveUser() {
+  saveUser(): void {
     if (this.userForm.valid) {
-      // esto se envia a la api
-      let userRequest: UserRequest = this.getUserData();
+      this.isLoading = true;
+      const userRequest: UserRequest = this.buildUserRequest();
 
-      // Simula la respuesta del servidor
-      let user: User = {
-        userId: Math.floor(Math.random() * 1000),
-        ...userRequest,
-        createdAt: new Date().toLocaleString(),
-        isActive: true,
-      };
-
-      this.defaultChangeUserDialog.emit({ isOpen: false, message: 'save', user: user });
+      this.userService.createUser(userRequest).subscribe({
+        next: (response: ApiResponse<UserResponse>) => {
+          response.data = {
+            ...response.data,
+            createdAt: new Date(response.data.createdAt).toLocaleString(),
+          };
+          this.userDialogChange.emit({ isOpen: false, message: 'save', data: response.data });
+          this.isLoading = false;
+        },
+        error: (error: ApiError) => {
+          if (error.statusCode === 409 && error.message.includes('email_already_exists')) {
+            this.userForm.controls.email.setErrors({ exists: { field: 'correo electrónico' } });
+          } else if (error.statusCode === 409 && error.message.includes('phone_number_already_exists')) {
+            this.userForm.controls.phoneNumber.setErrors({ exists: { field: 'número de teléfono' } });
+          } else if (error.statusCode === 409 && error.message.includes('key_employee_code_already_exists')) {
+            this.userForm.controls.employeeCode.setErrors({ exists: { field: 'código de empleado' } });
+          } else if (error.statusCode === 409 && error.message.includes('role_name_not_found')) {
+            this.userForm.controls.role.setErrors({ not_found: { field: 'rol' } });
+          } else if (error.statusCode === 409 && error.message.includes('role_denied')) {
+            this.userForm.controls.role.setErrors({ role_denied: null });
+          } else if (error.statusCode === 500 && error.message.includes('email_sending_failed')) {
+            this.showToast('error', 'Error', 'Fallo al enviar el correo de verificación, intente más tarde');
+          } else {
+            this.showToast('error', 'Error', 'Error al crear el usuario, intente más tarde');
+          }
+          this.isLoading = false;
+        },
+      });
     } else {
       this.userForm.markAllAsTouched();
     }
   }
 
-  editUser() {
+  editUser(): void {
     if (this.userForm.valid && this.selectedUser) {
-      // en la api pasar en la url isUpdatePassword si se actualiza la contraseña y id
-      let userRequest: UserRequest = this.getUserData();
-      if (this.isEditPassword) {
-        userRequest.password = this.userForm.value.password as string;
-      }
+      this.isLoading = true;
+      const userRequest: UserRequest = this.buildUserRequest();
 
-      // Simulación de respuesta
-      let user: User = {
-        userId: this.selectedUser.userId,
-        ...userRequest,
-        createdAt: this.selectedUser?.createdAt,
-        isActive: this.selectedUser.isActive,
-      };
-
-      this.defaultChangeUserDialog.emit({ isOpen: false, message: 'edit', user: user });
+      this.userService.updateUser(this.selectedUser.userId, this.isEditPassword, userRequest).subscribe({
+        next: (response: ApiResponse<UserResponse>) => {
+          response.data = {
+            ...response.data,
+            createdAt: new Date(response.data.createdAt).toLocaleString(),
+          };
+          this.userDialogChange.emit({ isOpen: false, message: 'edit', data: response.data });
+          this.isLoading = false;
+        },
+        error: (error: ApiError) => {
+          if (error.statusCode === 404 && error.message.includes('user_not_found')) {
+            this.showToast(
+              'warn',
+              'Usuario no encontrado',
+              'El usuario que intentó actualizar ya no existe en el sistema'
+            );
+          } else if (error.statusCode === 409 && error.message.includes('email_already_exists')) {
+            this.userForm.controls.email.setErrors({ exists: { field: 'correo electrónico' } });
+          } else if (error.statusCode === 409 && error.message.includes('phone_number_already_exists')) {
+            this.userForm.controls.phoneNumber.setErrors({ exists: { field: 'número de teléfono' } });
+          } else if (error.statusCode === 409 && error.message.includes('key_employee_code_already_exists')) {
+            this.userForm.controls.employeeCode.setErrors({ exists: { field: 'código de empleado' } });
+          } else if (error.statusCode === 409 && error.message.includes('role_name_not_found')) {
+            this.userForm.controls.role.setErrors({ not_found: { field: 'rol' } });
+          } else if (error.statusCode === 409 && error.message.includes('role_denied')) {
+            this.userForm.controls.role.setErrors({ role_denied: null });
+          } else if (error.statusCode === 500 && error.message.includes('email_sending_failed')) {
+            this.showToast('error', 'Error', 'Fallo al enviar el correo de verificación, intente más tarde');
+          } else {
+            this.showToast('error', 'Error', 'Error al actualizar el usuario, intente más tarde');
+          }
+          this.isLoading = false;
+        },
+      });
     } else {
       this.userForm.markAllAsTouched();
     }
   }
 
-  getUserData(): UserRequest {
+  buildUserRequest(): UserRequest {
     return {
-      role: this.selectedRole as Role,
+      role: this.selectedRole as RoleResponse,
       email: this.userForm.value.email as string,
       name: this.userForm.value.name as string,
       firstSurname: this.userForm.value.firstSurname as string,
       secondSurname: this.userForm.value.secondSurname as string,
       phoneNumber: this.userForm.value.phoneNumber as string,
-      key:
-        this.selectedRole?.roleId === 'ROLE_TUTOR'
-          ? (this.userForm.value.employeeCode as string)
-          : (this.userForm.value.studentCode as string),
+      key: this.userForm.value.employeeCode as string,
+      password: this.isEditPassword ? (this.userForm.value.password as string) : undefined,
     };
+  }
+
+  showToast(severity: 'success' | 'error' | 'warn' | 'info', summary: string, detail: string): void {
+    this.messageService.add({
+      severity,
+      icon: this.getToastIcon(severity),
+      summary,
+      detail,
+      life: 5000,
+    });
+  }
+
+  private getToastIcon(severity: 'success' | 'error' | 'warn' | 'info'): string {
+    switch (severity) {
+      case 'success':
+        return 'pi pi-check-circle';
+      case 'error':
+        return 'pi pi-times-circle';
+      case 'warn':
+        return 'pi pi-exclamation-triangle';
+      default:
+        return 'pi pi-info-circle';
+    }
   }
 }
