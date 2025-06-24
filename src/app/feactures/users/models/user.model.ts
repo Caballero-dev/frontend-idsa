@@ -1,4 +1,4 @@
-import { RoleResponse } from './Role.model';
+import { RoleResponse } from './role.model';
 
 export interface UserResponse {
   userId: number;

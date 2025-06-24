@@ -22,7 +22,7 @@ import { FormUtils } from '../../../../utils/form.utils';
 import { InputSelectComponent } from '../../../../shared/components/input-select/input-select.component';
 import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
 
-import { RoleResponse } from '../../models/Role.model';
+import { RoleResponse } from '../../models/role.model';
 import { UserRequest, UserResponse } from '../../models/user.model';
 
 @Component({
