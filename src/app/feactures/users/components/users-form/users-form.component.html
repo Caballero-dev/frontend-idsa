@@ -1,5 +1,5 @@
 <p-dialog
-  [(visible)]="userDialog"
+  [(visible)]="isUserDialogVisible"
   [modal]="true"
   [header]="isCreateUser ? 'Crear Usuario' : 'Editar Usuario'"
   closable="false"
@@ -44,7 +44,7 @@
             placeholder="Seleccione un rol"
             [showClear]="true"
             size="large"
-            (onChange)="roleChange($event)"
+            (onChange)="onRoleChange($event)"
           ></idsa-input-select>
         </div>
 
@@ -88,7 +88,7 @@
         <div class="w-full xs:w-2/4">
           <idsa-input-text
             type="onlyLetters"
-            inputId="paternalSurname"
+            inputId="firstSurname"
             label="Apellido paterno"
             labelFontSize="text-lg"
             labelPosition="top"
@@ -107,7 +107,7 @@
         <div class="w-full xs:w-2/4">
           <idsa-input-text
             type="onlyLetters"
-            inputId="maternalSurname"
+            inputId="secondSurname"
             label="Apellido materno"
             labelFontSize="text-lg"
             labelPosition="top"
@@ -122,25 +122,7 @@
           ></idsa-input-text>
         </div>
 
-        @if (selectedRole?.roleName === 'Estudiante') {
-          <div class="w-full xs:w-2/4">
-            <idsa-input-text
-              type="alphanumericUpperCase"
-              inputId="studentCode"
-              label="Matrícula"
-              labelFontSize="text-lg"
-              labelPosition="top"
-              [customFormControl]="userForm.controls.studentCode"
-              placeholder="Ingresa la matrícula"
-              [required]="true"
-              [readonly]="false"
-              [maxLength]="20"
-              [minLength]="10"
-              variant="outlined"
-              size="large"
-            ></idsa-input-text>
-          </div>
-        } @else if (selectedRole?.roleName === 'Tutor') {
+        @if (selectedRole?.roleName === 'Tutor') {
           <div class="w-full xs:w-2/4">
             <idsa-input-text
               type="alphanumericUpperCase"
@@ -161,7 +143,7 @@
         }
       </div>
 
-      @if (!isCreateUser) {
+      @if (!isCreateUser && selectedUser?.isVerifiedEmail) {
         <div class="flex flex-col gap-2">
           <div class="w-full">
             <idsa-input-text
@@ -182,28 +164,35 @@
           <div class="w-full">
             <p-checkbox
               class="mr-2"
-              id="activePassword"
+              id="editPassword"
               [binary]="true"
-              (onChange)="toggleEditPassword($event)"
+              (onChange)="onToggleEditPassword($event)"
             />
-            <label for="activePassword">Actualizar Contraseña</label>
+            <label for="editPassword">Actualizar Contraseña</label>
           </div>
         </div>
       }
 
       <div class="mt-4 flex justify-end gap-2">
         <p-button
+          *ngIf="!isLoading"
           label="Cancelar"
+          type="button"
           icon="pi pi-times"
-          text
+          severity="danger"
+          variant="outlined"
           (click)="closeDialog()"
         />
         <p-button
           [label]="isCreateUser ? 'Crear' : 'Actualizar'"
           type="submit"
           icon="pi pi-check"
+          [loading]="isLoading"
+          [disabled]="isLoading"
         />
       </div>
     </div>
   </form>
 </p-dialog>
+
+<p-toast />
