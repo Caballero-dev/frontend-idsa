@@ -6,7 +6,7 @@ import {
 } from '../../models/group-configuration.model';
 import { FormUtils } from '../../../../utils/form.utils';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Tutor } from '../../../tutors/models/tutors.model';
+import { TutorResponse as Tutor } from '../../../tutors/models/tutor.model';
 import { Campus } from '../../models/campus.model';
 import { Specialty } from '../../models/specialty.model';
 import { Modality } from '../../models/modality.model';

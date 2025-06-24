@@ -1,51 +1,55 @@
 <p-toolbar styleClass="mb-6">
   <ng-template #start>
-    <p-button
-      label="Crear"
-      icon="pi pi-plus"
-      severity="secondary"
-      class="mr-2"
-      (onClick)="createTutor()"
-    />
-    <p-button
-      severity="secondary"
-      label="Eliminar"
-      icon="pi pi-trash"
-      outlined
-      (onClick)="deleteSelectedTutors()"
-      [disabled]="!selectedTutors || !selectedTutors.length"
-    />
+    <span class="text-2xl font-bold">Administrar tutores</span>
+  </ng-template>
+  <ng-template #end>
+    <div class="flex gap-2">
+      <p-button
+        label="Actualizar Datos"
+        icon="pi pi-refresh"
+        [outlined]="true"
+        (click)="refreshTableData()"
+      />
+      <p-button
+        label="Nuevo Tutor"
+        icon="pi pi-plus"
+        severity="primary"
+        (onClick)="openCreateTutorDialog()"
+      />
+    </div>
   </ng-template>
 </p-toolbar>
 
 <p-table
   #dt
   [value]="tutors"
-  [rows]="15"
+  [columns]="cols"
+  [lazy]="true"
+  [loading]="isLoading"
+  [rows]="rows"
+  [first]="first"
+  [totalRecords]="totalRecords"
+  [paginator]="true"
+  [rowsPerPageOptions]="[20, 40, 60]"
   [scrollable]="true"
-  scrollHeight="500px"
+  scrollHeight="600px"
   [resizableColumns]="true"
   [showGridlines]="true"
-  [loading]="isLoading"
-  [columns]="cols"
-  [paginator]="true"
+  [rowHover]="true"
   [globalFilterFields]="tableUtils.getGlobalFilterFields(cols)"
   [tableStyle]="{ 'min-width': '75rem' }"
-  [(selection)]="selectedTutors"
-  [rowHover]="true"
   dataKey="tutorId"
   currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} tutores"
   [showCurrentPageReport]="true"
-  [rowsPerPageOptions]="[15, 30, 45]"
+  (onLazyLoad)="loadTutors($event)"
 >
   <ng-template #caption>
-    <h5 class="mb-2">Administrar tutores</h5>
     <div class="flex flex-col items-center justify-between xs:flex-row">
       <p-button
         label="Limpiar"
         [outlined]="true"
         icon="pi pi-filter-slash"
-        (click)="dt.reset(); searchTutorValue = ''; selectedTutors = []"
+        (click)="dt.reset(); searchTutorValue = ''"
       />
       <div class="mb-3 mt-3 xs:mb-0 xs:mt-0">
         <p-inputgroup>
@@ -68,9 +72,6 @@
     let-columns
   >
     <tr>
-      <th style="width: 3rem">
-        <p-tableHeaderCheckbox />
-      </th>
       @for (col of columns; track $index) {
         <th
           [pSortableColumn]="col.sortable ? col.field : null"
@@ -91,51 +92,55 @@
     let-columns="columns"
   >
     <tr>
-      <td style="width: 3rem">
-        <p-tableCheckbox [value]="tutor" />
-      </td>
       @for (col of columns; track $index) {
         <td>{{ tableUtils.getNestedValue(tutor, col.field) }}</td>
       }
-      <td style="text-align: center; min-width: 10rem">
-        <p-button
-          icon="pi pi-pencil"
-          class="mr-3"
-          [rounded]="true"
-          [outlined]="true"
-          (click)="editTutor(tutor)"
-        />
-        <p-button
-          icon="pi pi-trash"
-          class="ml-3"
-          severity="danger"
-          [rounded]="true"
-          [outlined]="true"
-          (click)="deleteTutor(tutor)"
-        />
+      <td>
+        <div class="flex items-center justify-around">
+          <p-button
+            [pTooltip]="'Editar tutor'"
+            tooltipPosition="top"
+            icon="pi pi-pencil"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="openEditTutorDialog(tutor)"
+          />
+          <p-button
+            [pTooltip]="'Eliminar tutor'"
+            tooltipPosition="top"
+            icon="pi pi-trash"
+            severity="danger"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="deleteTutor(tutor)"
+          />
+        </div>
       </td>
     </tr>
   </ng-template>
   <ng-template #emptymessage>
     <tr>
-      <td [attr.colspan]="cols.length + 2">No se encontraron tutores</td>
+      <td [attr.colspan]="cols.length + 1">No se encontraron tutores</td>
     </tr>
   </ng-template>
-  <ng-template #loadingbody>
+  <ng-template
+    *ngIf="!tutors"
+    #loadingbody
+  >
     <tr>
-      <td [attr.colspan]="cols.length + 2">Cargando datos de tutores. Por favor espere.</td>
+      <td [attr.colspan]="cols.length + 1">Cargando datos de tutores.</td>
     </tr>
   </ng-template>
 </p-table>
 
-@if (tutorDialogVisible) {
+@if (isTutorDialogVisible) {
   <tutors-form
     [isCreateTutor]="isCreateTutor"
     [selectedTutor]="selectedTutor"
-    [tutorDialog]="tutorDialogVisible"
-    (defaultChangeTutorDialog)="changeTutorDialog($event)"
+    [isTutorDialogVisible]="isTutorDialogVisible"
+    (tutorDialogChange)="onTutorDialogChange($event)"
   ></tutors-form>
 }
 
 <p-toast />
-<p-confirmdialog [style]="{ width: '450px' }" />
+<p-confirmDialog [style]="{ width: '450px' }" />

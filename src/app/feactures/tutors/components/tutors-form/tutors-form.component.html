@@ -1,5 +1,5 @@
 <p-dialog
-  [(visible)]="tutorDialog"
+  [(visible)]="isTutorDialogVisible"
   [modal]="true"
   [header]="isCreateTutor ? 'Crear Tutor' : 'Editar Tutor'"
   closable="false"
@@ -123,17 +123,24 @@
 
       <div class="mt-4 flex justify-end gap-2">
         <p-button
+          *ngIf="!isLoading"
           label="Cancelar"
+          type="button"
           icon="pi pi-times"
-          text
+          severity="danger"
+          variant="outlined"
           (click)="closeDialog()"
         />
         <p-button
           [label]="isCreateTutor ? 'Crear' : 'Actualizar'"
           type="submit"
           icon="pi pi-check"
+          [loading]="isLoading"
+          [disabled]="isLoading"
         />
       </div>
     </div>
   </form>
 </p-dialog>
+
+<p-toast />
