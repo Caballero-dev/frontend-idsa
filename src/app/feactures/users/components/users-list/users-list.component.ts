@@ -61,6 +61,7 @@ export class UsersListComponent implements OnInit {
   isLoading: boolean = true;
   isCreateUser: boolean = true;
   isUserDialogVisible: boolean = false;
+
   searchUserValue: string = '';
 
   cols: Column[] = [
@@ -84,6 +85,24 @@ export class UsersListComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  openCreateUserDialog(): void {
+    this.selectedUser = null;
+    this.isCreateUser = true;
+    this.isUserDialogVisible = true;
+  }
+
+  openEditUserDialog(user: UserResponse): void {
+    this.selectedUser = user;
+    this.isCreateUser = false;
+    this.isUserDialogVisible = true;
+  }
+
+  refreshTableData(): void {
+    this.first = 0;
+    this.userCache.clear();
+    this.loadUsers({ first: this.first, rows: this.rows });
+  }
+
   loadUsers(event: TableLazyLoadEvent): void {
     this.isLoading = true;
     this.first = event.first ?? 0;
@@ -93,7 +112,7 @@ export class UsersListComponent implements OnInit {
       this.userCache.clear();
     }
 
-    const page = this.getPage();
+    const page = this.getCurrentPageIndex();
     if (this.userCache.has(page)) {
       this.users = this.userCache.get(page)!;
       this.isLoading = false;
@@ -119,18 +138,6 @@ export class UsersListComponent implements OnInit {
         this.isLoading = false;
       },
     });
-  }
-
-  createUser(): void {
-    this.selectedUser = null;
-    this.isCreateUser = true;
-    this.isUserDialogVisible = true;
-  }
-
-  editUser(user: UserResponse): void {
-    this.selectedUser = user;
-    this.isCreateUser = false;
-    this.isUserDialogVisible = true;
   }
 
   updateStatus(userId: number, status: boolean): void {
@@ -220,12 +227,6 @@ export class UsersListComponent implements OnInit {
     });
   }
 
-  refreshTableData(): void {
-    this.first = 0;
-    this.userCache.clear();
-    this.loadUsers({ first: this.first, rows: this.rows });
-  }
-
   resendEmail(email: string): void {
     this.showToast('info', 'Enviando correo', 'Se está enviando el correo de verificación a ' + email);
     this.authService.resendEmail({ email }).subscribe({
@@ -244,27 +245,22 @@ export class UsersListComponent implements OnInit {
     });
   }
 
-  changeUserDialog(event: DialogState<UserResponse>): void {
+  onUserDialogChange(event: DialogState<UserResponse>): void {
     this.isUserDialogVisible = event.isOpen;
-    if (event.message === 'save') {
-      this.showToast('success', 'Usuario guardado', 'El usuario ha sido guardado correctamente');
-      this.totalRecords++;
-      if (this.users.length < this.rows) {
-        this.users = [...this.users, event.data!];
-        this.userCache.set(this.getPage(), this.users);
-      } else {
-        this.userCache.clear();
-      }
-    } else if (event.message === 'edit') {
-      this.showToast('success', 'Usuario actualizado', 'El usuario ha sido actualizado correctamente');
-      this.users = this.users.map((usr: UserResponse) => (usr.userId === event.data!.userId ? event.data! : usr));
-      this.userCache.set(this.getPage(), this.users);
-    } else if (event.message === 'close') {
-      this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
+    switch (event.message) {
+      case 'save':
+        this.handleUserSaved(event.data!);
+        break;
+      case 'edit':
+        this.handleUserUpdated(event.data!);
+        break;
+      case 'close':
+        this.handleDialogClose();
+        break;
     }
   }
 
-  getPage(): number {
+  getCurrentPageIndex(): number {
     return this.first / this.rows;
   }
 
@@ -276,6 +272,27 @@ export class UsersListComponent implements OnInit {
       detail,
       life: 5000,
     });
+  }
+
+  private handleUserSaved(userData: UserResponse): void {
+    this.showToast('success', 'Usuario guardado', 'El usuario ha sido guardado correctamente');
+    this.totalRecords++;
+    if (this.users.length < this.rows) {
+      this.users = [...this.users, userData];
+      this.userCache.set(this.getCurrentPageIndex(), this.users);
+    } else {
+      this.userCache.clear();
+    }
+  }
+
+  private handleUserUpdated(userData: UserResponse): void {
+    this.showToast('success', 'Usuario actualizado', 'El usuario ha sido actualizado correctamente');
+    this.users = this.users.map((usr: UserResponse) => (usr.userId === userData.userId ? userData : usr));
+    this.userCache.set(this.getCurrentPageIndex(), this.users);
+  }
+
+  private handleDialogClose(): void {
+    this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
   }
 
   private getToastIcon(severity: 'success' | 'error' | 'warn' | 'info'): string {

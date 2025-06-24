@@ -5,16 +5,16 @@
   <ng-template #end>
     <div class="flex gap-2">
       <p-button
-        label="Refrescar"
+        label="Actualizar Datos"
         icon="pi pi-refresh"
         [outlined]="true"
         (click)="refreshTableData()"
       />
       <p-button
-        label="Crear"
+        label="Nuevo Usuario"
         icon="pi pi-plus"
         severity="primary"
-        (onClick)="createUser()"
+        (onClick)="openCreateUserDialog()"
       />
     </div>
   </ng-template>
@@ -148,7 +148,7 @@
             icon="pi pi-pencil"
             [rounded]="true"
             [outlined]="true"
-            (click)="editUser(user)"
+            (click)="openEditUserDialog(user)"
           />
           <p-button
             [pTooltip]="'Eliminar usuario'"
@@ -183,7 +183,7 @@
     [isCreateUser]="isCreateUser"
     [selectedUser]="selectedUser"
     [isUserDialogVisible]="isUserDialogVisible"
-    (userDialogChange)="changeUserDialog($event)"
+    (userDialogChange)="onUserDialogChange($event)"
   ></users-form>
 }
 

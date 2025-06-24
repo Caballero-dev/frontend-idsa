@@ -55,9 +55,9 @@ export class UsersFormComponent implements OnInit, AfterViewInit {
 
   isLoading: boolean = false;
   isEditPassword: boolean = false;
+
   selectedRole: RoleResponse | null = null;
   roles!: RoleResponse[];
-
   formUtils = FormUtils;
 
   userForm = this.fb.group({
@@ -187,13 +187,13 @@ export class UsersFormComponent implements OnInit, AfterViewInit {
 
   saveOrUpdateUser(): void {
     if (this.isCreateUser) {
-      this.saveUser();
+      this.createUser();
     } else {
-      this.editUser();
+      this.updateUser();
     }
   }
 
-  saveUser(): void {
+  createUser(): void {
     if (this.userForm.valid) {
       this.isLoading = true;
       const userRequest: UserRequest = this.buildUserRequest();
@@ -231,7 +231,7 @@ export class UsersFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-  editUser(): void {
+  updateUser(): void {
     if (this.userForm.valid && this.selectedUser) {
       this.isLoading = true;
       const userRequest: UserRequest = this.buildUserRequest();
@@ -276,15 +276,16 @@ export class UsersFormComponent implements OnInit, AfterViewInit {
   }
 
   buildUserRequest(): UserRequest {
+    const formValues = this.userForm.value;
     return {
-      role: this.selectedRole as RoleResponse,
-      email: this.userForm.value.email as string,
-      name: this.userForm.value.name as string,
-      firstSurname: this.userForm.value.firstSurname as string,
-      secondSurname: this.userForm.value.secondSurname as string,
-      phoneNumber: this.userForm.value.phoneNumber as string,
-      key: this.userForm.value.employeeCode as string,
-      password: this.isEditPassword ? (this.userForm.value.password as string) : undefined,
+      role: this.selectedRole!,
+      email: formValues.email!,
+      name: formValues.name!,
+      firstSurname: formValues.firstSurname!,
+      secondSurname: formValues.secondSurname!,
+      phoneNumber: formValues.phoneNumber!,
+      key: formValues.employeeCode!,
+      password: this.isEditPassword ? formValues.password! : undefined,
     };
   }
 
