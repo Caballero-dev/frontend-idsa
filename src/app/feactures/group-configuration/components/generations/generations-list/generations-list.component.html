@@ -32,7 +32,7 @@
   [paginator]="true"
   [rowsPerPageOptions]="[20, 40, 60]"
   [scrollable]="true"
-  scrollHeight="600px"
+  scrollHeight="400px"
   [resizableColumns]="true"
   [showGridlines]="true"
   [rowHover]="true"
@@ -93,7 +93,7 @@
   >
     <tr>
       @for (col of columns; track $index) {
-        <td>{{ tableUtils.getNestedValue(generation, col.field) }}</td>
+        <td>{{ tableUtils.getNestedValue(generation, col.field) | date: 'yyyy-MM-dd' }}</td>
       }
       <td style="width: 10rem">
         <div class="flex items-center justify-around">

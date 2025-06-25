@@ -128,7 +128,7 @@ export class GenerationsListComponent implements OnInit {
   deleteGeneration(generation: GenerationResponse): void {
     this.confirmationService.confirm({
       message: `¿Está seguro que quieres eliminar la generación seleccionada?<br>
-        <br><b>Año de inicio:</b> ${generation.yearStart}<br><b>Año de fin:</b> ${generation.yearEnd}`,
+        <br><b>Año de inicio:</b> ${new Date(generation.yearStart).toLocaleDateString('en-CA')}<br><b>Año de fin:</b> ${new Date(generation.yearEnd).toLocaleDateString('en-CA')}`,
       header: 'Confirmar',
       closable: false,
       closeOnEscape: false,

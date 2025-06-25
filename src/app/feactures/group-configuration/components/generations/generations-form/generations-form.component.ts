@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { formatDate } from '@angular/common';
 
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -156,8 +155,8 @@ export class GenerationsFormComponent implements OnInit, AfterViewInit {
   buildGenerationRequest(): GenerationRequest {
     const formValues = this.generationForm.value;
     return {
-      yearStart: formatDate(formValues.startYear!, 'yyyy-MM-dd', 'en'),
-      yearEnd: formatDate(formValues.endYear!, 'yyyy-MM-dd', 'en'),
+      yearStart: formValues.startYear!.toISOString(),
+      yearEnd: formValues.endYear!.toISOString(),
     };
   }
 
