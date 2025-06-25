@@ -29,8 +29,8 @@ export class CampusService {
     return this.http.put<ApiResponse<CampusResponse>>(`${this.API_URL}/${campusId}`, campus);
   }
 
-  deleteCampus(campusId: number): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(`${this.API_URL}/${campusId}`);
+  deleteCampus(campusId: number): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/${campusId}`);
   }
 }
 
