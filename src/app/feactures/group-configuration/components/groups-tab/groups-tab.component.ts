@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TabsModule } from 'primeng/tabs';
+import { TabViewModule } from 'primeng/tabview';
 import { ModalitiesComponent } from '../modalities/modalities.component';
 import { SpecialtiesComponent } from '../specialties/specialties.component';
 import { GradesComponent } from '../grades/grades.component';
@@ -13,7 +13,7 @@ import { CampusesListComponent } from '../campuses/campuses-list/campuses-list.c
   selector: 'app-groups-tab',
   standalone: true,
   imports: [
-    TabsModule,
+    TabViewModule,
     CampusesListComponent,
     ModalitiesComponent,
     SpecialtiesComponent,
