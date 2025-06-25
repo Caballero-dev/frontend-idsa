@@ -12,7 +12,7 @@ import { Specialty } from '../../models/specialty.model';
 import { Modality } from '../../models/modality.model';
 import { Grade } from '../../models/grade.model';
 import { Group } from '../../models/group.model';
-import { Generation } from '../../models/generation.model';
+import { GenerationResponse as Generation } from '../../models/generation.model';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputSelectComponent } from '../../../../shared/components/input-select/input-select.component';

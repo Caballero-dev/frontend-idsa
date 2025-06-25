@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Generation } from '../models/generation.model';
+import { GenerationResponse as Generation } from '../models/generation.model';
 
 @Injectable({
   providedIn: 'root',

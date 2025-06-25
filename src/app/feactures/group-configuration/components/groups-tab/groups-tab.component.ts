@@ -4,7 +4,7 @@ import { ModalitiesComponent } from '../modalities/modalities.component';
 import { SpecialtiesComponent } from '../specialties/specialties.component';
 import { GradesComponent } from '../grades/grades.component';
 import { GroupsComponent } from '../groups/groups.component';
-import { GenerationsComponent } from '../generations/generations.component';
+import { GenerationsListComponent } from '../generations/generations-list/generations-list.component';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CampusesListComponent } from '../campuses/campuses-list/campuses-list.component';
@@ -19,7 +19,7 @@ import { CampusesListComponent } from '../campuses/campuses-list/campuses-list.c
     SpecialtiesComponent,
     GradesComponent,
     GroupsComponent,
-    GenerationsComponent,
+    GenerationsListComponent,
     RouterLink,
     ButtonModule,
   ],

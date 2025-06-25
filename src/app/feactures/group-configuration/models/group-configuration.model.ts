@@ -4,7 +4,7 @@ import { Specialty } from './specialty.model';
 import { Modality } from './modality.model';
 import { Grade } from './grade.model';
 import { Group } from './group.model';
-import { Generation } from './generation.model';
+import { GenerationResponse as Generation } from './generation.model';
 
 export interface GroupConfiguration {
   groupConfigurationId: number;
