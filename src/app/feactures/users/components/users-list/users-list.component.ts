@@ -121,10 +121,7 @@ export class UsersListComponent implements OnInit {
 
     this.userService.getAllUsers(page, this.rows).subscribe({
       next: (response: ApiResponse<UserResponse[]>) => {
-        this.users = response.data.map((user: UserResponse) => ({
-          ...user,
-          createdAt: new Date(user.createdAt).toLocaleString(),
-        }));
+        this.users = response.data;
         this.totalRecords = response.pageInfo!.totalElements;
         this.userCache.set(page, this.users);
         this.isLoading = false;

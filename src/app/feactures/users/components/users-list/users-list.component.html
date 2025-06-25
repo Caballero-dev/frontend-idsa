@@ -135,6 +135,8 @@
                 />
               }
             </div>
+          } @else if (col.field === 'createdAt') {
+            {{ tableUtils.getNestedValue(user, col.field) | date: 'dd-MM-yyyy hh:mm:ss a  ' }}
           } @else {
             {{ tableUtils.getNestedValue(user, col.field) }}
           }
