@@ -46,6 +46,15 @@ export class FormUtils {
         case 'email':
           return `El valor ingresado no es un correo electrónico`;
 
+        case 'exists':
+          return `El ${errors['exists'].field} ya existe`;
+
+        case 'not_found':
+          return `El ${errors['not_found'].field} no existe`;
+
+        case 'role_denied':
+          return `No tienes permisos para crear un usuario con este rol`;
+
         case 'pattern':
           if (errors['pattern'].requiredPattern === FormUtils.emailPattern.toString()) {
             return 'El valor ingresado no luce como un correo electrónico';

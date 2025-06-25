@@ -1,4 +1,4 @@
-export interface Tutor {
+export interface TutorResponse {
   tutorId: number;
   name: string;
   firstSurname: string;
@@ -15,10 +15,4 @@ export interface TutorRequest {
   employeeCode: string;
   phoneNumber: string;
   email: string;
-}
-
-export interface EmitterDialogTutor {
-  isOpen: boolean;
-  message: 'save' | 'edit' | 'close';
-  tutor: Tutor | null;
 }

@@ -1,51 +1,55 @@
 <p-toolbar styleClass="mb-6">
   <ng-template #start>
-    <p-button
-      label="Crear"
-      icon="pi pi-plus"
-      severity="secondary"
-      class="mr-2"
-      (onClick)="createUser()"
-    />
-    <p-button
-      severity="secondary"
-      label="Eliminar"
-      icon="pi pi-trash"
-      outlined
-      (onClick)="deleteSelectedUsers()"
-      [disabled]="!selectedUsers || !selectedUsers.length"
-    />
+    <span class="text-2xl font-bold">Administrar usuarios</span>
+  </ng-template>
+  <ng-template #end>
+    <div class="flex gap-2">
+      <p-button
+        label="Actualizar Datos"
+        icon="pi pi-refresh"
+        [outlined]="true"
+        (click)="refreshTableData()"
+      />
+      <p-button
+        label="Nuevo Usuario"
+        icon="pi pi-plus"
+        severity="primary"
+        (onClick)="openCreateUserDialog()"
+      />
+    </div>
   </ng-template>
 </p-toolbar>
 
 <p-table
   #dt
   [value]="users"
-  [rows]="15"
+  [columns]="cols"
+  [lazy]="true"
+  [loading]="isLoading"
+  [rows]="rows"
+  [first]="first"
+  [totalRecords]="totalRecords"
+  [paginator]="true"
+  [rowsPerPageOptions]="[20, 40, 60]"
   [scrollable]="true"
-  scrollHeight="500px"
+  scrollHeight="600px"
   [resizableColumns]="true"
   [showGridlines]="true"
-  [loading]="isLoading"
-  [columns]="cols"
-  [paginator]="true"
+  [rowHover]="true"
   [globalFilterFields]="tableUtils.getGlobalFilterFields(cols)"
   [tableStyle]="{ 'min-width': '75rem' }"
-  [(selection)]="selectedUsers"
-  [rowHover]="true"
   dataKey="userId"
-  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
+  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
   [showCurrentPageReport]="true"
-  [rowsPerPageOptions]="[15, 30, 45]"
+  (onLazyLoad)="loadUsers($event)"
 >
   <ng-template #caption>
-    <h5 class="mb-2">Administrar usuarios</h5>
     <div class="flex flex-col items-center justify-between xs:flex-row">
       <p-button
         label="Limpiar"
         [outlined]="true"
         icon="pi pi-filter-slash"
-        (click)="dt.reset(); searchUserValue = ''; selectedUsers = []"
+        (click)="dt.reset(); searchUserValue = ''"
       />
       <div class="mb-3 mt-3 xs:mb-0 xs:mt-0">
         <p-inputgroup>
@@ -68,9 +72,6 @@
     let-columns
   >
     <tr>
-      <th style="width: 3rem">
-        <p-tableHeaderCheckbox />
-      </th>
       @for (col of columns; track $index) {
         <th
           [pSortableColumn]="col.sortable ? col.field : null"
@@ -91,49 +92,98 @@
     let-columns="columns"
   >
     <tr>
-      <td style="width: 3rem">
-        <p-tableCheckbox [value]="user" />
-      </td>
       @for (col of columns; track $index) {
-        <td>{{ tableUtils.getNestedValue(user, col.field) }}</td>
+        <td>
+          @if (col.field === 'isActive') {
+            <div class="flex items-center justify-center">
+              <p-toggleswitch
+                [(ngModel)]="user.isActive"
+                [disabled]="!user.isActive && !user.isVerifiedEmail"
+                [pTooltip]="
+                  user.isActive
+                    ? 'Desactivar usuario'
+                    : user.isVerifiedEmail
+                      ? 'Activar usuario'
+                      : 'Usuario no verificado'
+                "
+                tooltipPosition="top"
+                (onChange)="updateStatus(user.userId, $event.checked)"
+              >
+                <ng-template
+                  #handle
+                  let-checked="checked"
+                >
+                  <i [ngClass]="['!text-xs', 'pi', checked ? 'pi-check' : 'pi-times']"></i>
+                </ng-template>
+              </p-toggleswitch>
+            </div>
+          } @else if (col.field === 'isVerifiedEmail') {
+            <div class="flex items-center justify-center">
+              <p-tag
+                [value]="user.isVerifiedEmail ? 'Verificado' : 'No Verificado'"
+                [severity]="user.isVerifiedEmail ? 'success' : 'warn'"
+              />
+              @if (!user.isVerifiedEmail) {
+                <p-button
+                  pTooltip="Reenviar correo de verificación"
+                  tooltipPosition="top"
+                  class="ml-4"
+                  icon="pi pi-envelope"
+                  [rounded]="true"
+                  [outlined]="true"
+                  (click)="resendEmail(user.email)"
+                />
+              }
+            </div>
+          } @else {
+            {{ tableUtils.getNestedValue(user, col.field) }}
+          }
+        </td>
       }
-      <td style="text-align: center; min-width: 10rem">
-        <p-button
-          icon="pi pi-pencil"
-          class="mr-3"
-          [rounded]="true"
-          [outlined]="true"
-          (click)="editUser(user)"
-        />
-        <p-button
-          icon="pi pi-trash"
-          class="ml-3"
-          severity="danger"
-          [rounded]="true"
-          [outlined]="true"
-          (click)="deleteUser(user)"
-        />
+      <td>
+        <div class="flex items-center justify-around">
+          <p-button
+            [pTooltip]="'Editar usuario'"
+            tooltipPosition="top"
+            icon="pi pi-pencil"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="openEditUserDialog(user)"
+          />
+          <p-button
+            [pTooltip]="'Eliminar usuario'"
+            tooltipPosition="top"
+            icon="pi pi-trash"
+            severity="danger"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="deleteUser(user)"
+          />
+        </div>
       </td>
     </tr>
   </ng-template>
   <ng-template #emptymessage>
     <tr>
-      <td [attr.colspan]="cols.length + 2">No se encontraron usuarios</td>
+      <td [attr.colspan]="cols.length + 1">No se encontraron usuarios</td>
     </tr>
   </ng-template>
-  <ng-template #loadingbody>
+  <ng-template
+    *ngIf="!users"
+    #loadingbody
+  >
     <tr>
-      <td [attr.colspan]="cols.length + 2">Cargando datos de usuarios. Por favor espere.</td>
+      <td [attr.colspan]="cols.length + 1">Cargando datos de usuarios.</td>
     </tr>
   </ng-template>
 </p-table>
 
-@if (userDialogVisible) {
+@if (isUserDialogVisible) {
   <users-form
     [isCreateUser]="isCreateUser"
     [selectedUser]="selectedUser"
-    [userDialog]="userDialogVisible"
-    (defaultChangeUserDialog)="changeUserDialog($event)"
+    [isUserDialogVisible]="isUserDialogVisible"
+    (userDialogChange)="onUserDialogChange($event)"
   ></users-form>
 }
 

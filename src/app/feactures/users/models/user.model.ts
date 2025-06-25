@@ -1,12 +1,9 @@
-export interface Role {
-  roleId: string;
-  roleName: string;
-}
+import { RoleResponse } from './role.model';
 
-export interface User {
+export interface UserResponse {
   userId: number;
   email: string;
-  role: Role;
+  role: RoleResponse;
   name: string;
   firstSurname: string;
   secondSurname: string;
@@ -14,10 +11,11 @@ export interface User {
   phoneNumber: string;
   createdAt: string;
   isActive: boolean;
+  isVerifiedEmail: boolean;
 }
 
 export interface UserRequest {
-  role: Role;
+  role: RoleResponse;
   email: string;
   password?: string;
   name: string;
@@ -25,10 +23,4 @@ export interface UserRequest {
   secondSurname: string;
   phoneNumber: string;
   key: string;
-}
-
-export interface EmitterDialogUser {
-  isOpen: boolean;
-  message: string;
-  user: User | null;
 }

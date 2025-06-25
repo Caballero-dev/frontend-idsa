@@ -1,4 +1,4 @@
-import { Tutor } from '../../tutors/models/tutors.model';
+import { TutorResponse as Tutor } from '../../tutors/models/tutor.model';
 import { Campus } from './campus.model';
 import { Specialty } from './specialty.model';
 import { Modality } from './modality.model';

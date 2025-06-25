@@ -1,27 +1,47 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { EmitterDialogTutor, Tutor, TutorRequest } from '../../models/tutors.model';
+import { ToastModule } from 'primeng/toast';
+
+import { TutorService } from '../../services/tutor.service';
+
+import { ApiError } from '../../../../core/models/ApiError.model';
+import { ApiResponse } from '../../../../core/models/ApiResponse.model';
+
+import { DialogState } from '../../../../shared/types/dialog.types';
 import { FormUtils } from '../../../../utils/form.utils';
+
 import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
+
+import { TutorRequest, TutorResponse } from '../../models/tutor.model';
 
 @Component({
   selector: 'tutors-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DialogModule, ButtonModule, InputTextComponent],
+  imports: [CommonModule, ReactiveFormsModule, ButtonModule, DialogModule, ToastModule, InputTextComponent],
   templateUrl: './tutors-form.component.html',
   styleUrl: './tutors-form.component.scss',
+  providers: [MessageService],
 })
-export class TutorsFormComponent implements OnInit {
-  @Input() tutorDialog: boolean = false;
+export class TutorsFormComponent implements OnInit, AfterViewInit {
+  @Input() isTutorDialogVisible: boolean = false;
   @Input() isCreateTutor: boolean = true;
-  @Input() selectedTutor: Tutor | null = null;
-  @Output() defaultChangeTutorDialog: EventEmitter<EmitterDialogTutor> = new EventEmitter<EmitterDialogTutor>();
+  @Input() selectedTutor: TutorResponse | null = null;
+  @Output() tutorDialogChange: EventEmitter<DialogState<TutorResponse>> = new EventEmitter<
+    DialogState<TutorResponse>
+  >();
+
+  private fb: FormBuilder = inject(FormBuilder);
+  private tutorService: TutorService = inject(TutorService);
+  private messageService: MessageService = inject(MessageService);
+
+  isLoading: boolean = false;
 
   formUtils = FormUtils;
-  private fb: FormBuilder = inject(FormBuilder);
 
   tutorForm = this.fb.group({
     employeeCode: [
@@ -80,13 +100,15 @@ export class TutorsFormComponent implements OnInit {
     ],
   });
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  ngAfterViewInit(): void {
     if (this.selectedTutor) {
       this.setValuesForm(this.selectedTutor);
     }
   }
 
-  setValuesForm(tutor: Tutor) {
+  setValuesForm(tutor: TutorResponse) {
     this.tutorForm.patchValue({
       employeeCode: tutor.employeeCode,
       name: tutor.name,
@@ -98,55 +120,111 @@ export class TutorsFormComponent implements OnInit {
   }
 
   closeDialog() {
-    this.defaultChangeTutorDialog.emit({ isOpen: false, message: 'close', tutor: null });
+    this.tutorDialogChange.emit({ isOpen: false, message: 'close', data: null });
   }
 
   saveOrUpdateTutor() {
     if (this.isCreateTutor) {
-      this.saveTutor();
+      this.createTutor();
     } else {
-      this.editTutor();
+      this.updateTutor();
     }
   }
 
-  saveTutor() {
+  createTutor() {
     if (this.tutorForm.valid) {
-      let tutorRequest: TutorRequest = this.getTutorData();
+      this.isLoading = true;
+      const tutorRequest: TutorRequest = this.buildTutorRequest();
 
-      let tutor: Tutor = {
-        tutorId: Math.floor(Math.random() * 100),
-        ...tutorRequest,
-      };
-
-      this.defaultChangeTutorDialog.emit({ isOpen: false, message: 'save', tutor: tutor });
+      this.tutorService.createTutor(tutorRequest).subscribe({
+        next: (response: ApiResponse<TutorResponse>) => {
+          this.tutorDialogChange.emit({ isOpen: false, message: 'save', data: response.data });
+          this.isLoading = false;
+        },
+        error: (error: ApiError) => {
+          if (error.statusCode === 409 && error.message.includes('email_already_exists')) {
+            this.tutorForm.controls.email.setErrors({ exists: { field: 'correo electrónico' } });
+          } else if (error.statusCode === 409 && error.message.includes('phone_number_already_exists')) {
+            this.tutorForm.controls.phoneNumber.setErrors({ exists: { field: 'número de teléfono' } });
+          } else if (error.statusCode === 409 && error.message.includes('employee_code_already_exists')) {
+            this.tutorForm.controls.employeeCode.setErrors({ exists: { field: 'código de empleado' } });
+          } else if (error.statusCode === 500 && error.message.includes('email_sending_failed')) {
+            this.showToast('error', 'Error', 'Fallo al enviar el correo de verificación, intente más tarde');
+          } else {
+            this.showToast('error', 'Error', 'Error al crear el tutor, intente más tarde');
+          }
+          this.isLoading = false;
+        },
+      });
     } else {
       this.tutorForm.markAllAsTouched();
     }
   }
 
-  editTutor() {
+  updateTutor() {
     if (this.tutorForm.valid && this.selectedTutor) {
-      let tutorRequest: TutorRequest = this.getTutorData();
+      this.isLoading = true;
+      const tutorRequest: TutorRequest = this.buildTutorRequest();
 
-      let tutor: Tutor = {
-        tutorId: this.selectedTutor.tutorId,
-        ...tutorRequest,
-      };
-
-      this.defaultChangeTutorDialog.emit({ isOpen: false, message: 'edit', tutor: tutor });
+      this.tutorService.updateTutor(this.selectedTutor.tutorId, tutorRequest).subscribe({
+        next: (response: ApiResponse<TutorResponse>) => {
+          this.tutorDialogChange.emit({ isOpen: false, message: 'edit', data: response.data });
+          this.isLoading = false;
+        },
+        error: (error: ApiError) => {
+          if (error.statusCode === 404 && error.message.includes('tutor_not_found')) {
+            this.showToast('warn', 'Tutor no encontrado', 'El tutor que intentó actualizar ya no existe en el sistema');
+          } else if (error.statusCode === 409 && error.message.includes('email_already_exists')) {
+            this.tutorForm.controls.email.setErrors({ exists: { field: 'correo electrónico' } });
+          } else if (error.statusCode === 409 && error.message.includes('phone_number_already_exists')) {
+            this.tutorForm.controls.phoneNumber.setErrors({ exists: { field: 'número de teléfono' } });
+          } else if (error.statusCode === 409 && error.message.includes('employee_code_already_exists')) {
+            this.tutorForm.controls.employeeCode.setErrors({ exists: { field: 'código de empleado' } });
+          } else if (error.statusCode === 500 && error.message.includes('email_sending_failed')) {
+            this.showToast('error', 'Error', 'Fallo al enviar el correo de verificación, intente más tarde');
+          } else {
+            this.showToast('error', 'Error', 'Error al actualizar el tutor, intente más tarde');
+          }
+          this.isLoading = false;
+        },
+      });
     } else {
       this.tutorForm.markAllAsTouched();
     }
   }
 
-  getTutorData(): TutorRequest {
+  buildTutorRequest(): TutorRequest {
+    const formValues = this.tutorForm.value;
     return {
-      employeeCode: this.tutorForm.value.employeeCode as string,
-      name: this.tutorForm.value.name as string,
-      firstSurname: this.tutorForm.value.firstSurname as string,
-      secondSurname: this.tutorForm.value.secondSurname as string,
-      email: this.tutorForm.value.email as string,
-      phoneNumber: this.tutorForm.value.phoneNumber as string,
+      employeeCode: formValues.employeeCode!,
+      name: formValues.name!,
+      firstSurname: formValues.firstSurname!,
+      secondSurname: formValues.secondSurname!,
+      email: formValues.email!,
+      phoneNumber: formValues.phoneNumber!,
     };
+  }
+
+  showToast(severity: 'success' | 'error' | 'warn' | 'info', summary: string, detail: string): void {
+    this.messageService.add({
+      severity,
+      icon: this.getToastIcon(severity),
+      summary,
+      detail,
+      life: 5000,
+    });
+  }
+
+  private getToastIcon(severity: 'success' | 'error' | 'warn' | 'info'): string {
+    switch (severity) {
+      case 'success':
+        return 'pi pi-check-circle';
+      case 'error':
+        return 'pi pi-times-circle';
+      case 'warn':
+        return 'pi pi-exclamation-triangle';
+      default:
+        return 'pi pi-info-circle';
+    }
   }
 }
