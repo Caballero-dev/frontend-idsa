@@ -1,0 +1,51 @@
+<p-dialog
+  [(visible)]="isCampusDialogVisible"
+  [modal]="true"
+  [header]="isCreateCampus ? 'Crear campus' : 'Editar campus'"
+  closable="false"
+  [style]="{ width: '550px' }"
+>
+  <form
+    [formGroup]="campusForm"
+    (ngSubmit)="saveOrUpdateCampus()"
+  >
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2 sm:flex-row sm:gap-4">
+        <div class="w-full">
+          <idsa-input-text
+            type="onlyLetters"
+            inputId="name"
+            label="Nombre del campus"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="campusForm.controls.name"
+            placeholder="Ingresa el nombre"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="100"
+            [minLength]="3"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end gap-2">
+        <p-button
+          label="Cancelar"
+          icon="pi pi-times"
+          text
+          (click)="closeDialog()"
+        />
+        <p-button
+          [label]="isCreateCampus ? 'Crear' : 'Actualizar'"
+          type="submit"
+          icon="pi pi-check"
+          [loading]="isLoading"
+        />
+      </div>
+    </div>
+  </form>
+</p-dialog>
+
+<p-toast />

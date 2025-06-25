@@ -1,5 +1,5 @@
 import { TutorResponse as Tutor } from '../../tutors/models/tutor.model';
-import { Campus } from './campus.model';
+import { CampusResponse as Campus } from './campus.model';
 import { Specialty } from './specialty.model';
 import { Modality } from './modality.model';
 import { Grade } from './grade.model';
