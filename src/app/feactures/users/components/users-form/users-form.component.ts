@@ -200,10 +200,6 @@ export class UsersFormComponent implements OnInit, AfterViewInit {
 
       this.userService.createUser(userRequest).subscribe({
         next: (response: ApiResponse<UserResponse>) => {
-          response.data = {
-            ...response.data,
-            createdAt: new Date(response.data.createdAt).toLocaleString(),
-          };
           this.userDialogChange.emit({ isOpen: false, message: 'save', data: response.data });
           this.isLoading = false;
         },
@@ -238,10 +234,6 @@ export class UsersFormComponent implements OnInit, AfterViewInit {
 
       this.userService.updateUser(this.selectedUser.userId, this.isEditPassword, userRequest).subscribe({
         next: (response: ApiResponse<UserResponse>) => {
-          response.data = {
-            ...response.data,
-            createdAt: new Date(response.data.createdAt).toLocaleString(),
-          };
           this.userDialogChange.emit({ isOpen: false, message: 'edit', data: response.data });
           this.isLoading = false;
         },
