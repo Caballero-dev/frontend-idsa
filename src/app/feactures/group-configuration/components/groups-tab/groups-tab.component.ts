@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { TabViewModule } from 'primeng/tabview';
 import { ModalitiesComponent } from '../modalities/modalities.component';
 import { SpecialtiesComponent } from '../specialties/specialties.component';
-import { GradesComponent } from '../grades/grades.component';
+import { GradesListComponent } from '../grades/grades-list/grades-list.component';
 import { GroupsComponent } from '../groups/groups.component';
 import { GenerationsListComponent } from '../generations/generations-list/generations-list.component';
 import { RouterLink } from '@angular/router';
@@ -17,7 +17,7 @@ import { CampusesListComponent } from '../campuses/campuses-list/campuses-list.c
     CampusesListComponent,
     ModalitiesComponent,
     SpecialtiesComponent,
-    GradesComponent,
+    GradesListComponent,
     GroupsComponent,
     GenerationsListComponent,
     RouterLink,
