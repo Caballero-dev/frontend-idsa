@@ -66,11 +66,18 @@ export class GenerationsFormComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onStartYearChange(selectedDate: Date): void {
-    this.generationForm.controls.endYear.enable();
-    this.selectedStartDate = selectedDate;
-    if (this.generationForm.value.endYear && selectedDate > this.generationForm.value.endYear) {
-      this.generationForm.controls.endYear.setValue(null);
+  onStartYearChange(): void {
+    const ctrl = this.generationForm.controls;
+    if (ctrl.startYear.valid) {
+      this.selectedStartDate = ctrl.startYear.value!;
+      ctrl.endYear.enable();
+      if (ctrl.endYear.value && this.selectedStartDate > ctrl.endYear.value) {
+        ctrl.endYear.setValue(null);
+      }
+    } else {
+      ctrl.endYear.disable();
+      ctrl.endYear.setValue(null);
+      this.selectedStartDate = null;
     }
   }
 

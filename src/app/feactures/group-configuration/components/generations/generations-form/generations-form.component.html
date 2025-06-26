@@ -1,9 +1,11 @@
 <p-dialog
   [(visible)]="isGenerationDialogVisible"
-  [modal]="true"
   [header]="isCreateGeneration ? 'Crear generación' : 'Editar generación'"
-  closable="false"
+  [modal]="true"
+  [closable]="true"
+  [closeOnEscape]="false"
   [style]="{ width: '550px' }"
+  (onHide)="closeDialog()"
 >
   <form
     [formGroup]="generationForm"
@@ -23,10 +25,9 @@
               [minDate]="minDate"
               placeholder="Fecha de inicio"
               [required]="true"
-              [readonly]="false"
               variant="outlined"
               size="large"
-              (onSelectDate)="onStartYearChange($event)"
+              (onSelectDate)="onStartYearChange()"
             ></idsa-input-date>
           </span>
         </div>
@@ -42,7 +43,6 @@
               [minDate]="selectedStartDate"
               placeholder="Fecha de fin"
               [required]="true"
-              [readonly]="false"
               variant="outlined"
               size="large"
             ></idsa-input-date>
