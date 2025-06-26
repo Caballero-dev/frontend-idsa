@@ -1,7 +1,7 @@
 import { TutorResponse as Tutor } from '../../tutors/models/tutor.model';
 import { CampusResponse as Campus } from './campus.model';
 import { Specialty } from './specialty.model';
-import { Modality } from './modality.model';
+import { ModalityResponse as Modality } from './modality.model';
 import { GradeResponse as Grade } from './grade.model';
 import { GroupResponse as Group } from './group.model';
 import { GenerationResponse as Generation } from './generation.model';

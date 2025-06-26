@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TabViewModule } from 'primeng/tabview';
-import { ModalitiesComponent } from '../modalities/modalities.component';
+import { ModalitiesListComponent } from '../modalities/modalities-list/modalities-list.component';
 import { SpecialtiesComponent } from '../specialties/specialties.component';
 import { GradesListComponent } from '../grades/grades-list/grades-list.component';
 import { GroupsListComponent } from '../groups/groups-list/groups-list.component';
@@ -15,7 +15,7 @@ import { CampusesListComponent } from '../campuses/campuses-list/campuses-list.c
   imports: [
     TabViewModule,
     CampusesListComponent,
-    ModalitiesComponent,
+    ModalitiesListComponent,
     SpecialtiesComponent,
     GradesListComponent,
     GroupsListComponent,

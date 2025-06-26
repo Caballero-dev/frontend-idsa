@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Modality } from '../models/modality.model';
+import { ModalityResponse as Modality } from '../models/modality.model';
 
 @Injectable({
   providedIn: 'root',
