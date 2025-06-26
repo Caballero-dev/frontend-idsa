@@ -69,7 +69,7 @@ export class GenerationsFormComponent implements OnInit, AfterViewInit {
   onStartYearChange(): void {
     const ctrl = this.generationForm.controls;
     if (ctrl.startYear.valid) {
-      this.selectedStartDate = ctrl.startYear.value!;
+      this.selectedStartDate = this.getMinEndDate(ctrl.startYear.value!);
       ctrl.endYear.enable();
       if (ctrl.endYear.value && this.selectedStartDate > ctrl.endYear.value) {
         ctrl.endYear.setValue(null);
@@ -175,6 +175,11 @@ export class GenerationsFormComponent implements OnInit, AfterViewInit {
       detail,
       life: 5000,
     });
+  }
+
+  private getMinEndDate(date: Date): Date {
+    date.setFullYear(date.getFullYear() + 1);
+    return date;
   }
 
   private getToastIcon(severity: 'success' | 'error' | 'warn' | 'info'): string {
