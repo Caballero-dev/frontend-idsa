@@ -1,9 +1,11 @@
 <p-dialog
   [(visible)]="isCampusDialogVisible"
-  [modal]="true"
   [header]="isCreateCampus ? 'Crear campus' : 'Editar campus'"
-  closable="false"
+  [modal]="true"
+  [closable]="true"
+  [closeOnEscape]="false"
   [style]="{ width: '550px' }"
+  (onHide)="closeDialog()"
 >
   <form
     [formGroup]="campusForm"
