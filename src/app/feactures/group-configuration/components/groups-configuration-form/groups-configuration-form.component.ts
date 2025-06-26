@@ -11,7 +11,7 @@ import { CampusResponse as Campus } from '../../models/campus.model';
 import { Specialty } from '../../models/specialty.model';
 import { Modality } from '../../models/modality.model';
 import { GradeResponse as Grade } from '../../models/grade.model';
-import { Group } from '../../models/group.model';
+import { GroupResponse as Group } from '../../models/group.model';
 import { GenerationResponse as Generation } from '../../models/generation.model';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';

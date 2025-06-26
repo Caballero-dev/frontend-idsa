@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Group } from '../models/group.model';
+import { GroupResponse as Group } from '../models/group.model';
 
 @Injectable({
   providedIn: 'root',

@@ -1,4 +1,4 @@
-export interface Group {
+export interface GroupResponse {
   groupId: number;
   name: string;
 }
