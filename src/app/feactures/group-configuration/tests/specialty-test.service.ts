@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Specialty } from '../models/specialty.model';
+import { SpecialtyResponse as Specialty } from '../models/specialty.model';
 
 @Injectable({
   providedIn: 'root',

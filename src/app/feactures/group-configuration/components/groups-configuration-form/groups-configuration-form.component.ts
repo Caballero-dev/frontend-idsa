@@ -8,7 +8,7 @@ import { FormUtils } from '../../../../utils/form.utils';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TutorResponse as Tutor } from '../../../tutors/models/tutor.model';
 import { CampusResponse as Campus } from '../../models/campus.model';
-import { Specialty } from '../../models/specialty.model';
+import { SpecialtyResponse as Specialty } from '../../models/specialty.model';
 import { ModalityResponse as Modality } from '../../models/modality.model';
 import { GradeResponse as Grade } from '../../models/grade.model';
 import { GroupResponse as Group } from '../../models/group.model';
