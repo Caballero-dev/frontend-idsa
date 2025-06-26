@@ -33,4 +33,3 @@ export class GroupService {
     return this.http.delete<ApiResponse<void>>(`${this.API_URL}/${groupId}`);
   }
 }
-

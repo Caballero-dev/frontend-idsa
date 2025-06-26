@@ -33,4 +33,3 @@ export class CampusService {
     return this.http.delete<void>(`${this.API_URL}/${campusId}`);
   }
 }
-
