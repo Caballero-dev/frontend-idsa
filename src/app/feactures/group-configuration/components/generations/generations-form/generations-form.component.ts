@@ -178,8 +178,9 @@ export class GenerationsFormComponent implements OnInit, AfterViewInit {
   }
 
   private getMinEndDate(date: Date): Date {
-    date.setFullYear(date.getFullYear() + 1);
-    return date;
+    const newDate = new Date(date);
+    newDate.setFullYear(newDate.getFullYear() + 1);
+    return newDate;
   }
 
   private getToastIcon(severity: 'success' | 'error' | 'warn' | 'info'): string {
