@@ -10,7 +10,16 @@
 
   <div [ngClass]="getClassContainerInput()">
     @if (type === 'valueString') {
-      <span class="p-float-label">
+      <p-inputgroup>
+        <p-button
+          *ngIf="btnConfig"
+          [loading]="btnConfig.loading"
+          [disabled]="btnConfig.disabled"
+          [icon]="btnConfig.icon"
+          [severity]="btnConfig.severity"
+          [outlined]="btnConfig.outlined"
+          (onClick)="onBtnClick.emit()"
+        />
         <p-select
           fluid
           [id]="selectId"
@@ -46,11 +55,20 @@
             </div>
           </ng-template>
         </p-select>
-      </span>
+      </p-inputgroup>
     }
 
     @if (type === 'valueObject') {
-      <span class="p-float-label">
+      <p-inputgroup>
+        <p-button
+          *ngIf="btnConfig"
+          [loading]="btnConfig.loading"
+          [disabled]="btnConfig.disabled"
+          [icon]="btnConfig.icon"
+          [severity]="btnConfig.severity"
+          [outlined]="btnConfig.outlined"
+          (onClick)="onBtnClick.emit()"
+        />
         <p-select
           fluid
           [id]="selectId"
@@ -86,7 +104,7 @@
             </div>
           </ng-template>
         </p-select>
-      </span>
+      </p-inputgroup>
     }
 
     @if (formUtils.isInvalidValidField(customFormControl)) {

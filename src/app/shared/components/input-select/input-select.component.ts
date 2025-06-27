@@ -1,14 +1,17 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule, formatDate } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+
+import { InputGroupModule } from 'primeng/inputgroup';
 import { SelectChangeEvent, SelectModule } from 'primeng/select';
+import { ButtonModule } from 'primeng/button';
 
 import { FormUtils } from '../../../utils/form.utils';
 
 @Component({
   selector: 'idsa-input-select',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SelectModule],
+  imports: [CommonModule, ReactiveFormsModule, InputGroupModule, ButtonModule, SelectModule],
   templateUrl: './input-select.component.html',
   styleUrl: './input-select.component.scss',
 })
@@ -33,8 +36,16 @@ export class InputSelectComponent implements OnInit {
   @Input({ required: false }) size: 'small' | 'large' = 'small';
   @Input() helpText: string | null = null;
   @Input() helpTextType: 'error' | 'info' = 'info';
+  @Input() btnConfig: {
+    loading?: boolean;
+    disabled: boolean;
+    icon: string;
+    severity: 'success' | 'info' | 'warn' | 'danger' | 'help' | 'primary' | 'secondary' | 'contrast' | null | undefined;
+    outlined: boolean;
+  } | null = null;
 
   @Output() onChange: EventEmitter<SelectChangeEvent> = new EventEmitter<SelectChangeEvent>();
+  @Output() onBtnClick: EventEmitter<void> = new EventEmitter<void>();
 
   formUtils = FormUtils;
 
