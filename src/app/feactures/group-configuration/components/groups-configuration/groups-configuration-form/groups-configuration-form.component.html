@@ -4,7 +4,7 @@
   [modal]="true"
   [closable]="true"
   [closeOnEscape]="false"
-  [style]="{ width: '550px' }"
+  [style]="{ width: '600px' }"
   (onHide)="closeDialog()"
 >
   <form
@@ -17,18 +17,25 @@
           <idsa-input-select
             type="valueObject"
             inputId="tutor"
-            [loading]="!tutors"
+            [loading]="tutors === null"
             label="Tutor"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.tutor"
-            [options]="tutors"
+            [options]="tutors ?? []"
             [optionLabels]="{ labels: ['name', 'firstSurname', 'secondSurname'], separator: ' ' }"
             optionValue="tutorId"
             placeholder="Selecciona un tutor"
             [required]="true"
             variant="outlined"
             size="large"
+            [btnConfig]="{
+              disabled: tutors === null,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            (onBtnClick)="loadTutors()"
           ></idsa-input-select>
         </div>
 
@@ -36,18 +43,25 @@
           <idsa-input-select
             type="valueObject"
             inputId="campus"
-            [loading]="!campuses"
+            [loading]="campuses === null"
             label="Campus"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.campus"
-            [options]="campuses"
+            [options]="campuses ?? []"
             optionLabel="name"
             optionValue="campusId"
             placeholder="Selecciona un campus"
             [required]="true"
             variant="outlined"
             size="large"
+            [btnConfig]="{
+              disabled: campuses === null,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            (onBtnClick)="loadCampuses()"
           ></idsa-input-select>
         </div>
 
@@ -55,18 +69,25 @@
           <idsa-input-select
             type="valueObject"
             inputId="specialty"
-            [loading]="!specialties"
+            [loading]="specialties === null"
             label="Especialidad"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.specialty"
-            [options]="specialties"
+            [options]="specialties ?? []"
             optionLabel="name"
             optionValue="specialtyId"
             placeholder="Selecciona una especialidad"
             [required]="true"
             variant="outlined"
             size="large"
+            [btnConfig]="{
+              disabled: specialties === null,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            (onBtnClick)="loadSpecialties()"
           ></idsa-input-select>
         </div>
 
@@ -74,18 +95,25 @@
           <idsa-input-select
             type="valueObject"
             inputId="modality"
-            [loading]="!modalities"
+            [loading]="modalities === null"
             label="Modalidad"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.modality"
-            [options]="modalities"
+            [options]="modalities ?? []"
             optionLabel="name"
             optionValue="modalityId"
             placeholder="Selecciona una modalidad"
             [required]="true"
             variant="outlined"
             size="large"
+            [btnConfig]="{
+              disabled: modalities === null,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            (onBtnClick)="loadModalities()"
           ></idsa-input-select>
         </div>
 
@@ -93,18 +121,25 @@
           <idsa-input-select
             type="valueObject"
             inputId="grade"
-            [loading]="!grades"
+            [loading]="grades === null"
             label="Grado"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.grade"
-            [options]="grades"
+            [options]="grades ?? []"
             optionLabel="name"
             optionValue="gradeId"
             placeholder="Selecciona un grado"
             [required]="true"
             variant="outlined"
             size="large"
+            [btnConfig]="{
+              disabled: grades === null,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            (onBtnClick)="loadGrades()"
           ></idsa-input-select>
         </div>
 
@@ -112,18 +147,25 @@
           <idsa-input-select
             type="valueObject"
             inputId="group"
-            [loading]="!groups"
+            [loading]="groups === null"
             label="Grupo"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.group"
-            [options]="groups"
+            [options]="groups ?? []"
             optionLabel="name"
             optionValue="groupId"
             placeholder="Selecciona un grupo"
             [required]="true"
             variant="outlined"
             size="large"
+            [btnConfig]="{
+              disabled: groups === null,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            (onBtnClick)="loadGroups()"
           ></idsa-input-select>
         </div>
 
@@ -131,12 +173,12 @@
           <idsa-input-select
             type="valueObject"
             inputId="generation"
-            [loading]="!generations"
+            [loading]="generations === null"
             label="Generación"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.generation"
-            [options]="generations"
+            [options]="generations ?? []"
             [optionLabels]="{ labels: ['yearStart', 'yearEnd'], separator: ' / ' }"
             [dateFormat]="{ format: 'yyyy-MM-dd', locale: 'en' }"
             optionValue="generationId"
@@ -144,6 +186,13 @@
             [required]="true"
             variant="outlined"
             size="large"
+            [btnConfig]="{
+              disabled: generations === null,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            (onBtnClick)="loadGenerations()"
           ></idsa-input-select>
         </div>
       </div>

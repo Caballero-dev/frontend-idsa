@@ -63,13 +63,13 @@ export class GroupsConfigurationFormComponent implements OnInit, AfterViewInit {
   isLoading: boolean = false;
   formUtils = FormUtils;
 
-  tutors!: TutorResponse[];
-  campuses!: CampusResponse[];
-  specialties!: SpecialtyResponse[];
-  modalities!: ModalityResponse[];
-  grades!: GradeResponse[];
-  groups!: GroupResponse[];
-  generations!: GenerationResponse[];
+  tutors: TutorResponse[] | null = null;
+  campuses: CampusResponse[] | null = null;
+  specialties: SpecialtyResponse[] | null = null;
+  modalities: ModalityResponse[] | null = null;
+  grades: GradeResponse[] | null = null;
+  groups: GroupResponse[] | null = null;
+  generations: GenerationResponse[] | null = null;
 
   groupConfigurationForm = this.fb.group({
     tutor: new FormControl<TutorResponse | null>(null, [Validators.required]),
@@ -101,78 +101,92 @@ export class GroupsConfigurationFormComponent implements OnInit, AfterViewInit {
     this.loadGenerations();
   }
 
-  private loadTutors(): void {
+  loadTutors(): void {
+    this.tutors = null;
     this.tutorService.getAllTutors().subscribe({
       next: (response: ApiResponse<TutorResponse[]>) => {
         this.tutors = response.data;
       },
       error: () => {
+        this.tutors = [];
         this.showToast('error', 'Error', 'Error al cargar tutores');
       },
     });
   }
 
-  private loadCampuses(): void {
+  loadCampuses(): void {
+    this.campuses = null;
     this.campusService.getAllCampuses().subscribe({
       next: (response: ApiResponse<CampusResponse[]>) => {
         this.campuses = response.data;
       },
       error: () => {
+        this.campuses = [];
         this.showToast('error', 'Error', 'Error al cargar campus');
       },
     });
   }
 
-  private loadSpecialties(): void {
+  loadSpecialties(): void {
+    this.specialties = null;
     this.specialtyService.getAllSpecialties().subscribe({
       next: (response: ApiResponse<SpecialtyResponse[]>) => {
         this.specialties = response.data;
       },
       error: () => {
+        this.specialties = [];
         this.showToast('error', 'Error', 'Error al cargar especialidades');
       },
     });
   }
 
-  private loadModalities(): void {
+  loadModalities(): void {
+    this.modalities = null;
     this.modalityService.getAllModalities().subscribe({
       next: (response: ApiResponse<ModalityResponse[]>) => {
         this.modalities = response.data;
       },
       error: () => {
+        this.modalities = [];
         this.showToast('error', 'Error', 'Error al cargar modalidades');
       },
     });
   }
 
-  private loadGrades(): void {
+  loadGrades(): void {
+    this.grades = null;
     this.gradeService.getAllGrades().subscribe({
       next: (response: ApiResponse<GradeResponse[]>) => {
         this.grades = response.data;
       },
       error: () => {
+        this.grades = [];
         this.showToast('error', 'Error', 'Error al cargar grados');
       },
     });
   }
 
-  private loadGroups(): void {
+  loadGroups(): void {
+    this.groups = null;
     this.groupService.getAllGroups().subscribe({
       next: (response: ApiResponse<GroupResponse[]>) => {
         this.groups = response.data;
       },
       error: () => {
+        this.groups = [];
         this.showToast('error', 'Error', 'Error al cargar grupos');
       },
     });
   }
 
-  private loadGenerations(): void {
+  loadGenerations(): void {
+    this.generations = null;
     this.generationService.getAllGenerations().subscribe({
       next: (response: ApiResponse<GenerationResponse[]>) => {
         this.generations = response.data;
       },
       error: () => {
+        this.generations = [];
         this.showToast('error', 'Error', 'Error al cargar generaciones');
       },
     });
