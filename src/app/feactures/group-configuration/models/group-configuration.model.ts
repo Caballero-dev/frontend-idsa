@@ -1,34 +1,28 @@
-import { TutorResponse as Tutor } from '../../tutors/models/tutor.model';
-import { CampusResponse as Campus } from './campus.model';
-import { SpecialtyResponse as Specialty } from './specialty.model';
-import { ModalityResponse as Modality } from './modality.model';
-import { GradeResponse as Grade } from './grade.model';
-import { GroupResponse as Group } from './group.model';
-import { GenerationResponse as Generation } from './generation.model';
+import { TutorResponse } from '../../tutors/models/tutor.model';
+import { CampusResponse } from './campus.model';
+import { SpecialtyResponse } from './specialty.model';
+import { ModalityResponse } from './modality.model';
+import { GradeResponse } from './grade.model';
+import { GroupResponse } from './group.model';
+import { GenerationResponse } from './generation.model';
 
-export interface GroupConfiguration {
+export interface GroupConfigurationResponse {
   groupConfigurationId: number;
-  tutor: Tutor;
-  campus: Campus;
-  specialty: Specialty;
-  modality: Modality;
-  grade: Grade;
-  group: Group;
-  generation: Generation;
+  tutor: TutorResponse;
+  campus: CampusResponse;
+  specialty: SpecialtyResponse;
+  modality: ModalityResponse;
+  grade: GradeResponse;
+  group: GroupResponse;
+  generation: GenerationResponse;
 }
 
 export interface GroupConfigurationRequest {
-  tutor: Tutor;
-  campus: Campus;
-  specialty: Specialty;
-  modality: Modality;
-  grade: Grade;
-  group: Group;
-  generation: Generation;
-}
-
-export interface EmitterDialogGroupConfiguration {
-  isOpen: boolean;
-  message: 'save' | 'edit' | 'close';
-  groupConfiguration: GroupConfiguration | null;
+  tutor: TutorResponse;
+  campus: CampusResponse;
+  specialty: SpecialtyResponse;
+  modality: ModalityResponse;
+  grade: GradeResponse;
+  group: GroupResponse;
+  generation: GenerationResponse;
 }

@@ -1,127 +1,148 @@
 <p-dialog
-  [(visible)]="groupConfigurationDialog"
-  [modal]="true"
+  [(visible)]="isGroupConfigurationDialogVisible"
   [header]="isCreateGroupConfiguration ? 'Crear configuración de grupo' : 'Editar configuración de grupo'"
-  closable="false"
+  [modal]="true"
+  [closable]="true"
+  [closeOnEscape]="false"
   [style]="{ width: '550px' }"
+  (onHide)="closeDialog()"
 >
   <form
     [formGroup]="groupConfigurationForm"
     (ngSubmit)="saveOrUpdateGroupConfiguration()"
   >
     <div class="flex flex-col gap-4">
-      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
-        <div class="w-full xs:w-2/4">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="w-full">
           <idsa-input-select
             type="valueObject"
-            selectId="tutor"
+            inputId="tutor"
+            [loading]="!tutors"
             label="Tutor"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.tutor"
             [options]="tutors"
-            optionLabel="name"
-            placeholder="Seleccione un tutor"
-            [showClear]="true"
+            [optionLabels]="{ labels: ['name', 'firstSurname', 'secondSurname'], separator: ' ' }"
+            optionValue="tutorId"
+            placeholder="Selecciona un tutor"
+            [required]="true"
+            variant="outlined"
             size="large"
           ></idsa-input-select>
         </div>
-        <div class="w-full xs:w-2/4">
+
+        <div class="w-full">
           <idsa-input-select
             type="valueObject"
-            selectId="campus"
+            inputId="campus"
+            [loading]="!campuses"
             label="Campus"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.campus"
             [options]="campuses"
             optionLabel="name"
-            placeholder="Seleccione un campus"
-            [showClear]="true"
+            optionValue="campusId"
+            placeholder="Selecciona un campus"
+            [required]="true"
+            variant="outlined"
             size="large"
           ></idsa-input-select>
         </div>
-      </div>
 
-      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
-        <div class="w-full xs:w-2/4">
+        <div class="w-full">
           <idsa-input-select
             type="valueObject"
-            selectId="specialty"
+            inputId="specialty"
+            [loading]="!specialties"
             label="Especialidad"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.specialty"
             [options]="specialties"
             optionLabel="name"
-            placeholder="Seleccione una especialidad"
-            [showClear]="true"
+            optionValue="specialtyId"
+            placeholder="Selecciona una especialidad"
+            [required]="true"
+            variant="outlined"
             size="large"
           ></idsa-input-select>
         </div>
-        <div class="w-full xs:w-2/4">
+
+        <div class="w-full">
           <idsa-input-select
             type="valueObject"
-            selectId="modality"
+            inputId="modality"
+            [loading]="!modalities"
             label="Modalidad"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.modality"
             [options]="modalities"
             optionLabel="name"
-            placeholder="Seleccione una modalidad"
-            [showClear]="true"
+            optionValue="modalityId"
+            placeholder="Selecciona una modalidad"
+            [required]="true"
+            variant="outlined"
             size="large"
           ></idsa-input-select>
         </div>
-      </div>
 
-      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
-        <div class="w-full xs:w-2/4">
+        <div class="w-full">
           <idsa-input-select
             type="valueObject"
-            selectId="grade"
+            inputId="grade"
+            [loading]="!grades"
             label="Grado"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.grade"
             [options]="grades"
             optionLabel="name"
-            placeholder="Seleccione un grado"
-            [showClear]="true"
+            optionValue="gradeId"
+            placeholder="Selecciona un grado"
+            [required]="true"
+            variant="outlined"
             size="large"
           ></idsa-input-select>
         </div>
-        <div class="w-full xs:w-2/4">
+
+        <div class="w-full">
           <idsa-input-select
             type="valueObject"
-            selectId="group"
+            inputId="group"
+            [loading]="!groups"
             label="Grupo"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.group"
             [options]="groups"
             optionLabel="name"
-            placeholder="Seleccione un grupo"
-            [showClear]="true"
+            optionValue="groupId"
+            placeholder="Selecciona un grupo"
+            [required]="true"
+            variant="outlined"
             size="large"
           ></idsa-input-select>
         </div>
-      </div>
 
-      <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
-        <div class="w-full xs:w-2/4">
+        <div class="w-full">
           <idsa-input-select
-            type="valueObjectLabels"
-            selectId="generation"
+            type="valueObject"
+            inputId="generation"
+            [loading]="!generations"
             label="Generación"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.generation"
             [options]="generations"
-            [optionLabels]="['yearStart', 'yearEnd']"
-            placeholder="Seleccione una generación"
-            [showClear]="true"
+            [optionLabels]="{ labels: ['yearStart', 'yearEnd'], separator: ' / ' }"
+            [dateFormat]="{ format: 'yyyy-MM-dd', locale: 'en' }"
+            optionValue="generationId"
+            placeholder="Selecciona una generación"
+            [required]="true"
+            variant="outlined"
             size="large"
           ></idsa-input-select>
         </div>
@@ -129,17 +150,24 @@
 
       <div class="mt-4 flex justify-end gap-2">
         <p-button
+          *ngIf="!isLoading"
+          type="button"
           label="Cancelar"
           icon="pi pi-times"
-          text
+          severity="danger"
+          variant="outlined"
           (click)="closeDialog()"
         />
         <p-button
           [label]="isCreateGroupConfiguration ? 'Crear' : 'Actualizar'"
           type="submit"
           icon="pi pi-check"
+          [loading]="isLoading"
+          [disabled]="isLoading"
         />
       </div>
     </div>
   </form>
 </p-dialog>
+
+<p-toast />
