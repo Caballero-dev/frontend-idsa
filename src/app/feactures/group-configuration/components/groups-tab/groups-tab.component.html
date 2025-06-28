@@ -14,36 +14,35 @@
   especialidades, grados, grupos y generaciones.
 </div>
 
-<p-tabs
-  value="0"
-  scrollable
->
-  <p-tablist>
-    <p-tab value="0">Campus</p-tab>
-    <p-tab value="1">Modalidades</p-tab>
-    <p-tab value="2">Especialidades</p-tab>
-    <p-tab value="3">Grados</p-tab>
-    <p-tab value="4">Grupos</p-tab>
-    <p-tab value="5">Generaciones</p-tab>
-  </p-tablist>
-  <p-tabpanels>
-    <p-tabpanel value="0">
-      <app-campuses></app-campuses>
-    </p-tabpanel>
-    <p-tabpanel value="1">
-      <app-modalities></app-modalities>
-    </p-tabpanel>
-    <p-tabpanel value="2">
-      <app-specialties></app-specialties>
-    </p-tabpanel>
-    <p-tabpanel value="3">
-      <app-grades></app-grades>
-    </p-tabpanel>
-    <p-tabpanel value="4">
-      <app-groups></app-groups>
-    </p-tabpanel>
-    <p-tabpanel value="5">
-      <app-generations></app-generations>
-    </p-tabpanel>
-  </p-tabpanels>
-</p-tabs>
+<p-tabView [scrollable]="true">
+  <p-tabPanel header="Campus">
+    <ng-template pTemplate="content">
+      <app-campuses-list></app-campuses-list>
+    </ng-template>
+  </p-tabPanel>
+  <p-tabPanel header="Modalidades">
+    <ng-template pTemplate="content">
+      <app-modalities-list></app-modalities-list>
+    </ng-template>
+  </p-tabPanel>
+  <p-tabPanel header="Especialidades">
+    <ng-template pTemplate="content">
+      <app-specialities-list></app-specialities-list>
+    </ng-template>
+  </p-tabPanel>
+  <p-tabPanel header="Grados">
+    <ng-template pTemplate="content">
+      <app-grades-list></app-grades-list>
+    </ng-template>
+  </p-tabPanel>
+  <p-tabPanel header="Grupos">
+    <ng-template pTemplate="content">
+      <app-groups-list></app-groups-list>
+    </ng-template>
+  </p-tabPanel>
+  <p-tabPanel header="Generaciones">
+    <ng-template pTemplate="content">
+      <app-generations-list></app-generations-list>
+    </ng-template>
+  </p-tabPanel>
+</p-tabView>

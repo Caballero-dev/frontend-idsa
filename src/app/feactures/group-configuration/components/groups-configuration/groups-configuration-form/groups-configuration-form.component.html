@@ -1,0 +1,236 @@
+<p-dialog
+  [(visible)]="isGroupConfigurationDialogVisible"
+  [header]="isCreateGroupConfiguration ? 'Crear configuración de grupo' : 'Editar configuración de grupo'"
+  [modal]="true"
+  [closable]="true"
+  [closeOnEscape]="false"
+  [style]="{ width: '600px' }"
+  (onHide)="closeDialog()"
+>
+  <form
+    [formGroup]="groupConfigurationForm"
+    (ngSubmit)="saveOrUpdateGroupConfiguration()"
+  >
+    <div class="flex flex-col gap-4">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="w-full">
+          <idsa-input-select
+            type="valueObjectLazy"
+            inputId="tutor"
+            [loading]="tutors.isLoading"
+            label="Tutor"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="groupConfigurationForm.controls.tutor"
+            [options]="tutors.data"
+            [optionLabels]="{ labels: ['name', 'firstSurname', 'secondSurname'], separator: ' ' }"
+            optionValue="tutorId"
+            placeholder="Selecciona un tutor"
+            [required]="true"
+            variant="outlined"
+            size="large"
+            [btnConfig]="{
+              disabled: tutors.isLoading,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            [lazy]="tutors.hasNext"
+            (onBtnClick)="loadTutors(0, 20)"
+            (onLazyLoad)="onLazyLoadTutors($event)"
+          ></idsa-input-select>
+        </div>
+
+        <div class="w-full">
+          <idsa-input-select
+            type="valueObjectLazy"
+            inputId="campus"
+            [loading]="campuses.isLoading"
+            label="Campus"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="groupConfigurationForm.controls.campus"
+            [options]="campuses.data"
+            optionLabel="name"
+            optionValue="campusId"
+            placeholder="Selecciona un campus"
+            [required]="true"
+            variant="outlined"
+            size="large"
+            [btnConfig]="{
+              disabled: campuses.isLoading,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            [lazy]="campuses.hasNext"
+            (onBtnClick)="loadCampuses(0, 20)"
+            (onLazyLoad)="onLazyLoadCampuses($event)"
+          ></idsa-input-select>
+        </div>
+
+        <div class="w-full">
+          <idsa-input-select
+            type="valueObjectLazy"
+            inputId="specialty"
+            [loading]="specialties.isLoading"
+            label="Especialidad"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="groupConfigurationForm.controls.specialty"
+            [options]="specialties.data"
+            optionLabel="name"
+            optionValue="specialtyId"
+            placeholder="Selecciona una especialidad"
+            [required]="true"
+            variant="outlined"
+            size="large"
+            [btnConfig]="{
+              disabled: specialties.isLoading,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            [lazy]="specialties.hasNext"
+            (onBtnClick)="loadSpecialties(0, 20)"
+            (onLazyLoad)="onLazyLoadSpecialties($event)"
+          ></idsa-input-select>
+        </div>
+
+        <div class="w-full">
+          <idsa-input-select
+            type="valueObjectLazy"
+            inputId="modality"
+            [loading]="modalities.isLoading"
+            label="Modalidad"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="groupConfigurationForm.controls.modality"
+            [options]="modalities.data"
+            optionLabel="name"
+            optionValue="modalityId"
+            placeholder="Selecciona una modalidad"
+            [required]="true"
+            variant="outlined"
+            size="large"
+            [btnConfig]="{
+              disabled: modalities.isLoading,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            [lazy]="modalities.hasNext"
+            (onBtnClick)="loadModalities(0, 20)"
+            (onLazyLoad)="onLazyLoadModalities($event)"
+          ></idsa-input-select>
+        </div>
+
+        <div class="w-full">
+          <idsa-input-select
+            type="valueObjectLazy"
+            inputId="grade"
+            [loading]="grades.isLoading"
+            label="Grado"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="groupConfigurationForm.controls.grade"
+            [options]="grades.data"
+            optionLabel="name"
+            optionValue="gradeId"
+            placeholder="Selecciona un grado"
+            [required]="true"
+            variant="outlined"
+            size="large"
+            [btnConfig]="{
+              disabled: grades.isLoading,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            [lazy]="grades.hasNext"
+            (onBtnClick)="loadGrades(0, 20)"
+            (onLazyLoad)="onLazyLoadGrades($event)"
+          ></idsa-input-select>
+        </div>
+
+        <div class="w-full">
+          <idsa-input-select
+            type="valueObjectLazy"
+            inputId="group"
+            [loading]="groups.isLoading"
+            label="Grupo"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="groupConfigurationForm.controls.group"
+            [options]="groups.data"
+            optionLabel="name"
+            optionValue="groupId"
+            placeholder="Selecciona un grupo"
+            [required]="true"
+            variant="outlined"
+            size="large"
+            [btnConfig]="{
+              disabled: groups.isLoading,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            [lazy]="groups.hasNext"
+            (onBtnClick)="loadGroups(0, 20)"
+            (onLazyLoad)="onLazyLoadGroups($event)"
+          ></idsa-input-select>
+        </div>
+
+        <div class="w-full">
+          <idsa-input-select
+            type="valueObjectLazy"
+            inputId="generation"
+            [loading]="generations.isLoading"
+            label="Generación"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="groupConfigurationForm.controls.generation"
+            [options]="generations.data"
+            [optionLabels]="{ labels: ['yearStart', 'yearEnd'], separator: ' / ' }"
+            [dateFormat]="{ format: 'yyyy-MM-dd', locale: 'en' }"
+            optionValue="generationId"
+            placeholder="Selecciona una generación"
+            [required]="true"
+            variant="outlined"
+            size="large"
+            [btnConfig]="{
+              disabled: generations.isLoading,
+              icon: 'pi pi-refresh',
+              severity: 'primary',
+              outlined: false,
+            }"
+            [lazy]="generations.hasNext"
+            (onBtnClick)="loadGenerations(0, 20)"
+            (onLazyLoad)="onLazyLoadGenerations($event)"
+          ></idsa-input-select>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end gap-2">
+        <p-button
+          *ngIf="!isLoading"
+          type="button"
+          label="Cancelar"
+          icon="pi pi-times"
+          severity="danger"
+          variant="outlined"
+          (click)="closeDialog()"
+        />
+        <p-button
+          [label]="isCreateGroupConfiguration ? 'Crear' : 'Actualizar'"
+          type="submit"
+          icon="pi pi-check"
+          [loading]="isLoading"
+          [disabled]="isLoading"
+        />
+      </div>
+    </div>
+  </form>
+</p-dialog>
+
+<p-toast />

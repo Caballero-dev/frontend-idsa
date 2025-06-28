@@ -1,0 +1,146 @@
+<p-toolbar styleClass="mb-6">
+  <ng-template #start>
+    <span class="text-2xl font-bold">Administrar grupos</span>
+  </ng-template>
+  <ng-template #end>
+    <div class="flex gap-2">
+      <p-button
+        label="Actualizar Datos"
+        icon="pi pi-refresh"
+        [outlined]="true"
+        (click)="refreshTableData()"
+      />
+      <p-button
+        label="Nuevo Grupo"
+        icon="pi pi-plus"
+        severity="primary"
+        (onClick)="openCreateGroupDialog()"
+      />
+    </div>
+  </ng-template>
+</p-toolbar>
+
+<p-table
+  #dt
+  [value]="groups"
+  [columns]="cols"
+  [lazy]="true"
+  [loading]="isLoading"
+  [rows]="rows"
+  [first]="first"
+  [totalRecords]="totalRecords"
+  [paginator]="true"
+  [rowsPerPageOptions]="[20, 40, 60]"
+  [scrollable]="true"
+  scrollHeight="400px"
+  [resizableColumns]="true"
+  [showGridlines]="true"
+  [rowHover]="true"
+  [globalFilterFields]="tableUtils.getGlobalFilterFields(cols)"
+  [tableStyle]="{ 'min-width': '35rem' }"
+  dataKey="groupId"
+  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} grupos"
+  [showCurrentPageReport]="true"
+  (onLazyLoad)="loadGroups($event)"
+>
+  <ng-template #caption>
+    <div class="flex flex-col items-center justify-between xs:flex-row">
+      <p-button
+        label="Limpiar"
+        [outlined]="true"
+        icon="pi pi-filter-slash"
+        (click)="dt.reset(); searchGroupValue = ''"
+      />
+      <div class="mb-3 mt-3 xs:mb-0 xs:mt-0">
+        <p-inputgroup>
+          <input
+            pInputText
+            type="text"
+            [(ngModel)]="searchGroupValue"
+            placeholder="Buscar..."
+          />
+          <p-button
+            icon="pi pi-search"
+            (click)="dt.filterGlobal(searchGroupValue.trim(), 'contains')"
+          />
+        </p-inputgroup>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template
+    #header
+    let-columns
+  >
+    <tr>
+      @for (col of columns; track $index) {
+        <th
+          [pSortableColumn]="col.sortable ? col.field : null"
+          pResizableColumn
+        >
+          {{ col.header }}
+          @if (col.sortable) {
+            <p-sortIcon field="{{ col.field }}" />
+          }
+        </th>
+      }
+      <th style="min-width: 10rem"></th>
+    </tr>
+  </ng-template>
+  <ng-template
+    #body
+    let-group
+    let-columns="columns"
+  >
+    <tr>
+      @for (col of columns; track $index) {
+        <td>{{ tableUtils.getNestedValue(group, col.field) }}</td>
+      }
+      <td style="width: 10rem">
+        <div class="flex items-center justify-around">
+          <p-button
+            [pTooltip]="'Editar grupo'"
+            tooltipPosition="top"
+            icon="pi pi-pencil"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="openEditGroupDialog(group)"
+          />
+          <p-button
+            [pTooltip]="'Eliminar grupo'"
+            tooltipPosition="top"
+            icon="pi pi-trash"
+            severity="danger"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="deleteGroup(group)"
+          />
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template #emptymessage>
+    <tr>
+      <td [attr.colspan]="cols.length + 1">No se encontraron grupos</td>
+    </tr>
+  </ng-template>
+  <ng-template
+    *ngIf="!groups"
+    #loadingbody
+  >
+    <tr>
+      <td [attr.colspan]="cols.length + 1">Cargando datos de grupos.</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+@if (isGroupDialogVisible) {
+  <groups-form
+    [isCreateGroup]="isCreateGroup"
+    [selectedGroup]="selectedGroup"
+    [isGroupDialogVisible]="isGroupDialogVisible"
+    (groupDialogChange)="onGroupDialogChange($event)"
+  ></groups-form>
+}
+
+<p-toast />
+<p-confirmDialog [style]="{ width: '450px' }" />

@@ -10,14 +10,23 @@
 
   <div [ngClass]="getClassContainerInput()">
     @if (type === 'valueString') {
-      <span class="p-float-label">
+      <p-inputgroup>
+        <p-button
+          *ngIf="btnConfig"
+          [loading]="btnConfig.loading"
+          [disabled]="btnConfig.disabled"
+          [icon]="btnConfig.icon"
+          [severity]="btnConfig.severity"
+          [outlined]="btnConfig.outlined"
+          (onClick)="onBtnClick.emit()"
+        />
         <p-select
           fluid
           [id]="selectId"
+          [loading]="loading"
           [formControl]="customFormControl"
           [placeholder]="placeholder"
           [options]="options"
-          [optionLabel]="optionLabel"
           [optionValue]="optionValue"
           [showClear]="showClear"
           [size]="size"
@@ -26,35 +35,104 @@
           [attr.aria-required]="required"
           [attr.aria-describedby]="getAriaDescribedBy()"
           (onChange)="onChange.emit($event)"
-        ></p-select>
-      </span>
+        >
+          <ng-template
+            #selectedItem
+            let-selectedOption
+          >
+            <div
+              class="flex items-center gap-2"
+              *ngIf="selectedOption"
+            >
+              {{ getOptionLabel(selectedOption) }}
+            </div>
+          </ng-template>
+          <ng-template
+            let-options
+            #item
+          >
+            <div class="flex items-center gap-2">
+              {{ getOptionLabel(options) }}
+            </div>
+          </ng-template>
+        </p-select>
+      </p-inputgroup>
     }
 
-    @if (type === 'valueObject') {
-      <span class="p-float-label">
+    @if (type === 'valueStringLazy') {
+      <p-inputgroup>
+        <p-button
+          *ngIf="btnConfig"
+          [loading]="btnConfig.loading"
+          [disabled]="btnConfig.disabled"
+          [icon]="btnConfig.icon"
+          [severity]="btnConfig.severity"
+          [outlined]="btnConfig.outlined"
+          (onClick)="onBtnClick.emit()"
+        />
         <p-select
           fluid
           [id]="selectId"
+          [loading]="loading"
           [formControl]="customFormControl"
           [placeholder]="placeholder"
           [options]="options"
-          [optionLabel]="optionLabel"
+          [optionValue]="optionValue"
           [showClear]="showClear"
           [size]="size"
           [appendTo]="'body'"
+          [lazy]="lazy"
+          [virtualScroll]="lazy"
+          [virtualScrollItemSize]="40"
+          [virtualScrollOptions]="{
+            delay: 100,
+            showLoader: lazy,
+            lazy: lazy,
+          }"
           [attr.aria-label]="label"
           [attr.aria-required]="required"
           [attr.aria-describedby]="getAriaDescribedBy()"
           (onChange)="onChange.emit($event)"
-        ></p-select>
-      </span>
+          (onLazyLoad)="onLazyLoad.emit($event)"
+        >
+          <ng-template
+            #selectedItem
+            let-selectedOption
+          >
+            <div
+              class="flex items-center gap-2"
+              *ngIf="selectedOption"
+            >
+              {{ getOptionLabel(selectedOption) }}
+            </div>
+          </ng-template>
+          <ng-template
+            let-options
+            #item
+          >
+            <div class="flex items-center gap-2">
+              {{ getOptionLabel(options) }}
+            </div>
+          </ng-template>
+        </p-select>
+      </p-inputgroup>
     }
 
-    @if (type === 'valueObjectLabels') {
-      <span class="p-float-label">
+    @if (type === 'valueObject') {
+      <p-inputgroup>
+        <p-button
+          *ngIf="btnConfig"
+          [loading]="btnConfig.loading"
+          [disabled]="btnConfig.disabled"
+          [icon]="btnConfig.icon"
+          [severity]="btnConfig.severity"
+          [outlined]="btnConfig.outlined"
+          (onClick)="onBtnClick.emit()"
+        />
         <p-select
           fluid
           [id]="selectId"
+          [loading]="loading"
           [formControl]="customFormControl"
           [placeholder]="placeholder"
           [options]="options"
@@ -74,12 +152,7 @@
               class="flex items-center gap-2"
               *ngIf="selectedOption"
             >
-              @for (optLabel of optionLabels; track $index) {
-                @if ($index !== 0 && $index !== optionLabels.length) {
-                  <span>/</span>
-                }
-                <span>{{ selectedOption[optLabel] }}</span>
-              }
+              {{ getOptionLabel(selectedOption) }}
             </div>
           </ng-template>
           <ng-template
@@ -87,16 +160,69 @@
             #item
           >
             <div class="flex items-center gap-2">
-              @for (optLabel of optionLabels; track $index) {
-                @if ($index !== 0 && $index !== optionLabels.length) {
-                  <span>/</span>
-                }
-                <span>{{ options[optLabel] }}</span>
-              }
+              {{ getOptionLabel(options) }}
             </div>
           </ng-template>
         </p-select>
-      </span>
+      </p-inputgroup>
+    }
+
+    @if (type === 'valueObjectLazy') {
+      <p-inputgroup>
+        <p-button
+          *ngIf="btnConfig"
+          [loading]="btnConfig.loading"
+          [disabled]="btnConfig.disabled"
+          [icon]="btnConfig.icon"
+          [severity]="btnConfig.severity"
+          [outlined]="btnConfig.outlined"
+          (onClick)="onBtnClick.emit()"
+        />
+        <p-select
+          fluid
+          [id]="selectId"
+          [loading]="loading"
+          [formControl]="customFormControl"
+          [placeholder]="placeholder"
+          [options]="options"
+          [showClear]="showClear"
+          [size]="size"
+          [appendTo]="'body'"
+          [lazy]="lazy"
+          [virtualScroll]="lazy"
+          [virtualScrollItemSize]="40"
+          [virtualScrollOptions]="{
+            delay: 100,
+            showLoader: lazy,
+            lazy: lazy,
+          }"
+          [attr.aria-label]="label"
+          [attr.aria-required]="required"
+          [attr.aria-describedby]="getAriaDescribedBy()"
+          (onChange)="onChange.emit($event)"
+          (onLazyLoad)="onLazyLoad.emit($event)"
+        >
+          <ng-template
+            #selectedItem
+            let-selectedOption
+          >
+            <div
+              class="flex items-center gap-2"
+              *ngIf="selectedOption"
+            >
+              {{ getOptionLabel(selectedOption) }}
+            </div>
+          </ng-template>
+          <ng-template
+            let-options
+            #item
+          >
+            <div class="flex items-center gap-2">
+              {{ getOptionLabel(options) }}
+            </div>
+          </ng-template>
+        </p-select>
+      </p-inputgroup>
     }
 
     @if (formUtils.isInvalidValidField(customFormControl)) {

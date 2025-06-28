@@ -33,4 +33,3 @@ export class TutorService {
     return this.http.delete<void>(`${this.API_URL}/${tutorId}`);
   }
 }
-

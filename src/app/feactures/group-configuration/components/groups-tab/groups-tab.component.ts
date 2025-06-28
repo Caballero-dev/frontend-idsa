@@ -1,25 +1,25 @@
 import { Component } from '@angular/core';
-import { TabsModule } from 'primeng/tabs';
-import { CampusesComponent } from '../campuses/campuses.component';
-import { ModalitiesComponent } from '../modalities/modalities.component';
-import { SpecialtiesComponent } from '../specialties/specialties.component';
-import { GradesComponent } from '../grades/grades.component';
-import { GroupsComponent } from '../groups/groups.component';
-import { GenerationsComponent } from '../generations/generations.component';
+import { TabViewModule } from 'primeng/tabview';
+import { ModalitiesListComponent } from '../modalities/modalities-list/modalities-list.component';
+import { SpecialitiesListComponent } from '../specialities/specialities-list/specialities-list.component';
+import { GradesListComponent } from '../grades/grades-list/grades-list.component';
+import { GroupsListComponent } from '../groups/groups-list/groups-list.component';
+import { GenerationsListComponent } from '../generations/generations-list/generations-list.component';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { CampusesListComponent } from '../campuses/campuses-list/campuses-list.component';
 
 @Component({
   selector: 'app-groups-tab',
   standalone: true,
   imports: [
-    TabsModule,
-    CampusesComponent,
-    ModalitiesComponent,
-    SpecialtiesComponent,
-    GradesComponent,
-    GroupsComponent,
-    GenerationsComponent,
+    TabViewModule,
+    CampusesListComponent,
+    ModalitiesListComponent,
+    SpecialitiesListComponent,
+    GradesListComponent,
+    GroupsListComponent,
+    GenerationsListComponent,
     RouterLink,
     ButtonModule,
   ],

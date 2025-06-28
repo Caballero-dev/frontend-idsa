@@ -1,0 +1,57 @@
+<p-dialog
+  [(visible)]="isModalityDialogVisible"
+  [header]="isCreateModality ? 'Crear modalidad' : 'Editar modalidad'"
+  [modal]="true"
+  [closable]="true"
+  [closeOnEscape]="false"
+  [style]="{ width: '550px' }"
+  (onHide)="closeDialog()"
+>
+  <form
+    [formGroup]="modalityForm"
+    (ngSubmit)="saveOrUpdateModality()"
+  >
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2 sm:flex-row sm:gap-4">
+        <div class="w-full">
+          <idsa-input-text
+            type="onlyLetters"
+            inputId="name"
+            label="Nombre de la modalidad"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="modalityForm.controls.name"
+            placeholder="Ingresa el nombre"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="50"
+            [minLength]="3"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end gap-2">
+        <p-button
+          *ngIf="!isLoading"
+          label="Cancelar"
+          type="button"
+          icon="pi pi-times"
+          severity="danger"
+          variant="outlined"
+          (click)="closeDialog()"
+        />
+        <p-button
+          [label]="isCreateModality ? 'Crear' : 'Actualizar'"
+          type="submit"
+          icon="pi pi-check"
+          [loading]="isLoading"
+          [disabled]="isLoading"
+        />
+      </div>
+    </div>
+  </form>
+</p-dialog>
+
+<p-toast />

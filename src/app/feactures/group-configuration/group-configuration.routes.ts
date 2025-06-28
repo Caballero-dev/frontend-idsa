@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { GroupsTabComponent } from './components/groups-tab/groups-tab.component';
-import { GroupsConfigurationListComponent } from './components/groups-configuration-list/groups-configuration-list.component';
+import { GroupsConfigurationListComponent } from './components/groups-configuration/groups-configuration-list/groups-configuration-list.component';
 
 const groupConfigurationRoutes: Routes = [
   { path: '', redirectTo: '', pathMatch: 'full' },

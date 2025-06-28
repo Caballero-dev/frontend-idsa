@@ -1,4 +1,4 @@
-export interface Specialty {
+export interface SpecialtyResponse {
   specialtyId: number;
   name: string;
   shortName: string;

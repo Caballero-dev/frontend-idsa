@@ -1,0 +1,74 @@
+<p-dialog
+  [(visible)]="isSpecialtyDialogVisible"
+  [header]="isCreateSpecialty ? 'Crear especialidad' : 'Editar especialidad'"
+  [modal]="true"
+  [closable]="true"
+  [closeOnEscape]="false"
+  [style]="{ width: '550px' }"
+  (onHide)="closeDialog()"
+>
+  <form
+    [formGroup]="specialtyForm"
+    (ngSubmit)="saveOrUpdateSpecialty()"
+  >
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2 sm:flex-row sm:gap-4">
+        <div class="w-full sm:w-2/4">
+          <idsa-input-text
+            type="onlyLetters"
+            inputId="name"
+            label="Nombre de la especialidad"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="specialtyForm.controls.name"
+            placeholder="Ingresa el nombre"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="100"
+            [minLength]="3"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
+        <div class="w-full sm:w-2/4">
+          <idsa-input-text
+            type="onlyPlainLettersUpperCase"
+            inputId="shortName"
+            label="Nombre corto"
+            labelFontSize="text-lg"
+            labelPosition="top"
+            [customFormControl]="specialtyForm.controls.shortName"
+            placeholder="Ingresa el nombre corto"
+            [required]="true"
+            [readonly]="false"
+            [maxLength]="10"
+            [minLength]="2"
+            variant="outlined"
+            size="large"
+          ></idsa-input-text>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end gap-2">
+        <p-button
+          *ngIf="!isLoading"
+          label="Cancelar"
+          type="button"
+          icon="pi pi-times"
+          severity="danger"
+          variant="outlined"
+          (click)="closeDialog()"
+        />
+        <p-button
+          [label]="isCreateSpecialty ? 'Crear' : 'Actualizar'"
+          type="submit"
+          icon="pi pi-check"
+          [loading]="isLoading"
+          [disabled]="isLoading"
+        />
+      </div>
+    </div>
+  </form>
+</p-dialog>
+
+<p-toast />

@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormUtils } from '../../../utils/form.utils';
-import { DatePicker } from 'primeng/datepicker';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { DatePicker } from 'primeng/datepicker';
+
+import { FormUtils } from '../../../utils/form.utils';
 
 @Component({
   selector: 'idsa-input-date',
@@ -22,18 +24,21 @@ export class InputDateComponent implements OnInit {
   @Input() maxDate: Date | null = null;
   @Input() placeholder: string = '';
   @Input() required: boolean = false;
-  @Input() disabled: boolean = false;
   @Input() readonly: boolean = false;
   @Input() variant: 'filled' | 'outlined' = 'outlined';
   @Input({ required: false }) size: 'small' | 'large' = 'small';
   @Input() helpText: string | null = null;
   @Input() helpTextType: 'error' | 'info' = 'info';
 
-  @Output() onSelectDate: EventEmitter<Date> = new EventEmitter<Date>();
+  @Output() onSelectDate: EventEmitter<void> = new EventEmitter<void>();
 
   formUtils = FormUtils;
 
   ngOnInit(): void {}
+
+  onDateSelect() {
+    this.onSelectDate.emit();
+  }
 
   getClassContainerDiv(): string {
     if (this.labelPosition === 'top') {
