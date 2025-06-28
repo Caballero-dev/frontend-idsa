@@ -81,13 +81,13 @@
           [showClear]="showClear"
           [size]="size"
           [appendTo]="'body'"
-          [lazy]="true"
-          [virtualScroll]="true"
-          [virtualScrollItemSize]="options.length"
+          [lazy]="lazy"
+          [virtualScroll]="lazy"
+          [virtualScrollItemSize]="40"
           [virtualScrollOptions]="{
-            delay: 250,
-            showLoader: true,
-            lazy: true,
+            delay: 100,
+            showLoader: lazy,
+            lazy: lazy,
           }"
           [attr.aria-label]="label"
           [attr.aria-required]="required"
@@ -188,13 +188,13 @@
           [showClear]="showClear"
           [size]="size"
           [appendTo]="'body'"
-          [lazy]="true"
-          [virtualScroll]="true"
-          [virtualScrollItemSize]="virtualScrollItemSize"
+          [lazy]="lazy"
+          [virtualScroll]="lazy"
+          [virtualScrollItemSize]="40"
           [virtualScrollOptions]="{
-            delay: 250,
-            showLoader: true,
-            lazy: true,
+            delay: 100,
+            showLoader: lazy,
+            lazy: lazy,
           }"
           [attr.aria-label]="label"
           [attr.aria-required]="required"

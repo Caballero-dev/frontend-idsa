@@ -36,7 +36,7 @@ export class InputSelectComponent implements OnInit {
   @Input({ required: false }) size: 'small' | 'large' = 'small';
   @Input() helpText: string | null = null;
   @Input() helpTextType: 'error' | 'info' = 'info';
-  @Input() virtualScrollItemSize: number = 0;
+  @Input() lazy: boolean = false;
   @Input() btnConfig: {
     loading?: boolean;
     disabled: boolean;
