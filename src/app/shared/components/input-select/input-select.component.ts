@@ -3,7 +3,7 @@ import { CommonModule, formatDate } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { InputGroupModule } from 'primeng/inputgroup';
-import { SelectChangeEvent, SelectModule } from 'primeng/select';
+import { SelectChangeEvent, SelectLazyLoadEvent, SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 
 import { FormUtils } from '../../../utils/form.utils';
@@ -16,7 +16,7 @@ import { FormUtils } from '../../../utils/form.utils';
   styleUrl: './input-select.component.scss',
 })
 export class InputSelectComponent implements OnInit {
-  @Input() type: 'valueObject' | 'valueString' = 'valueString';
+  @Input() type: 'valueObject' | 'valueString' | 'valueObjectLazy' | 'valueStringLazy' = 'valueString';
   @Input() selectId: string = '';
   @Input() loading: boolean = false;
   @Input() label: string = '';
@@ -36,6 +36,7 @@ export class InputSelectComponent implements OnInit {
   @Input({ required: false }) size: 'small' | 'large' = 'small';
   @Input() helpText: string | null = null;
   @Input() helpTextType: 'error' | 'info' = 'info';
+  @Input() virtualScrollItemSize: number = 0;
   @Input() btnConfig: {
     loading?: boolean;
     disabled: boolean;
@@ -46,6 +47,7 @@ export class InputSelectComponent implements OnInit {
 
   @Output() onChange: EventEmitter<SelectChangeEvent> = new EventEmitter<SelectChangeEvent>();
   @Output() onBtnClick: EventEmitter<void> = new EventEmitter<void>();
+  @Output() onLazyLoad: EventEmitter<SelectLazyLoadEvent> = new EventEmitter<SelectLazyLoadEvent>();
 
   formUtils = FormUtils;
 

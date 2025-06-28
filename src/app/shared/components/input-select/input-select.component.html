@@ -23,6 +23,7 @@
         <p-select
           fluid
           [id]="selectId"
+          [loading]="loading"
           [formControl]="customFormControl"
           [placeholder]="placeholder"
           [options]="options"
@@ -34,6 +35,65 @@
           [attr.aria-required]="required"
           [attr.aria-describedby]="getAriaDescribedBy()"
           (onChange)="onChange.emit($event)"
+        >
+          <ng-template
+            #selectedItem
+            let-selectedOption
+          >
+            <div
+              class="flex items-center gap-2"
+              *ngIf="selectedOption"
+            >
+              {{ getOptionLabel(selectedOption) }}
+            </div>
+          </ng-template>
+          <ng-template
+            let-options
+            #item
+          >
+            <div class="flex items-center gap-2">
+              {{ getOptionLabel(options) }}
+            </div>
+          </ng-template>
+        </p-select>
+      </p-inputgroup>
+    }
+
+    @if (type === 'valueStringLazy') {
+      <p-inputgroup>
+        <p-button
+          *ngIf="btnConfig"
+          [loading]="btnConfig.loading"
+          [disabled]="btnConfig.disabled"
+          [icon]="btnConfig.icon"
+          [severity]="btnConfig.severity"
+          [outlined]="btnConfig.outlined"
+          (onClick)="onBtnClick.emit()"
+        />
+        <p-select
+          fluid
+          [id]="selectId"
+          [loading]="loading"
+          [formControl]="customFormControl"
+          [placeholder]="placeholder"
+          [options]="options"
+          [optionValue]="optionValue"
+          [showClear]="showClear"
+          [size]="size"
+          [appendTo]="'body'"
+          [lazy]="true"
+          [virtualScroll]="true"
+          [virtualScrollItemSize]="options.length"
+          [virtualScrollOptions]="{
+            delay: 250,
+            showLoader: true,
+            lazy: true,
+          }"
+          [attr.aria-label]="label"
+          [attr.aria-required]="required"
+          [attr.aria-describedby]="getAriaDescribedBy()"
+          (onChange)="onChange.emit($event)"
+          (onLazyLoad)="onLazyLoad.emit($event)"
         >
           <ng-template
             #selectedItem
@@ -83,6 +143,64 @@
           [attr.aria-required]="required"
           [attr.aria-describedby]="getAriaDescribedBy()"
           (onChange)="onChange.emit($event)"
+        >
+          <ng-template
+            #selectedItem
+            let-selectedOption
+          >
+            <div
+              class="flex items-center gap-2"
+              *ngIf="selectedOption"
+            >
+              {{ getOptionLabel(selectedOption) }}
+            </div>
+          </ng-template>
+          <ng-template
+            let-options
+            #item
+          >
+            <div class="flex items-center gap-2">
+              {{ getOptionLabel(options) }}
+            </div>
+          </ng-template>
+        </p-select>
+      </p-inputgroup>
+    }
+
+    @if (type === 'valueObjectLazy') {
+      <p-inputgroup>
+        <p-button
+          *ngIf="btnConfig"
+          [loading]="btnConfig.loading"
+          [disabled]="btnConfig.disabled"
+          [icon]="btnConfig.icon"
+          [severity]="btnConfig.severity"
+          [outlined]="btnConfig.outlined"
+          (onClick)="onBtnClick.emit()"
+        />
+        <p-select
+          fluid
+          [id]="selectId"
+          [loading]="loading"
+          [formControl]="customFormControl"
+          [placeholder]="placeholder"
+          [options]="options"
+          [showClear]="showClear"
+          [size]="size"
+          [appendTo]="'body'"
+          [lazy]="true"
+          [virtualScroll]="true"
+          [virtualScrollItemSize]="virtualScrollItemSize"
+          [virtualScrollOptions]="{
+            delay: 250,
+            showLoader: true,
+            lazy: true,
+          }"
+          [attr.aria-label]="label"
+          [attr.aria-required]="required"
+          [attr.aria-describedby]="getAriaDescribedBy()"
+          (onChange)="onChange.emit($event)"
+          (onLazyLoad)="onLazyLoad.emit($event)"
         >
           <ng-template
             #selectedItem
