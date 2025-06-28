@@ -34,6 +34,14 @@ import { GroupResponse } from '../../../models/group.model';
 import { GenerationResponse } from '../../../models/generation.model';
 import { TutorResponse } from '../../../../tutors/models/tutor.model';
 
+interface LazyLoadData<T> {
+  currentPage: number;
+  totalElements: number;
+  hasNext: boolean;
+  isLoading: boolean;
+  data: T[];
+}
+
 @Component({
   selector: 'groups-configuration-form',
   standalone: true,
@@ -64,55 +72,55 @@ export class GroupsConfigurationFormComponent implements OnInit, AfterViewInit {
   isLoading: boolean = false;
   formUtils = FormUtils;
 
-  tutors: {
-    currentPage: number;
-    totalElements: number;
-    hasNext: boolean;
-    isLoading: boolean;
-    data: TutorResponse[];
-  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
-  campuses: {
-    currentPage: number;
-    totalElements: number;
-    hasNext: boolean;
-    isLoading: boolean;
-    data: CampusResponse[];
-  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
-  specialties: {
-    currentPage: number;
-    totalElements: number;
-    hasNext: boolean;
-    isLoading: boolean;
-    data: SpecialtyResponse[];
-  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
-  modalities: {
-    currentPage: number;
-    totalElements: number;
-    hasNext: boolean;
-    isLoading: boolean;
-    data: ModalityResponse[];
-  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
-  grades: {
-    currentPage: number;
-    totalElements: number;
-    hasNext: boolean;
-    isLoading: boolean;
-    data: GradeResponse[];
-  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
-  groups: {
-    currentPage: number;
-    totalElements: number;
-    hasNext: boolean;
-    isLoading: boolean;
-    data: GroupResponse[];
-  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
-  generations: {
-    currentPage: number;
-    totalElements: number;
-    hasNext: boolean;
-    isLoading: boolean;
-    data: GenerationResponse[];
-  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
+  tutors: LazyLoadData<TutorResponse> = {
+    currentPage: 0,
+    totalElements: 0,
+    hasNext: false,
+    isLoading: false,
+    data: [],
+  };
+  campuses: LazyLoadData<CampusResponse> = {
+    currentPage: 0,
+    totalElements: 0,
+    hasNext: false,
+    isLoading: false,
+    data: [],
+  };
+  specialties: LazyLoadData<SpecialtyResponse> = {
+    currentPage: 0,
+    totalElements: 0,
+    hasNext: false,
+    isLoading: false,
+    data: [],
+  };
+  modalities: LazyLoadData<ModalityResponse> = {
+    currentPage: 0,
+    totalElements: 0,
+    hasNext: false,
+    isLoading: false,
+    data: [],
+  };
+  grades: LazyLoadData<GradeResponse> = {
+    currentPage: 0,
+    totalElements: 0,
+    hasNext: false,
+    isLoading: false,
+    data: [],
+  };
+  groups: LazyLoadData<GroupResponse> = {
+    currentPage: 0,
+    totalElements: 0,
+    hasNext: false,
+    isLoading: false,
+    data: [],
+  };
+  generations: LazyLoadData<GenerationResponse> = {
+    currentPage: 0,
+    totalElements: 0,
+    hasNext: false,
+    isLoading: false,
+    data: [],
+  };
 
   groupConfigurationForm = this.fb.group({
     tutor: new FormControl<TutorResponse | null>(null, [Validators.required]),
@@ -396,8 +404,8 @@ export class GroupsConfigurationFormComponent implements OnInit, AfterViewInit {
           this.isLoading = false;
         },
         error: (error: ApiError) => {
-          if (error.statusCode === 409 && error.message.includes('group_configuration_already_exists')) {
-            this.showToast('error', 'Error', 'Ya existe una configuración con los mismos parámetros');
+          if (error.statusCode === 409 && error.message.includes('configuration_already_exists')) {
+            this.showToast('error', 'Error', 'Ya existe una configuración de grupo con los mismos datos');
           } else if (error.status === 'Unknown Error' && error.statusCode === 0) {
             this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
           } else {
@@ -430,8 +438,8 @@ export class GroupsConfigurationFormComponent implements OnInit, AfterViewInit {
                 'Configuración no encontrada',
                 'La configuración que intentó actualizar ya no existe en el sistema'
               );
-            } else if (error.statusCode === 409 && error.message.includes('group_configuration_already_exists')) {
-              this.showToast('error', 'Error', 'Ya existe una configuración con los mismos parámetros');
+            } else if (error.statusCode === 409 && error.message.includes('configuration_already_exists')) {
+              this.showToast('error', 'Error', 'Ya existe una configuración de grupo con los mismos datos');
             } else if (error.status === 'Unknown Error' && error.statusCode === 0) {
               this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
             } else {
