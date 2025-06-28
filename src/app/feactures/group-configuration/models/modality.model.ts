@@ -1,4 +1,4 @@
-export interface Modality {
+export interface ModalityResponse {
   modalityId: number;
   name: string;
 }

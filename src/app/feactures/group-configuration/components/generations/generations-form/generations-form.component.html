@@ -1,0 +1,75 @@
+<p-dialog
+  [(visible)]="isGenerationDialogVisible"
+  [header]="isCreateGeneration ? 'Crear generación' : 'Editar generación'"
+  [modal]="true"
+  [closable]="true"
+  [closeOnEscape]="false"
+  [style]="{ width: '550px' }"
+  (onHide)="closeDialog()"
+>
+  <form
+    [formGroup]="generationForm"
+    (ngSubmit)="saveOrUpdateGeneration()"
+  >
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2 sm:flex-row sm:gap-4">
+        <div class="w-full sm:w-2/4">
+          <span class="p-float-label">
+            <idsa-input-date
+              type="date"
+              inputId="startDate"
+              label="Fecha de inicio"
+              labelFontSize="text-lg"
+              labelPosition="top"
+              [customFormControl]="generationForm.controls.startYear"
+              [minDate]="minDate"
+              placeholder="Fecha de inicio"
+              [required]="true"
+              variant="outlined"
+              size="large"
+              (onSelectDate)="onStartYearChange()"
+            ></idsa-input-date>
+          </span>
+        </div>
+        <div class="w-full sm:w-2/4">
+          <span class="p-float-label">
+            <idsa-input-date
+              type="date"
+              inputId="endDate"
+              label="Fecha de fin"
+              labelFontSize="text-lg"
+              labelPosition="top"
+              [customFormControl]="generationForm.controls.endYear"
+              [minDate]="selectedStartDate"
+              placeholder="Fecha de fin"
+              [required]="true"
+              variant="outlined"
+              size="large"
+            ></idsa-input-date>
+          </span>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end gap-2">
+        <p-button
+          *ngIf="!isLoading"
+          label="Cancelar"
+          type="button"
+          icon="pi pi-times"
+          severity="danger"
+          variant="outlined"
+          (click)="closeDialog()"
+        />
+        <p-button
+          [label]="isCreateGeneration ? 'Crear' : 'Actualizar'"
+          type="submit"
+          icon="pi pi-check"
+          [loading]="isLoading"
+          [disabled]="isLoading"
+        />
+      </div>
+    </div>
+  </form>
+</p-dialog>
+
+<p-toast />

@@ -1,4 +1,4 @@
-export interface Generation {
+export interface GenerationResponse {
   generationId: number;
   yearStart: string;
   yearEnd: string;

@@ -1,0 +1,164 @@
+<p-toolbar styleClass="mb-6">
+  <ng-template #start>
+    <span class="text-2xl font-bold">Administrar configuración de grupos</span>
+  </ng-template>
+  <ng-template #end>
+    <div class="flex gap-2">
+      <p-button
+        label="Actualizar Datos"
+        icon="pi pi-refresh"
+        [outlined]="true"
+        (click)="refreshTableData()"
+      />
+      <p-button
+        label="Nueva configuración"
+        icon="pi pi-plus"
+        severity="primary"
+        (click)="openCreateGroupConfigurationDialog()"
+      />
+      <p-button
+        label="Gestionar datos de grupo"
+        icon="pi pi-cog"
+        severity="secondary"
+        [routerLink]="['./configuracion']"
+      />
+    </div>
+  </ng-template>
+</p-toolbar>
+
+<p-table
+  #dt
+  [value]="groupConfigurations"
+  [columns]="cols"
+  [lazy]="true"
+  [loading]="isLoading"
+  [rows]="rows"
+  [first]="first"
+  [totalRecords]="totalRecords"
+  [paginator]="true"
+  [rowsPerPageOptions]="[20, 40, 60]"
+  [scrollable]="true"
+  scrollHeight="600px"
+  [resizableColumns]="true"
+  [showGridlines]="true"
+  [rowHover]="true"
+  [globalFilterFields]="tableUtils.getGlobalFilterFields(cols)"
+  [tableStyle]="{ 'min-width': '75rem' }"
+  dataKey="groupConfigurationId"
+  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} configuraciones de grupo"
+  [showCurrentPageReport]="true"
+  (onLazyLoad)="loadGroupConfigurations($event)"
+>
+  <ng-template #caption>
+    <div class="flex flex-col items-center justify-between xs:flex-row">
+      <p-button
+        label="Limpiar"
+        [outlined]="true"
+        icon="pi pi-filter-slash"
+        (click)="dt.reset(); searchGroupConfigurationValue = ''"
+      />
+      <div class="mb-3 mt-3 xs:mb-0 xs:mt-0">
+        <p-inputgroup>
+          <input
+            pInputText
+            type="text"
+            [(ngModel)]="searchGroupConfigurationValue"
+            placeholder="Buscar..."
+          />
+          <p-button
+            icon="pi pi-search"
+            (click)="dt.filterGlobal(searchGroupConfigurationValue.trim(), 'contains')"
+          />
+        </p-inputgroup>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template
+    #header
+    let-columns
+  >
+    <tr>
+      @for (col of columns; track $index) {
+        <th
+          [pSortableColumn]="col.sortable ? col.field : null"
+          pResizableColumn
+        >
+          {{ col.header }}
+          @if (col.sortable) {
+            <p-sortIcon field="{{ col.field }}" />
+          }
+        </th>
+      }
+      <th style="min-width: 10rem"></th>
+    </tr>
+  </ng-template>
+
+  <ng-template
+    #body
+    let-groupConfiguration
+    let-columns="columns"
+  >
+    <tr>
+      @for (col of columns; track $index) {
+        <td>
+          @if (col.field === 'tutor.fullName') {
+            {{ groupConfiguration.tutor.name }}
+            {{ groupConfiguration.tutor.firstSurname }}
+            {{ groupConfiguration.tutor.secondSurname }}
+          } @else if (col.field === 'generation') {
+            {{ groupConfiguration.generation.yearStart | date: 'yyyy-MM-dd' }} /
+            {{ groupConfiguration.generation.yearEnd | date: 'yyyy-MM-dd' }}
+          } @else {
+            {{ tableUtils.getNestedValue(groupConfiguration, col.field) }}
+          }
+        </td>
+      }
+      <td>
+        <div class="flex items-center justify-around">
+          <p-button
+            [pTooltip]="'Editar configuración'"
+            tooltipPosition="top"
+            icon="pi pi-pencil"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="openEditGroupConfigurationDialog(groupConfiguration)"
+          />
+          <p-button
+            [pTooltip]="'Eliminar configuración'"
+            tooltipPosition="top"
+            icon="pi pi-trash"
+            severity="danger"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="deleteGroupConfiguration(groupConfiguration)"
+          />
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template #emptymessage>
+    <tr>
+      <td [attr.colspan]="cols.length + 1">No se encontraron configuraciones de grupo</td>
+    </tr>
+  </ng-template>
+  <ng-template
+    *ngIf="!groupConfigurations"
+    #loadingbody
+  >
+    <tr>
+      <td [attr.colspan]="cols.length + 1">Cargando datos de configuraciones de grupo.</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+@if (isGroupConfigurationDialogVisible) {
+  <groups-configuration-form
+    [isGroupConfigurationDialogVisible]="isGroupConfigurationDialogVisible"
+    [isCreateGroupConfiguration]="isCreateGroupConfiguration"
+    [selectedGroupConfiguration]="selectedGroupConfiguration"
+    (groupConfigurationDialogChange)="onGroupConfigurationDialogChange($event)"
+  />
+}
+
+<p-toast />
+<p-confirmDialog [style]="{ width: '450px' }" />

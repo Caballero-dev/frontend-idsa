@@ -1,4 +1,4 @@
-export interface Grade {
+export interface GradeResponse {
   gradeId: number;
   name: string;
 }

@@ -19,13 +19,15 @@
         [showButtonBar]="true"
         [appendTo]="'body'"
         [iconDisplay]="'input'"
-        dateFormat="dd/mm/yy"
+        dateFormat="yy-mm-dd"
         [placeholder]="placeholder"
         [size]="size"
+        [readonlyInput]="readonly"
         [attr.aria-label]="label"
         [attr.aria-required]="required"
         [attr.aria-describedby]="getAriaDescribedBy()"
-        (onSelect)="onSelectDate.emit($event)"
+        (onSelect)="onDateSelect()"
+        (onInput)="onDateSelect()"
       ></p-datePicker>
     }
 
