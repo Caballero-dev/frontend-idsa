@@ -144,7 +144,7 @@ export class GroupsConfigurationListComponent implements OnInit {
         <b>Modalidad:</b> ${groupConfiguration.modality.name}<br>
         <b>Especialidad:</b> ${groupConfiguration.specialty.name}<br>
         <b>Grado y grupo:</b> ${groupConfiguration.grade.name} - ${groupConfiguration.group.name}<br>
-        <b>Generación:</b> ${groupConfiguration.generation.yearStart} - ${groupConfiguration.generation.yearEnd}`,
+        <b>Generación:</b> ${new Date(groupConfiguration.generation.yearStart).toLocaleDateString('en-CA')} - ${new Date(groupConfiguration.generation.yearEnd).toLocaleDateString('en-CA')}`,
       header: 'Confirmar',
       closable: false,
       closeOnEscape: false,
