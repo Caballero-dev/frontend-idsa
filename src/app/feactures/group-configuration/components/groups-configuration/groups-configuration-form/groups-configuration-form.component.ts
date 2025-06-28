@@ -5,6 +5,7 @@ import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angu
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { SelectLazyLoadEvent } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 
 import { GroupConfigurationService } from '../../../services/group-configuration.service';
@@ -63,13 +64,55 @@ export class GroupsConfigurationFormComponent implements OnInit, AfterViewInit {
   isLoading: boolean = false;
   formUtils = FormUtils;
 
-  tutors: TutorResponse[] | null = null;
-  campuses: CampusResponse[] | null = null;
-  specialties: SpecialtyResponse[] | null = null;
-  modalities: ModalityResponse[] | null = null;
-  grades: GradeResponse[] | null = null;
-  groups: GroupResponse[] | null = null;
-  generations: GenerationResponse[] | null = null;
+  tutors: {
+    currentPage: number;
+    totalElements: number;
+    hasNext: boolean;
+    isLoading: boolean;
+    data: TutorResponse[];
+  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
+  campuses: {
+    currentPage: number;
+    totalElements: number;
+    hasNext: boolean;
+    isLoading: boolean;
+    data: CampusResponse[];
+  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
+  specialties: {
+    currentPage: number;
+    totalElements: number;
+    hasNext: boolean;
+    isLoading: boolean;
+    data: SpecialtyResponse[];
+  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
+  modalities: {
+    currentPage: number;
+    totalElements: number;
+    hasNext: boolean;
+    isLoading: boolean;
+    data: ModalityResponse[];
+  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
+  grades: {
+    currentPage: number;
+    totalElements: number;
+    hasNext: boolean;
+    isLoading: boolean;
+    data: GradeResponse[];
+  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
+  groups: {
+    currentPage: number;
+    totalElements: number;
+    hasNext: boolean;
+    isLoading: boolean;
+    data: GroupResponse[];
+  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
+  generations: {
+    currentPage: number;
+    totalElements: number;
+    hasNext: boolean;
+    isLoading: boolean;
+    data: GenerationResponse[];
+  } = { currentPage: 0, totalElements: 0, hasNext: false, isLoading: false, data: [] };
 
   groupConfigurationForm = this.fb.group({
     tutor: new FormControl<TutorResponse | null>(null, [Validators.required]),
@@ -92,101 +135,227 @@ export class GroupsConfigurationFormComponent implements OnInit, AfterViewInit {
   }
 
   private loadFormData(): void {
-    this.loadTutors();
-    this.loadCampuses();
-    this.loadSpecialties();
-    this.loadModalities();
-    this.loadGrades();
-    this.loadGroups();
-    this.loadGenerations();
+    this.loadTutors(this.tutors.currentPage, 20);
+    this.loadCampuses(this.campuses.currentPage, 20);
+    this.loadSpecialties(this.specialties.currentPage, 20);
+    this.loadModalities(this.modalities.currentPage, 20);
+    this.loadGrades(this.grades.currentPage, 20);
+    this.loadGroups(this.groups.currentPage, 20);
+    this.loadGenerations(this.generations.currentPage, 20);
   }
 
-  loadTutors(): void {
-    this.tutors = null;
-    this.tutorService.getAllTutors().subscribe({
+  onLazyLoadTutors(event: SelectLazyLoadEvent): void {
+    if (this.tutors.isLoading) return;
+    const { first, last } = event;
+    if (this.tutors.hasNext && last >= this.tutors.data.length) {
+      this.tutors.currentPage++;
+      this.loadTutors(this.tutors.currentPage, 20);
+    }
+  }
+
+  loadTutors(page: number, size: number): void {
+    this.tutors.isLoading = true;
+    this.tutorService.getAllTutors(page, size).subscribe({
       next: (response: ApiResponse<TutorResponse[]>) => {
-        this.tutors = response.data;
+        if (response.pageInfo!.page === 0) {
+          this.tutors.data = [...response.data];
+          this.tutors.currentPage = 0;
+        } else {
+          this.tutors.data = [...this.tutors.data, ...response.data];
+        }
+        this.tutors.hasNext = response.pageInfo!.hasNext;
+        this.tutors.totalElements = response.pageInfo!.totalElements;
+        this.tutors.isLoading = false;
       },
       error: () => {
-        this.tutors = [];
+        this.tutors.data = [];
+        this.tutors.isLoading = false;
         this.showToast('error', 'Error', 'Error al cargar tutores');
       },
     });
   }
 
-  loadCampuses(): void {
-    this.campuses = null;
-    this.campusService.getAllCampuses().subscribe({
+  onLazyLoadCampuses(event: SelectLazyLoadEvent): void {
+    if (this.campuses.isLoading) return;
+    const { first, last } = event;
+    if (this.campuses.hasNext && last >= this.campuses.data.length) {
+      this.campuses.currentPage++;
+      this.loadCampuses(this.campuses.currentPage, 20);
+    }
+  }
+
+  loadCampuses(page: number, size: number): void {
+    this.campuses.isLoading = true;
+    this.campusService.getAllCampuses(page, size).subscribe({
       next: (response: ApiResponse<CampusResponse[]>) => {
-        this.campuses = response.data;
+        if (response.pageInfo!.page === 0) {
+          this.campuses.data = [...response.data];
+          this.campuses.currentPage = 0;
+        } else {
+          this.campuses.data = [...this.campuses.data, ...response.data];
+        }
+        this.campuses.hasNext = response.pageInfo!.hasNext;
+        this.campuses.totalElements = response.pageInfo!.totalElements;
+        this.campuses.isLoading = false;
       },
       error: () => {
-        this.campuses = [];
+        this.campuses.data = [];
+        this.campuses.isLoading = false;
         this.showToast('error', 'Error', 'Error al cargar campus');
       },
     });
   }
 
-  loadSpecialties(): void {
-    this.specialties = null;
-    this.specialtyService.getAllSpecialties().subscribe({
+  onLazyLoadSpecialties(event: SelectLazyLoadEvent): void {
+    if (this.specialties.isLoading) return;
+    const { first, last } = event;
+    if (this.specialties.hasNext && last >= this.specialties.data.length) {
+      this.specialties.currentPage++;
+      this.loadSpecialties(this.specialties.currentPage, 20);
+    }
+  }
+
+  loadSpecialties(page: number, size: number): void {
+    this.specialties.isLoading = true;
+    this.specialtyService.getAllSpecialties(page, size).subscribe({
       next: (response: ApiResponse<SpecialtyResponse[]>) => {
-        this.specialties = response.data;
+        if (response.pageInfo!.page === 0) {
+          this.specialties.data = [...response.data];
+          this.specialties.currentPage = 0;
+        } else {
+          this.specialties.data = [...this.specialties.data, ...response.data];
+        }
+        this.specialties.hasNext = response.pageInfo!.hasNext;
+        this.specialties.totalElements = response.pageInfo!.totalElements;
+        this.specialties.isLoading = false;
       },
       error: () => {
-        this.specialties = [];
+        this.specialties.data = [];
+        this.specialties.isLoading = false;
         this.showToast('error', 'Error', 'Error al cargar especialidades');
       },
     });
   }
 
-  loadModalities(): void {
-    this.modalities = null;
-    this.modalityService.getAllModalities().subscribe({
+  onLazyLoadModalities(event: SelectLazyLoadEvent): void {
+    if (this.modalities.isLoading) return;
+    const { first, last } = event;
+    if (this.modalities.hasNext && last >= this.modalities.data.length) {
+      this.modalities.currentPage++;
+      this.loadModalities(this.modalities.currentPage, 20);
+    }
+  }
+
+  loadModalities(page: number, size: number): void {
+    this.modalities.isLoading = true;
+    this.modalityService.getAllModalities(page, size).subscribe({
       next: (response: ApiResponse<ModalityResponse[]>) => {
-        this.modalities = response.data;
+        if (response.pageInfo!.page === 0) {
+          this.modalities.data = [...response.data];
+          this.modalities.currentPage = 0;
+        } else {
+          this.modalities.data = [...this.modalities.data, ...response.data];
+        }
+        this.modalities.hasNext = response.pageInfo!.hasNext;
+        this.modalities.totalElements = response.pageInfo!.totalElements;
+        this.modalities.isLoading = false;
       },
       error: () => {
-        this.modalities = [];
+        this.modalities.data = [];
+        this.modalities.isLoading = false;
         this.showToast('error', 'Error', 'Error al cargar modalidades');
       },
     });
   }
 
-  loadGrades(): void {
-    this.grades = null;
-    this.gradeService.getAllGrades().subscribe({
+  onLazyLoadGrades(event: SelectLazyLoadEvent): void {
+    if (this.grades.isLoading) return;
+    const { first, last } = event;
+    if (this.grades.hasNext && last >= this.grades.data.length) {
+      this.grades.currentPage++;
+      this.loadGrades(this.grades.currentPage, 20);
+    }
+  }
+
+  loadGrades(page: number, size: number): void {
+    this.grades.isLoading = true;
+    this.gradeService.getAllGrades(page, size).subscribe({
       next: (response: ApiResponse<GradeResponse[]>) => {
-        this.grades = response.data;
+        if (response.pageInfo!.page === 0) {
+          this.grades.data = [...response.data];
+          this.grades.currentPage = 0;
+        } else {
+          this.grades.data = [...this.grades.data, ...response.data];
+        }
+        this.grades.hasNext = response.pageInfo!.hasNext;
+        this.grades.totalElements = response.pageInfo!.totalElements;
+        this.grades.isLoading = false;
       },
       error: () => {
-        this.grades = [];
+        this.grades.data = [];
+        this.grades.isLoading = false;
         this.showToast('error', 'Error', 'Error al cargar grados');
       },
     });
   }
 
-  loadGroups(): void {
-    this.groups = null;
-    this.groupService.getAllGroups().subscribe({
+  onLazyLoadGroups(event: SelectLazyLoadEvent): void {
+    if (this.groups.isLoading) return;
+    const { first, last } = event;
+    if (this.groups.hasNext && last >= this.groups.data.length) {
+      this.groups.currentPage++;
+      this.loadGroups(this.groups.currentPage, 20);
+    }
+  }
+
+  loadGroups(page: number, size: number): void {
+    this.groups.isLoading = true;
+    this.groupService.getAllGroups(page, size).subscribe({
       next: (response: ApiResponse<GroupResponse[]>) => {
-        this.groups = response.data;
+        if (response.pageInfo!.page === 0) {
+          this.groups.data = [...response.data];
+          this.groups.currentPage = 0;
+        } else {
+          this.groups.data = [...this.groups.data, ...response.data];
+        }
+        this.groups.hasNext = response.pageInfo!.hasNext;
+        this.groups.totalElements = response.pageInfo!.totalElements;
+        this.groups.isLoading = false;
       },
       error: () => {
-        this.groups = [];
+        this.groups.data = [];
+        this.groups.isLoading = false;
         this.showToast('error', 'Error', 'Error al cargar grupos');
       },
     });
   }
 
-  loadGenerations(): void {
-    this.generations = null;
-    this.generationService.getAllGenerations().subscribe({
+  onLazyLoadGenerations(event: SelectLazyLoadEvent): void {
+    if (this.generations.isLoading) return;
+    const { first, last } = event;
+    if (this.generations.hasNext && last >= this.generations.data.length) {
+      this.generations.currentPage++;
+      this.loadGenerations(this.generations.currentPage, 20);
+    }
+  }
+
+  loadGenerations(page: number, size: number): void {
+    this.generations.isLoading = true;
+    this.generationService.getAllGenerations(page, size).subscribe({
       next: (response: ApiResponse<GenerationResponse[]>) => {
-        this.generations = response.data;
+        if (response.pageInfo!.page === 0) {
+          this.generations.data = [...response.data];
+          this.generations.currentPage = 0;
+        } else {
+          this.generations.data = [...this.generations.data, ...response.data];
+        }
+        this.generations.hasNext = response.pageInfo!.hasNext;
+        this.generations.totalElements = response.pageInfo!.totalElements;
+        this.generations.isLoading = false;
       },
       error: () => {
-        this.generations = [];
+        this.generations.data = [];
+        this.generations.isLoading = false;
         this.showToast('error', 'Error', 'Error al cargar generaciones');
       },
     });

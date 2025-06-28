@@ -15,14 +15,14 @@
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div class="w-full">
           <idsa-input-select
-            type="valueObject"
+            type="valueObjectLazy"
             inputId="tutor"
-            [loading]="tutors === null"
+            [loading]="tutors.isLoading"
             label="Tutor"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.tutor"
-            [options]="tutors ?? []"
+            [options]="tutors.data"
             [optionLabels]="{ labels: ['name', 'firstSurname', 'secondSurname'], separator: ' ' }"
             optionValue="tutorId"
             placeholder="Selecciona un tutor"
@@ -30,25 +30,27 @@
             variant="outlined"
             size="large"
             [btnConfig]="{
-              disabled: tutors === null,
+              disabled: tutors.isLoading,
               icon: 'pi pi-refresh',
               severity: 'primary',
               outlined: false,
             }"
-            (onBtnClick)="loadTutors()"
+            [lazy]="tutors.hasNext"
+            (onBtnClick)="loadTutors(0, 20)"
+            (onLazyLoad)="onLazyLoadTutors($event)"
           ></idsa-input-select>
         </div>
 
         <div class="w-full">
           <idsa-input-select
-            type="valueObject"
+            type="valueObjectLazy"
             inputId="campus"
-            [loading]="campuses === null"
+            [loading]="campuses.isLoading"
             label="Campus"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.campus"
-            [options]="campuses ?? []"
+            [options]="campuses.data"
             optionLabel="name"
             optionValue="campusId"
             placeholder="Selecciona un campus"
@@ -56,25 +58,27 @@
             variant="outlined"
             size="large"
             [btnConfig]="{
-              disabled: campuses === null,
+              disabled: campuses.isLoading,
               icon: 'pi pi-refresh',
               severity: 'primary',
               outlined: false,
             }"
-            (onBtnClick)="loadCampuses()"
+            [lazy]="campuses.hasNext"
+            (onBtnClick)="loadCampuses(0, 20)"
+            (onLazyLoad)="onLazyLoadCampuses($event)"
           ></idsa-input-select>
         </div>
 
         <div class="w-full">
           <idsa-input-select
-            type="valueObject"
+            type="valueObjectLazy"
             inputId="specialty"
-            [loading]="specialties === null"
+            [loading]="specialties.isLoading"
             label="Especialidad"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.specialty"
-            [options]="specialties ?? []"
+            [options]="specialties.data"
             optionLabel="name"
             optionValue="specialtyId"
             placeholder="Selecciona una especialidad"
@@ -82,25 +86,27 @@
             variant="outlined"
             size="large"
             [btnConfig]="{
-              disabled: specialties === null,
+              disabled: specialties.isLoading,
               icon: 'pi pi-refresh',
               severity: 'primary',
               outlined: false,
             }"
-            (onBtnClick)="loadSpecialties()"
+            [lazy]="specialties.hasNext"
+            (onBtnClick)="loadSpecialties(0, 20)"
+            (onLazyLoad)="onLazyLoadSpecialties($event)"
           ></idsa-input-select>
         </div>
 
         <div class="w-full">
           <idsa-input-select
-            type="valueObject"
+            type="valueObjectLazy"
             inputId="modality"
-            [loading]="modalities === null"
+            [loading]="modalities.isLoading"
             label="Modalidad"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.modality"
-            [options]="modalities ?? []"
+            [options]="modalities.data"
             optionLabel="name"
             optionValue="modalityId"
             placeholder="Selecciona una modalidad"
@@ -108,25 +114,27 @@
             variant="outlined"
             size="large"
             [btnConfig]="{
-              disabled: modalities === null,
+              disabled: modalities.isLoading,
               icon: 'pi pi-refresh',
               severity: 'primary',
               outlined: false,
             }"
-            (onBtnClick)="loadModalities()"
+            [lazy]="modalities.hasNext"
+            (onBtnClick)="loadModalities(0, 20)"
+            (onLazyLoad)="onLazyLoadModalities($event)"
           ></idsa-input-select>
         </div>
 
         <div class="w-full">
           <idsa-input-select
-            type="valueObject"
+            type="valueObjectLazy"
             inputId="grade"
-            [loading]="grades === null"
+            [loading]="grades.isLoading"
             label="Grado"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.grade"
-            [options]="grades ?? []"
+            [options]="grades.data"
             optionLabel="name"
             optionValue="gradeId"
             placeholder="Selecciona un grado"
@@ -134,25 +142,27 @@
             variant="outlined"
             size="large"
             [btnConfig]="{
-              disabled: grades === null,
+              disabled: grades.isLoading,
               icon: 'pi pi-refresh',
               severity: 'primary',
               outlined: false,
             }"
-            (onBtnClick)="loadGrades()"
+            [lazy]="grades.hasNext"
+            (onBtnClick)="loadGrades(0, 20)"
+            (onLazyLoad)="onLazyLoadGrades($event)"
           ></idsa-input-select>
         </div>
 
         <div class="w-full">
           <idsa-input-select
-            type="valueObject"
+            type="valueObjectLazy"
             inputId="group"
-            [loading]="groups === null"
+            [loading]="groups.isLoading"
             label="Grupo"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.group"
-            [options]="groups ?? []"
+            [options]="groups.data"
             optionLabel="name"
             optionValue="groupId"
             placeholder="Selecciona un grupo"
@@ -160,25 +170,27 @@
             variant="outlined"
             size="large"
             [btnConfig]="{
-              disabled: groups === null,
+              disabled: groups.isLoading,
               icon: 'pi pi-refresh',
               severity: 'primary',
               outlined: false,
             }"
-            (onBtnClick)="loadGroups()"
+            [lazy]="groups.hasNext"
+            (onBtnClick)="loadGroups(0, 20)"
+            (onLazyLoad)="onLazyLoadGroups($event)"
           ></idsa-input-select>
         </div>
 
         <div class="w-full">
           <idsa-input-select
-            type="valueObject"
+            type="valueObjectLazy"
             inputId="generation"
-            [loading]="generations === null"
+            [loading]="generations.isLoading"
             label="Generación"
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="groupConfigurationForm.controls.generation"
-            [options]="generations ?? []"
+            [options]="generations.data"
             [optionLabels]="{ labels: ['yearStart', 'yearEnd'], separator: ' / ' }"
             [dateFormat]="{ format: 'yyyy-MM-dd', locale: 'en' }"
             optionValue="generationId"
@@ -187,12 +199,14 @@
             variant="outlined"
             size="large"
             [btnConfig]="{
-              disabled: generations === null,
+              disabled: generations.isLoading,
               icon: 'pi pi-refresh',
               severity: 'primary',
               outlined: false,
             }"
-            (onBtnClick)="loadGenerations()"
+            [lazy]="generations.hasNext"
+            (onBtnClick)="loadGenerations(0, 20)"
+            (onLazyLoad)="onLazyLoadGenerations($event)"
           ></idsa-input-select>
         </div>
       </div>
