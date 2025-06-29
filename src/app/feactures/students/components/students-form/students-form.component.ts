@@ -1,34 +1,54 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { EmitterDialogStudent, Student, StudentRequest } from '../../models/student.model';
+import { ToastModule } from 'primeng/toast';
+
+import { StudentService } from '../../services/student.service';
+
+import { ApiError } from '../../../../core/models/ApiError.model';
+import { ApiResponse } from '../../../../core/models/ApiResponse.model';
+
+import { DialogState } from '../../../../shared/types/dialog.types';
 import { FormUtils } from '../../../../utils/form.utils';
+
 import { InputTextComponent } from '../../../../shared/components/input-text/input-text.component';
+
+import { StudentRequest, StudentResponse } from '../../models/student.model';
 
 @Component({
   selector: 'students-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DialogModule, ButtonModule, InputTextComponent],
+  imports: [CommonModule, ReactiveFormsModule, ButtonModule, DialogModule, ToastModule, InputTextComponent],
   templateUrl: './students-form.component.html',
   styleUrl: './students-form.component.scss',
+  providers: [MessageService],
 })
-export class StudentsFormComponent implements OnInit {
-  @Input() studentDialog: boolean = false;
+export class StudentsFormComponent implements OnInit, AfterViewInit {
+  @Input() isStudentDialogVisible: boolean = false;
   @Input() isCreateStudent: boolean = true;
-  @Input() selectedStudent: Student | null = null;
-  @Output() defaultChangeStudentDialog: EventEmitter<EmitterDialogStudent> = new EventEmitter<EmitterDialogStudent>();
+  @Input() selectedStudent: StudentResponse | null = null;
+  @Input() groupId: number | null = null;
+  @Output() studentDialogChange: EventEmitter<DialogState<StudentResponse>> = new EventEmitter<
+    DialogState<StudentResponse>
+  >();
 
-  formUtils = FormUtils;
   private fb: FormBuilder = inject(FormBuilder);
+  private studentService: StudentService = inject(StudentService);
+  private messageService: MessageService = inject(MessageService);
+
+  isLoading: boolean = false;
+  formUtils = FormUtils;
 
   studentForm = this.fb.group({
     studentCode: [
       '',
       [
         Validators.required,
-        Validators.minLength(10),
+        Validators.minLength(5),
         Validators.maxLength(20),
         Validators.pattern(this.formUtils.alphanumericPattern),
       ],
@@ -60,15 +80,6 @@ export class StudentsFormComponent implements OnInit {
         Validators.pattern(this.formUtils.onlyLettersPattern),
       ],
     ],
-    email: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(6),
-        Validators.maxLength(100),
-        Validators.pattern(this.formUtils.emailPattern),
-      ],
-    ],
     phoneNumber: [
       '',
       [
@@ -80,79 +91,135 @@ export class StudentsFormComponent implements OnInit {
     ],
   });
 
-  ngOnInit() {
+  ngOnInit(): void {}
+
+  ngAfterViewInit(): void {
     if (this.selectedStudent) {
-      this.setValuesForm(this.selectedStudent);
+      this.setFormValues(this.selectedStudent);
     }
   }
 
-  setValuesForm(student: Student) {
-    this.studentForm.setValue({
+  setFormValues(student: StudentResponse): void {
+    this.studentForm.patchValue({
       studentCode: student.studentCode,
       name: student.name,
       firstSurname: student.firstSurname,
       secondSurname: student.secondSurname,
-      email: student.email,
       phoneNumber: student.phoneNumber,
     });
   }
 
-  closeDialog() {
-    this.defaultChangeStudentDialog.emit({ isOpen: false, message: 'close', student: null });
+  closeDialog(): void {
+    this.studentDialogChange.emit({ isOpen: false, message: 'close', data: null });
   }
 
-  saveOrUpdateStudent() {
+  saveOrUpdateStudent(): void {
     if (this.isCreateStudent) {
-      this.saveStudent();
+      this.createStudent();
     } else {
       this.updateStudent();
     }
   }
 
-  saveStudent() {
-    if (this.studentForm.valid) {
-      // Mandar id de grupo por url
-      let studentRequest: StudentRequest = this.getStudentFormData();
+  createStudent(): void {
+    if (this.studentForm.valid && this.groupId) {
+      this.isLoading = true;
+      const studentRequest: StudentRequest = this.buildStudentRequest();
 
-      // Simula la respuesta del servidor
-      let user: Student = {
-        studentId: Math.floor(Math.random() * 1000),
-        ...studentRequest,
-        predictionResult: null,
-      };
-
-      this.defaultChangeStudentDialog.emit({ isOpen: false, message: 'save', student: user });
+      this.studentService.createStudent(this.groupId, studentRequest).subscribe({
+        next: (response: ApiResponse<StudentResponse>) => {
+          this.studentDialogChange.emit({ isOpen: false, message: 'save', data: response.data });
+          this.isLoading = false;
+        },
+        error: (error: ApiError) => {
+          if (error.statusCode === 409 && error.message.includes('student_code_already_exists')) {
+            this.studentForm.controls.studentCode.setErrors({ exists: { field: 'matrícula' } });
+          } else if (error.statusCode === 409 && error.message.includes('phone_number_already_exists')) {
+            this.studentForm.controls.phoneNumber.setErrors({ exists: { field: 'número de teléfono' } });
+          } else if (error.statusCode === 409 && error.message.includes('group_configuration_not_found')) {
+            this.showToast(
+              'warn',
+              'Grupo no encontrado',
+              'El grupo que intentó crear el estudiante ya no existe en el sistema'
+            );
+          } else if (error.status === 'Unknown Error' && error.statusCode === 0) {
+            this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
+          } else {
+            this.showToast('error', 'Error', 'Ha ocurrido un error inesperado, por favor intente más tarde');
+          }
+          this.isLoading = false;
+        },
+      });
     } else {
       this.studentForm.markAllAsTouched();
     }
   }
 
-  // VERIFICAR QUE FUNCIONE Y QUE SE PUEDA ACTUALIZAR Y EN LA LISTA EN EL CAMPO PROBABILIDAD DE CONSUMO Y TIENE NULL COLOCAR NA
-  updateStudent() {
+  updateStudent(): void {
     if (this.studentForm.valid && this.selectedStudent) {
-      let studentRequest: StudentRequest = this.getStudentFormData();
+      this.isLoading = true;
+      const studentRequest: StudentRequest = this.buildStudentRequest();
 
-      // Simula la respuesta del servidor pasar id por url
-      let student: Student = {
-        studentId: this.selectedStudent.studentId,
-        ...studentRequest,
-        predictionResult: this.selectedStudent.predictionResult,
-      };
-
-      this.defaultChangeStudentDialog.emit({ isOpen: false, message: 'edit', student: student });
+      this.studentService.updateStudent(this.selectedStudent.studentId, studentRequest).subscribe({
+        next: (response: ApiResponse<StudentResponse>) => {
+          this.studentDialogChange.emit({ isOpen: false, message: 'edit', data: response.data });
+          this.isLoading = false;
+        },
+        error: (error: ApiError) => {
+          if (error.statusCode === 404 && error.message.includes('student_not_found')) {
+            this.showToast(
+              'warn',
+              'Estudiante no encontrado',
+              'El estudiante que intentó actualizar ya no existe en el sistema'
+            );
+          } else if (error.statusCode === 409 && error.message.includes('student_code_already_exists')) {
+            this.studentForm.controls.studentCode.setErrors({ exists: { field: 'número de matrícula' } });
+          } else if (error.statusCode === 409 && error.message.includes('phone_number_already_exists')) {
+            this.studentForm.controls.phoneNumber.setErrors({ exists: { field: 'número de teléfono' } });
+          } else if (error.status === 'Unknown Error' && error.statusCode === 0) {
+            this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
+          } else {
+            this.showToast('error', 'Error', 'Ha ocurrido un error inesperado, por favor intente más tarde');
+          }
+          this.isLoading = false;
+        },
+      });
     } else {
       this.studentForm.markAllAsTouched();
     }
   }
 
-  getStudentFormData(): StudentRequest {
+  buildStudentRequest(): StudentRequest {
+    const formValues = this.studentForm.value;
     return {
-      studentCode: this.studentForm.value.studentCode as string,
-      name: this.studentForm.value.name as string,
-      firstSurname: this.studentForm.value.firstSurname as string,
-      secondSurname: this.studentForm.value.secondSurname as string,
-      email: this.studentForm.value.email as string,
-      phoneNumber: this.studentForm.value.phoneNumber as string,
+      studentCode: formValues.studentCode!,
+      name: formValues.name!,
+      firstSurname: formValues.firstSurname!,
+      secondSurname: formValues.secondSurname!,
+      phoneNumber: formValues.phoneNumber!,
     };
+  }
+
+  showToast(severity: 'success' | 'error' | 'warn' | 'info', summary: string, detail: string): void {
+    this.messageService.add({
+      severity,
+      icon: this.getToastIcon(severity),
+      summary,
+      detail,
+      life: 5000,
+    });
+  }
+
+  private getToastIcon(severity: 'success' | 'error' | 'warn' | 'info'): string {
+    switch (severity) {
+      case 'success':
+        return 'pi pi-check-circle';
+      case 'error':
+        return 'pi pi-times-circle';
+      case 'warn':
+        return 'pi pi-exclamation-triangle';
+      default:
+        return 'pi pi-info-circle';
+    }
   }
 }

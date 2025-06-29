@@ -14,7 +14,6 @@ export class ReportTestService {
         firstSurname: 'Pérez',
         secondSurname: 'Rivera',
         phoneNumber: '5557890123',
-        email: 'miguel.perez@estudiante.edu.mx',
         predictionResult: 72.8,
       },
       reportId: 12345,

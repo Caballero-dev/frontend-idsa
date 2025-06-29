@@ -1,4 +1,4 @@
-import { Student } from './student.model';
+import { StudentResponse as Student } from './student.model';
 
 export interface Report {
   student: Student;
