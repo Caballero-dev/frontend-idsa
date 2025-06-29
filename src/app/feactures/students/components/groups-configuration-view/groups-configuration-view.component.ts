@@ -45,7 +45,6 @@ import { GroupConfigurationView } from '../../models/group-configuration-view.mo
 })
 export class GroupsConfigurationViewComponent implements OnInit {
   private groupConfigurationViewService = inject(GroupConfigurationViewService);
-  private profileService: ProfileService = inject(ProfileService);
   private messageService: MessageService = inject(MessageService);
   private groupCache: Map<number, GroupConfigurationView[]> = new Map<number, GroupConfigurationView[]>();
 
@@ -74,14 +73,6 @@ export class GroupsConfigurationViewComponent implements OnInit {
     this.loadGroupData({ first: this.first, rows: this.rows });
   }
 
-  validateProfile(event: TableLazyLoadEvent): void {
-    if (!this.profileService.isLoading() && this.profileService.profile()?.roleName === Role.TUTOR) {
-      this.loadGroupDataByTutorEmail(event, this.profileService.profile()!.email);
-    } else {
-      this.loadGroupData(event);
-    }
-  }
-
   loadGroupData(event: TableLazyLoadEvent): void {
     this.isLoading = true;
     this.first = event.first ?? 0;
@@ -99,40 +90,6 @@ export class GroupsConfigurationViewComponent implements OnInit {
     }
 
     this.groupConfigurationViewService.getAllGroupConfigurationsView(page, this.rows).subscribe({
-      next: (response: ApiResponse<GroupConfigurationView[]>) => {
-        this.groups = response.data;
-        this.totalRecords = response.pageInfo!.totalElements;
-        this.groupCache.set(page, this.groups);
-        this.isLoading = false;
-      },
-      error: (error: ApiError) => {
-        if (error.status === 'Unknown Error' && error.statusCode === 0) {
-          this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
-        } else {
-          this.showToast('error', 'Error', 'Ha ocurrido un error inesperado, por favor intente más tarde');
-        }
-        this.isLoading = false;
-      },
-    });
-  }
-
-  loadGroupDataByTutorEmail(event: TableLazyLoadEvent, tutorEmail: string): void {
-    this.isLoading = true;
-    this.first = event.first ?? 0;
-    const currentRows: number = event.rows ?? this.rows;
-    if (this.rows !== currentRows) {
-      this.rows = currentRows;
-      this.groupCache.clear();
-    }
-
-    const page = this.getCurrentPageIndex();
-    if (this.groupCache.has(page)) {
-      this.groups = this.groupCache.get(page)!;
-      this.isLoading = false;
-      return;
-    }
-
-    this.groupConfigurationViewService.getGroupConfigurationViewByTutorEmail(tutorEmail, page, this.rows).subscribe({
       next: (response: ApiResponse<GroupConfigurationView[]>) => {
         this.groups = response.data;
         this.totalRecords = response.pageInfo!.totalElements;

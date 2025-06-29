@@ -45,7 +45,7 @@
   dataKey="id"
   currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
   [showCurrentPageReport]="true"
-  (onLazyLoad)="validateProfile($event)"
+  (onLazyLoad)="loadGroupData($event)"
 >
   <ng-template #caption>
     <div class="flex flex-col items-center justify-between xs:flex-row">

@@ -23,18 +23,4 @@ export class GroupConfigurationViewService {
       },
     });
   }
-
-  getGroupConfigurationViewByTutorEmail(
-    tutorEmail: string,
-    page: number = 0,
-    size: number = 20
-  ): Observable<ApiResponse<GroupConfigurationView[]>> {
-    return this.http.get<ApiResponse<GroupConfigurationView[]>>(`${this.API_URL}/by-tutor-email/${tutorEmail}`, {
-      params: {
-        page,
-        size,
-      },
-    });
-  }
 }
-
