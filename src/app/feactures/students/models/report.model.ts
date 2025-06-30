@@ -1,13 +1,14 @@
-import { StudentResponse as Student } from './student.model';
+import { StudentResponse } from './student.model';
 
-export interface Report {
-  student: Student;
+export interface ReportResponse {
   reportId: number;
-  createdAt: string;
-  images: string[];
+  student: StudentResponse;
   temperature: number;
+  heartRate: number;
+  systolicBloodPressure: number;
+  diastolicBloodPressure: number;
   pupilDilationRight: number;
   pupilDilationLeft: number;
-  heartRate: number;
-  oxygenLevels: number;
+  images: string[];
+  createdAt: string;
 }
