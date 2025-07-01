@@ -18,4 +18,3 @@ export class ImageService {
     return this.http.get(`${this.API_URL}/${name}`, { responseType: 'blob' });
   }
 }
-
