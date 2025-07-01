@@ -1,9 +1,11 @@
 <p-dialog
-  [(visible)]="studentDialog"
-  [modal]="true"
+  [(visible)]="isStudentDialogVisible"
   [header]="isCreateStudent ? 'Crear Estudiante' : 'Editar Estudiante'"
-  closable="false"
+  [modal]="true"
+  [closable]="true"
+  [closeOnEscape]="false"
   [style]="{ width: '550px' }"
+  (onHide)="closeDialog()"
 >
   <form
     [formGroup]="studentForm"
@@ -13,17 +15,17 @@
       <div class="flex flex-col gap-2 xs:flex-row xs:gap-4">
         <div class="w-full xs:w-2/4">
           <idsa-input-text
-            type="email"
-            inputId="email"
-            label="Correo electrónico"
+            type="alphanumericUpperCase"
+            inputId="studentCode"
+            label="Matrícula"
             labelFontSize="text-lg"
             labelPosition="top"
-            [customFormControl]="studentForm.controls.email"
-            placeholder="Ingresa el correo electrónico"
+            [customFormControl]="studentForm.controls.studentCode"
+            placeholder="Ingresa la matrícula"
             [required]="true"
             [readonly]="false"
-            [maxLength]="100"
-            [minLength]="6"
+            [maxLength]="20"
+            [minLength]="10"
             variant="outlined"
             size="large"
           ></idsa-input-text>
@@ -36,7 +38,7 @@
             labelFontSize="text-lg"
             labelPosition="top"
             [customFormControl]="studentForm.controls.phoneNumber"
-            placeholder="Ingresa el numero de telefono"
+            placeholder="Ingresa el número de teléfono"
             [required]="true"
             [readonly]="false"
             [maxLength]="10"
@@ -68,7 +70,7 @@
         <div class="w-full xs:w-2/4">
           <idsa-input-text
             type="onlyLetters"
-            inputId="paternalSurname"
+            inputId="firstSurname"
             label="Apellido paterno"
             labelFontSize="text-lg"
             labelPosition="top"
@@ -88,7 +90,7 @@
         <div class="w-full xs:w-2/4">
           <idsa-input-text
             type="onlyLetters"
-            inputId="maternalSurname"
+            inputId="secondSurname"
             label="Apellido materno"
             labelFontSize="text-lg"
             labelPosition="top"
@@ -102,38 +104,28 @@
             size="large"
           ></idsa-input-text>
         </div>
-        <div class="w-full xs:w-2/4">
-          <idsa-input-text
-            type="alphanumericUpperCase"
-            inputId="employeeCode"
-            label="Matrícula"
-            labelFontSize="text-lg"
-            labelPosition="top"
-            [customFormControl]="studentForm.controls.studentCode"
-            placeholder="Ingresa la matrícula"
-            [required]="true"
-            [readonly]="false"
-            [maxLength]="20"
-            [minLength]="10"
-            variant="outlined"
-            size="large"
-          ></idsa-input-text>
-        </div>
       </div>
 
       <div class="mt-4 flex justify-end gap-2">
         <p-button
+          *ngIf="!isLoading"
           label="Cancelar"
+          type="button"
           icon="pi pi-times"
-          text
+          severity="danger"
+          variant="outlined"
           (click)="closeDialog()"
         />
         <p-button
           [label]="isCreateStudent ? 'Crear' : 'Actualizar'"
           type="submit"
           icon="pi pi-check"
+          [loading]="isLoading"
+          [disabled]="isLoading"
         />
       </div>
     </div>
   </form>
 </p-dialog>
+
+<p-toast />

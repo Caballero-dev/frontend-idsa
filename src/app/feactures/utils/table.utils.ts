@@ -1,11 +1,5 @@
 import { Table } from 'primeng/table';
-
-// FIXME: Eliminar esta interfaz y usar el de shared
-export interface Column {
-  field: string;
-  header: string;
-  sortable: boolean;
-}
+import { Column } from '../../shared/types/table.types';
 
 export class TableUtils {
   static getGlobalFilterFields(cols: Column[]): string[] {
