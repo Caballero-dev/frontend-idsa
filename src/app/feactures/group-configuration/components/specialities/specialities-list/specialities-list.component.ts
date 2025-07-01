@@ -59,8 +59,8 @@ export class SpecialitiesListComponent implements OnInit {
   searchSpecialtyValue: string = '';
 
   cols: Column[] = [
-    { field: 'name', header: 'Nombre', sortable: true },
-    { field: 'shortName', header: 'Nombre corto', sortable: true },
+    { field: 'name', header: 'Nombre', sortable: false },
+    { field: 'shortName', header: 'Nombre corto', sortable: false },
   ];
   tableUtils = TableUtils;
 

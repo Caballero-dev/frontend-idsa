@@ -65,12 +65,12 @@ export class UsersListComponent implements OnInit {
   searchUserValue: string = '';
 
   cols: Column[] = [
-    { field: 'name', header: 'Nombre', sortable: true },
-    { field: 'firstSurname', header: 'Primer Apellido', sortable: true },
-    { field: 'secondSurname', header: 'Segundo Apellido', sortable: true },
-    { field: 'email', header: 'Correo Electrónico', sortable: true },
-    { field: 'createdAt', header: 'Fecha de Registro', sortable: true },
-    { field: 'role.roleName', header: 'Rol', sortable: true },
+    { field: 'name', header: 'Nombre', sortable: false },
+    { field: 'firstSurname', header: 'Primer Apellido', sortable: false },
+    { field: 'secondSurname', header: 'Segundo Apellido', sortable: false },
+    { field: 'email', header: 'Correo Electrónico', sortable: false },
+    { field: 'createdAt', header: 'Fecha de Registro', sortable: false },
+    { field: 'role.roleName', header: 'Rol', sortable: false },
     { field: 'isActive', header: 'Activo', sortable: false },
     { field: 'isVerifiedEmail', header: 'Estado del Correo', sortable: false },
   ];
