@@ -26,7 +26,7 @@
 </p-toolbar>
 
 <div
-  *ngIf="isLoading"
+  *ngIf="!reportSelected"
   class="card flex items-center justify-center py-8"
 >
   <i class="pi pi-spinner pi-spin text-4xl text-primary"></i>
@@ -44,7 +44,7 @@
 
 <div
   class="card grid"
-  *ngIf="!isLoading && reportSelected"
+  *ngIf="reportSelected"
 >
   <div class="flex w-full flex-col gap-1">
     <div class="mb-2 grid grid-cols-12 items-center gap-6">
@@ -157,7 +157,7 @@
     <span class="ml-2 text-lg">Cargando...</span>
   </div>
 
-  @if (reports && reports.length > 1) {
+  @if (!isLoading && reports && reports.length > 0) {
     <div class="min-w-[800px]">
       <p-chart
         type="line"
@@ -167,6 +167,12 @@
         (onDataSelect)="selectReport($event)"
       ></p-chart>
     </div>
+    <p-paginator
+      (onPageChange)="onPageChange($event)"
+      [first]="first"
+      [rows]="rows"
+      [totalRecords]="totalRecords"
+    />
   } @else if (!isLoading) {
     <div class="flex flex-col items-center justify-center rounded bg-gray-50 py-12">
       <i class="pi pi-chart-line mb-3 text-4xl text-gray-400"></i>

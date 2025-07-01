@@ -8,7 +8,7 @@ import { Button } from 'primeng/button';
 import { ChartModule } from 'primeng/chart';
 import { GalleriaModule } from 'primeng/galleria';
 import { MessageService } from 'primeng/api';
-import { PaginatorModule } from 'primeng/paginator';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 
@@ -51,10 +51,10 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
   reportSelectedImages: ImageData[] = [];
   reports!: ReportResponse[];
 
+  rows: number = 10;
+  first: number = 0;
   page: number = 0;
   totalRecords: number = 0;
-  hasNext: boolean = false;
-  hasPrevious: boolean = false;
 
   chartData: any = {};
   chartOptions: any = {};
@@ -90,11 +90,25 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
     this.loadReportDetails();
   }
 
+  onPageChange(event: PaginatorState): void {
+    this.first = event.first ?? 0;
+    this.rows = event.rows ?? this.rows;
+    const page = this.getCurrentPageIndex();
+    if (this.reportCache.has(page)) {
+      this.reports = this.reportCache.get(page)!;
+      this.updateChartData();
+      this.isLoading = false;
+    } else {
+      this.page = event.pageCount! - (event.page! + 1);
+      this.loadReportDetails();
+    }
+  }
+
   loadReportDetails(): void {
     if (!this.groupId || !this.studentId) return;
 
     this.isLoading = true;
-    this.reportService.getReportByStudentId(this.studentId, this.page, 10).subscribe({
+    this.reportService.getReportByStudentId(this.studentId, this.page, this.rows).subscribe({
       next: (response: ApiResponse<ReportResponse[]>) => {
         if (response.data.length === 0) {
           this.isLoading = false;
@@ -109,9 +123,9 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
           this.loadImages(this.reportSelected.images);
         }
 
+        this.first = (response.pageInfo!.totalPages - 1 - response.pageInfo!.page) * this.rows;
+        this.page = this.getCurrentPageIndex();
         this.totalRecords = response.pageInfo!.totalElements;
-        this.hasNext = response.pageInfo!.hasNext;
-        this.hasPrevious = response.pageInfo!.hasPrevious;
         this.reportCache.set(this.page, this.reports);
         this.isLoading = false;
         this.updateChartData();
@@ -203,7 +217,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
         {
           label: 'Temperatura (°C)',
           data: temperature,
-          borderColor: '#42A5F5',
+          borderColor: '#FFA500',
           fill: false,
           tension: 0.4,
           pointRadius: 5,
@@ -212,7 +226,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
         {
           label: 'Frecuencia cardiaca (ppm)',
           data: heartRate,
-          borderColor: '#66BB6A',
+          borderColor: '#B22222',
           fill: false,
           tension: 0.4,
           pointRadius: 5,
@@ -221,7 +235,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
         {
           label: 'Presión arterial sistólica (mmHg)',
           data: systolic,
-          borderColor: '#FFA726',
+          borderColor: '#1E90FF',
           fill: false,
           tension: 0.4,
           pointRadius: 5,
@@ -230,7 +244,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
         {
           label: 'Presión arterial diastólica (mmHg)',
           data: diastolic,
-          borderColor: '#AB47BC',
+          borderColor: '#87CEFA',
           fill: false,
           tension: 0.4,
           pointRadius: 5,
@@ -258,6 +272,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
         tooltip: {
           mode: 'index',
           intersect: false,
+          position: 'nearest',
         },
       },
       interaction: {
@@ -278,8 +293,8 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
     };
   }
 
-  test(event: any): void {
-    console.log('event', event);
+  getCurrentPageIndex(): number {
+    return this.first / this.rows;
   }
 
   showToast(severity: 'success' | 'error' | 'warn' | 'info', summary: string, detail: string): void {
