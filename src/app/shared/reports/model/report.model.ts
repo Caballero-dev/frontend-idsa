@@ -1,4 +1,4 @@
-import { StudentResponse } from './student.model';
+import { StudentResponse } from '../../../feactures/students/models/student.model';
 
 export interface ReportResponse {
   reportId: number;
