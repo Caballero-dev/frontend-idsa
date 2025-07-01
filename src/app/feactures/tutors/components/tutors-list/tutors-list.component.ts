@@ -59,12 +59,12 @@ export class TutorsListComponent implements OnInit {
   searchTutorValue: string = '';
 
   cols: Column[] = [
-    { field: 'employeeCode', header: 'Número de Empleado', sortable: true },
-    { field: 'name', header: 'Nombre', sortable: true },
-    { field: 'firstSurname', header: 'Primer Apellido', sortable: true },
-    { field: 'secondSurname', header: 'Segundo Apellido', sortable: true },
-    { field: 'phoneNumber', header: 'Teléfono', sortable: true },
-    { field: 'email', header: 'Correo Electrónico', sortable: true },
+    { field: 'employeeCode', header: 'Número de Empleado', sortable: false },
+    { field: 'name', header: 'Nombre', sortable: false },
+    { field: 'firstSurname', header: 'Primer Apellido', sortable: false },
+    { field: 'secondSurname', header: 'Segundo Apellido', sortable: false },
+    { field: 'phoneNumber', header: 'Teléfono', sortable: false },
+    { field: 'email', header: 'Correo Electrónico', sortable: false },
   ];
   tableUtils = TableUtils;
 
