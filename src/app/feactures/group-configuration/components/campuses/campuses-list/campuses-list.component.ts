@@ -58,7 +58,7 @@ export class CampusesListComponent implements OnInit {
 
   searchCampusValue: string = '';
 
-  cols: Column[] = [{ field: 'name', header: 'Nombre', sortable: true }];
+  cols: Column[] = [{ field: 'name', header: 'Nombre', sortable: false }];
   tableUtils = TableUtils;
 
   campuses!: CampusResponse[];

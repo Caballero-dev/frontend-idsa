@@ -63,12 +63,12 @@ export class StudentsListComponent implements OnInit {
   searchStudentValue: string = '';
 
   cols: Column[] = [
-    { field: 'studentCode', header: 'Matrícula', sortable: true },
-    { field: 'name', header: 'Nombre', sortable: true },
-    { field: 'firstSurname', header: 'Apellido Paterno', sortable: true },
-    { field: 'secondSurname', header: 'Apellido Materno', sortable: true },
-    { field: 'phoneNumber', header: 'Teléfono', sortable: true },
-    { field: 'predictionResult', header: 'Prob. consumo', sortable: true },
+    { field: 'studentCode', header: 'Matrícula', sortable: false },
+    { field: 'name', header: 'Nombre', sortable: false },
+    { field: 'firstSurname', header: 'Apellido Paterno', sortable: false },
+    { field: 'secondSurname', header: 'Apellido Materno', sortable: false },
+    { field: 'phoneNumber', header: 'Teléfono', sortable: false },
+    { field: 'predictionResult', header: 'Prob. consumo', sortable: false },
   ];
   tableUtils = TableUtils;
 

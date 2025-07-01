@@ -58,7 +58,7 @@ export class ModalitiesListComponent implements OnInit {
 
   searchModalityValue: string = '';
 
-  cols: Column[] = [{ field: 'name', header: 'Nombre', sortable: true }];
+  cols: Column[] = [{ field: 'name', header: 'Nombre', sortable: false }];
   tableUtils = TableUtils;
 
   modalities!: ModalityResponse[];

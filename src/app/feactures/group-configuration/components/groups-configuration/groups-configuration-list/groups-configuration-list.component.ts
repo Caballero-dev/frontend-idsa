@@ -64,14 +64,14 @@ export class GroupsConfigurationListComponent implements OnInit {
   searchGroupConfigurationValue: string = '';
 
   cols: Column[] = [
-    { field: 'tutor.fullName', header: 'Tutor', sortable: true },
-    { field: 'tutor.email', header: 'Correo electrónico', sortable: true },
-    { field: 'campus.name', header: 'Campus', sortable: true },
-    { field: 'specialty.name', header: 'Especialidad', sortable: true },
-    { field: 'modality.name', header: 'Modalidad', sortable: true },
-    { field: 'grade.name', header: 'Grado', sortable: true },
-    { field: 'group.name', header: 'Grupo', sortable: true },
-    { field: 'generation', header: 'Generación', sortable: true },
+    { field: 'tutor.fullName', header: 'Tutor', sortable: false },
+    { field: 'tutor.email', header: 'Correo electrónico', sortable: false },
+    { field: 'campus.name', header: 'Campus', sortable: false },
+    { field: 'specialty.name', header: 'Especialidad', sortable: false },
+    { field: 'modality.name', header: 'Modalidad', sortable: false },
+    { field: 'grade.name', header: 'Grado', sortable: false },
+    { field: 'group.name', header: 'Grupo', sortable: false },
+    { field: 'generation', header: 'Generación', sortable: false },
   ];
   tableUtils = TableUtils;
 

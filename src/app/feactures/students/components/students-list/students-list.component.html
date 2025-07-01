@@ -82,14 +82,8 @@
   >
     <tr>
       @for (col of columns; track $index) {
-        <th
-          [pSortableColumn]="col.sortable ? col.field : null"
-          pResizableColumn
-        >
+        <th pResizableColumn>
           {{ col.header }}
-          @if (col.sortable) {
-            <p-sortIcon field="{{ col.field }}" />
-          }
         </th>
       }
       <th style="min-width: 10rem"></th>

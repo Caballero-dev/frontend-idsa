@@ -58,7 +58,7 @@ export class GradesListComponent implements OnInit {
 
   searchGradeValue: string = '';
 
-  cols: Column[] = [{ field: 'name', header: 'Nombre', sortable: true }];
+  cols: Column[] = [{ field: 'name', header: 'Nombre', sortable: false }];
   tableUtils = TableUtils;
 
   grades!: GradeResponse[];
