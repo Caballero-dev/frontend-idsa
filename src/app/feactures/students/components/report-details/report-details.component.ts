@@ -1,6 +1,6 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { formatDate } from '@angular/common';
+import { formatDate, isPlatformBrowser } from '@angular/common';
 
 import { catchError, combineLatest, finalize, map, Observable, of } from 'rxjs';
 
@@ -15,9 +15,9 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { ApiError } from '../../../../core/models/ApiError.model';
 import { ApiResponse } from '../../../../core/models/ApiResponse.model';
 
-import { ReportService } from '../../services/report.service';
+import { ReportService } from '../../../../shared/reports/services/report.service';
 import { ImageService } from '../../services/image.service';
-import { ReportResponse } from '../../models/report.model';
+import { ReportResponse } from '../../../../shared/reports/model/report.model';
 
 interface ImageData {
   url: string;
@@ -39,6 +39,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
   private messageService: MessageService = inject(MessageService);
   private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private router: Router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
   private reportCache: Map<number, ReportResponse[]> = new Map<number, ReportResponse[]>();
 
   groupId: number | null = null;
@@ -255,42 +256,44 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
   }
 
   initChartOptions(): void {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+    if (isPlatformBrowser(this.platformId)) {
+      const documentStyle = getComputedStyle(document.documentElement);
+      const textColor = documentStyle.getPropertyValue('--p-text-color');
+      const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+      const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
 
-    this.chartOptions = {
-      maintainAspectRatio: false,
-      aspectRatio: 0.6,
-      plugins: {
-        legend: {
-          labels: {
-            color: textColor,
+      this.chartOptions = {
+        maintainAspectRatio: false,
+        aspectRatio: 0.6,
+        plugins: {
+          legend: {
+            labels: {
+              color: textColor,
+            },
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            position: 'nearest',
           },
         },
-        tooltip: {
-          mode: 'index',
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
           intersect: false,
-          position: 'nearest',
         },
-      },
-      interaction: {
-        mode: 'nearest',
-        axis: 'x',
-        intersect: false,
-      },
-      scales: {
-        x: {
-          ticks: { color: textColorSecondary },
-          grid: { color: surfaceBorder, drawBorder: false },
+        scales: {
+          x: {
+            ticks: { color: textColorSecondary },
+            grid: { color: surfaceBorder, drawBorder: false },
+          },
+          y: {
+            ticks: { color: textColorSecondary },
+            grid: { color: surfaceBorder, drawBorder: false },
+          },
         },
-        y: {
-          ticks: { color: textColorSecondary },
-          grid: { color: surfaceBorder, drawBorder: false },
-        },
-      },
-    };
+      };
+    }
   }
 
   getCurrentPageIndex(): number {
