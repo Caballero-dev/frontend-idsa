@@ -70,10 +70,6 @@ export class ProfileDetailsComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  getCreadtedAt(fecha: string): string {
-    return formatDate(fecha, 'dd/MM/yyyy hh:mm a', 'en');
-  }
-
   getHelpTextPassword(): string | null {
     return this.updatePasswordForm.errors && this.updatePasswordForm.controls.confirmPassword.touched
       ? 'Las contraseñas no son iguales'
