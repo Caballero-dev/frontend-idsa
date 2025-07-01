@@ -1,92 +1,102 @@
 <div class="grid grid-cols-12 gap-8">
   <div class="contents">
-    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
-      <div class="card mb-0">
-        <div class="mb-4 flex justify-between">
-          <div>
-            <span class="mb-4 block font-medium text-muted-color">Alumnos</span>
-            <div class="text-xl font-medium text-surface-900">152</div>
+    @if (!isLoading && reportSummary) {
+      <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+        <div class="card mb-0">
+          <div class="mb-4 flex justify-between">
+            <div>
+              <span class="mb-4 block font-medium text-muted-color">Alumnos</span>
+              <div class="text-xl font-medium text-surface-900">{{ reportSummary.totalStudents }}</div>
+            </div>
+            <div
+              class="flex items-center justify-center bg-blue-100 rounded-border"
+              style="width: 2.5rem; height: 2.5rem"
+            >
+              <i class="pi pi-graduation-cap !text-xl text-blue-500"></i>
+            </div>
           </div>
-          <div
-            class="flex items-center justify-center bg-blue-100 rounded-border"
-            style="width: 2.5rem; height: 2.5rem"
-          >
-            <i class="pi pi-graduation-cap !text-xl text-blue-500"></i>
-          </div>
+          <span class="text-muted-color">Registrados</span>
         </div>
-        <span class="text-muted-color">Registrados</span>
       </div>
-    </div>
-    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
-      <div class="card mb-0">
-        <div class="mb-4 flex justify-between">
-          <div>
-            <span class="mb-4 block font-medium text-muted-color">Alumnos</span>
-            <div class="text-xl font-medium text-surface-900">40</div>
+      <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+        <div class="card mb-0">
+          <div class="mb-4 flex justify-between">
+            <div>
+              <span class="mb-4 block font-medium text-muted-color">Alumnos</span>
+              <div class="text-xl font-medium text-surface-900">{{ reportSummary.studentsWithLowProbability }}</div>
+            </div>
+            <div
+              class="message-success flex items-center justify-center rounded-border"
+              style="width: 2.5rem; height: 2.5rem"
+            >
+              <i class="pi pi-graduation-cap !text-xl"></i>
+            </div>
           </div>
-          <div
-            class="message-success flex items-center justify-center rounded-border"
-            style="width: 2.5rem; height: 2.5rem"
-          >
-            <i class="pi pi-graduation-cap !text-xl"></i>
-          </div>
+          <span class="text-muted-color">Baja probabilidad</span>
         </div>
-        <span class="text-muted-color">Baja probabilidad</span>
       </div>
-    </div>
-    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
-      <div class="card mb-0">
-        <div class="mb-4 flex justify-between">
-          <div>
-            <span class="mb-4 block font-medium text-muted-color">Alumnos</span>
-            <div class="text-xl font-medium text-surface-900">51</div>
+      <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+        <div class="card mb-0">
+          <div class="mb-4 flex justify-between">
+            <div>
+              <span class="mb-4 block font-medium text-muted-color">Alumnos</span>
+              <div class="text-xl font-medium text-surface-900">{{ reportSummary.studentsWithMediumProbability }}</div>
+            </div>
+            <div
+              class="message-warn flex items-center justify-center rounded-border"
+              style="width: 2.5rem; height: 2.5rem"
+            >
+              <i class="pi pi-graduation-cap !text-xl"></i>
+            </div>
           </div>
-          <div
-            class="message-warn flex items-center justify-center rounded-border"
-            style="width: 2.5rem; height: 2.5rem"
-          >
-            <i class="pi pi-graduation-cap !text-xl"></i>
-          </div>
+          <span class="text-muted-color">Probable</span>
         </div>
-        <span class="text-muted-color">Probable</span>
       </div>
-    </div>
-    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
-      <div class="card mb-0">
-        <div class="mb-4 flex justify-between">
-          <div>
-            <span class="mb-4 block font-medium text-muted-color">Alumnos</span>
-            <div class="text-xl font-medium text-surface-900">60</div>
+      <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+        <div class="card mb-0">
+          <div class="mb-4 flex justify-between">
+            <div>
+              <span class="mb-4 block font-medium text-muted-color">Alumnos</span>
+              <div class="text-xl font-medium text-surface-900">{{ reportSummary.studentsWithHighProbability }}</div>
+            </div>
+            <div
+              class="message-error flex items-center justify-center rounded-border"
+              style="width: 2.5rem; height: 2.5rem"
+            >
+              <i class="pi pi-graduation-cap !text-xl"></i>
+            </div>
           </div>
-          <div
-            class="message-error flex items-center justify-center rounded-border"
-            style="width: 2.5rem; height: 2.5rem"
-          >
-            <i class="pi pi-graduation-cap !text-xl"></i>
-          </div>
+          <span class="text-muted-color">Alta probabilidad</span>
         </div>
-        <span class="text-muted-color">Alta probabilidad</span>
       </div>
-    </div>
+    } @else if (isLoading) {
+      <div class="col-span-12">
+        <div class="card flex justify-center">
+          <i class="pi pi-spinner pi-spin text-4xl text-primary"></i>
+        </div>
+      </div>
+    }
   </div>
-  <div class="col-span-12 xl:col-span-6">
-    <div class="card">
-      <p-chart
-        type="pie"
-        [data]="pieData"
-        [options]="pieOptions"
-        height="400px"
-      ></p-chart>
-    </div>
-  </div>
-  <div class="col-span-12 xl:col-span-6">
-    <div class="card">
-      <p-chart
-        type="bar"
-        [data]="barData"
-        [options]="barOptions"
-        height="400px"
-      ></p-chart>
+
+  <div class="col-span-12">
+    <div class="card flex justify-center">
+      @if (!isLoadingPie && reportSummary) {
+        <p-chart
+          type="pie"
+          [data]="pieData"
+          [options]="pieOptions"
+          class="w-full md:w-[35rem]"
+        ></p-chart>
+      } @else if (!isLoadingPie && !reportSummary) {
+        <div class="flex flex-col items-center justify-center rounded bg-gray-50 py-12">
+          <i class="pi pi-chart-line mb-3 text-4xl text-gray-400"></i>
+          <span class="text-gray-500">No hay suficientes datos para mostrar en la gráfica</span>
+        </div>
+      } @else if (isLoadingPie) {
+        <div class="card flex justify-center">
+          <i class="pi pi-spinner pi-spin text-4xl text-primary"></i>
+        </div>
+      }
     </div>
   </div>
 </div>
