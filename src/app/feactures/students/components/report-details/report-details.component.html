@@ -17,6 +17,9 @@
         label="Actualizar datos"
         icon="pi pi-refresh"
         [outlined]="true"
+        [disabled]="isLoading"
+        [loading]="isLoading"
+        (click)="refreshReportDetails()"
       />
     </div>
   </ng-template>
@@ -31,39 +34,18 @@
 </div>
 
 <div
-  class="card grid"
-  *ngIf="!isLoading"
+  *ngIf="!isLoading && !reportSelected"
+  class="card flex flex-col items-center justify-center py-12"
 >
-  <div class="flex w-full flex-col gap-1 py-5">
-    <div class="mb-2 grid grid-cols-12 gap-4">
-      <label class="col-span-12 flex items-center text-lg font-semibold xs:text-xl sm:col-span-4 md:col-span-3">
-        Nombre:
-      </label>
-      <div class="col-span-12 text-lg xs:text-xl sm:col-span-8 md:col-span-9">
-        {{ reportSelected.student.name }} {{ reportSelected.student.firstSurname }}
-        {{ reportSelected.student.secondSurname }}
-      </div>
-    </div>
+  <i class="pi pi-chart-line mb-4 text-6xl text-gray-400"></i>
+  <h3 class="mb-2 text-xl font-semibold text-gray-600">No hay datos disponibles</h3>
+  <p class="mb-4 text-center text-gray-500">No se encontraron reportes para este estudiante.</p>
+</div>
 
-    <div class="mb-2 grid grid-cols-12 gap-4">
-      <label class="col-span-12 flex items-center text-lg font-semibold xs:text-xl sm:col-span-4 md:col-span-3">
-        Matrícula:
-      </label>
-      <div class="col-span-12 text-lg xs:text-xl sm:col-span-8 md:col-span-9">
-        {{ reportSelected.student.studentCode }}
-      </div>
-    </div>
-
-    <div class="mb-2 grid grid-cols-12 gap-4">
-      <label class="col-span-12 flex items-center text-lg font-semibold xs:text-xl sm:col-span-4 md:col-span-3">
-        Número de teléfono:
-      </label>
-      <div class="col-span-12 text-lg xs:text-xl sm:col-span-8 md:col-span-9">
-        {{ reportSelected.student.phoneNumber }}
-      </div>
-    </div>
-  </div>
-
+<div
+  class="card grid"
+  *ngIf="!isLoading && reportSelected"
+>
   <div class="flex w-full flex-col gap-1">
     <div class="mb-2 grid grid-cols-12 items-center gap-6">
       <div class="col-span-12 md:col-span-6">
@@ -116,8 +98,22 @@
         </div>
       </div>
       <div class="col-span-12 md:col-span-6">
-        <div class="mb-2 text-lg font-semibold xs:text-xl">
-          <b>Resultados del Análisis:</b>
+        <div class="mb-2 text-lg xs:text-xl">
+          <span class="font-semibold">Nombre:</span>
+          {{ reportSelected.student.name }} {{ reportSelected.student.firstSurname }}
+          {{ reportSelected.student.secondSurname }}
+        </div>
+        <div class="mb-2 text-lg xs:text-xl">
+          <span class="font-semibold">Matrícula:</span>
+          {{ reportSelected.student.studentCode }}
+        </div>
+        <div class="mb-2 text-lg xs:text-xl">
+          <span class="font-semibold">Número de teléfono:</span>
+          {{ reportSelected.student.phoneNumber }}
+        </div>
+        <hr />
+        <div class="mb-2 text-lg xs:text-xl">
+          <span class="font-semibold">Resultados del Análisis:</span>
           {{ reportSelected.student.predictionResult + '%' }}
         </div>
         <div class="mb-2 text-lg xs:text-xl">
@@ -147,6 +143,36 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="card mt-8">
+  <div class="mb-5 text-center">
+    <span class="text-lg font-bold">Evolución de signos vitales</span>
+  </div>
+  <div
+    *ngIf="isLoading"
+    class="card flex items-center justify-center py-8"
+  >
+    <i class="pi pi-spinner pi-spin text-4xl text-primary"></i>
+    <span class="ml-2 text-lg">Cargando...</span>
+  </div>
+
+  @if (reports && reports.length > 1) {
+    <div class="min-w-[800px]">
+      <p-chart
+        type="line"
+        [data]="chartData"
+        [options]="chartOptions"
+        class="h-[70rem] w-full"
+        (onDataSelect)="selectReport($event)"
+      ></p-chart>
+    </div>
+  } @else if (!isLoading) {
+    <div class="flex flex-col items-center justify-center rounded bg-gray-50 py-12">
+      <i class="pi pi-chart-line mb-3 text-4xl text-gray-400"></i>
+      <span class="text-gray-500">No hay suficientes datos para mostrar en la gráfica</span>
+    </div>
+  }
 </div>
 
 <p-toast />

@@ -1,13 +1,16 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { formatDate } from '@angular/common';
 
-import { catchError, combineLatest, finalize, map, of } from 'rxjs';
+import { catchError, combineLatest, finalize, map, Observable, of } from 'rxjs';
 
 import { Button } from 'primeng/button';
+import { ChartModule } from 'primeng/chart';
 import { GalleriaModule } from 'primeng/galleria';
 import { MessageService } from 'primeng/api';
-import { ToolbarModule } from 'primeng/toolbar';
+import { PaginatorModule } from 'primeng/paginator';
 import { ToastModule } from 'primeng/toast';
+import { ToolbarModule } from 'primeng/toolbar';
 
 import { ApiError } from '../../../../core/models/ApiError.model';
 import { ApiResponse } from '../../../../core/models/ApiResponse.model';
@@ -25,7 +28,7 @@ interface ImageData {
 @Component({
   selector: 'app-report-details',
   standalone: true,
-  imports: [Button, GalleriaModule, ToolbarModule, ToastModule],
+  imports: [Button, GalleriaModule, ToolbarModule, ToastModule, ChartModule, PaginatorModule],
   templateUrl: './report-details.component.html',
   styleUrl: './report-details.component.scss',
   providers: [MessageService],
@@ -44,8 +47,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   isLoadingImage: boolean = false;
 
-  indexSelectedReport: number = 0;
-  reportSelected!: ReportResponse;
+  reportSelected: ReportResponse | null = null;
   reportSelectedImages: ImageData[] = [];
   reports!: ReportResponse[];
 
@@ -54,10 +56,14 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
   hasNext: boolean = false;
   hasPrevious: boolean = false;
 
+  chartData: any = {};
+  chartOptions: any = {};
+
   ngOnInit(): void {
     this.getGroupIdFromRoute();
     this.getStudentIdFromRoute();
     this.loadReportDetails();
+    this.initChartOptions();
   }
 
   ngOnDestroy(): void {
@@ -68,11 +74,20 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
     this.router.navigate(['/panel/alumnos/grupo', this.groupId]);
   }
 
-  selectReport(index: number): void {
+  selectReport(event: any): void {
+    const indexSelected = event.element.index;
     this.cleanupObjectUrls();
-    this.indexSelectedReport = index;
-    this.reportSelected = this.reports[index];
+    this.reportSelected = this.reports[indexSelected];
     this.loadImages(this.reportSelected.images);
+  }
+
+  refreshReportDetails(): void {
+    this.cleanupObjectUrls();
+    this.reportSelected = null;
+    this.isLoadingImage = false;
+    this.reportCache.clear();
+    this.page = 0;
+    this.loadReportDetails();
   }
 
   loadReportDetails(): void {
@@ -87,18 +102,19 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
           return;
         }
 
-        this.reports = response.data;
+        this.reports = response.data.reverse();
 
         if (!this.reportSelected) {
-          this.reportSelected = this.reports[this.indexSelectedReport];
+          this.reportSelected = this.reports[this.reports.length - 1];
           this.loadImages(this.reportSelected.images);
         }
 
         this.totalRecords = response.pageInfo!.totalElements;
         this.hasNext = response.pageInfo!.hasNext;
         this.hasPrevious = response.pageInfo!.hasPrevious;
-        this.reportCache.set(this.page, response.data);
+        this.reportCache.set(this.page, this.reports);
         this.isLoading = false;
+        this.updateChartData();
       },
       error: (error: ApiError) => {
         if (error.statusCode === 404 && error.message.includes('student_not_found')) {
@@ -122,10 +138,10 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isLoadingImage = true;
     this.cleanupObjectUrls();
+    this.isLoadingImage = true;
 
-    const imageObservables = imageUrls.map((url) =>
+    const imageObservables: Observable<ImageData>[] = imageUrls.map((url) =>
       this.imageService.getImage(url).pipe(
         map((blob: Blob) => ({
           url,
@@ -149,22 +165,121 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe({
-        next: (imageResults) => {
+        next: (imageResults: ImageData[]) => {
           this.reportSelectedImages = imageResults;
 
-          const loadedCount: number = imageResults.filter((img) => img.loaded).length;
+          const loadedCount: number = imageResults.filter((img: ImageData) => img.loaded).length;
           const totalCount: number = imageResults.length;
 
           console.log(`Cargadas: ${loadedCount}/${totalCount} imágenes`);
         },
         error: () => {
-          this.reportSelectedImages = imageUrls.map((url) => ({
+          this.reportSelectedImages = imageUrls.map((url: string) => ({
             url,
             objectUrl: '',
             loaded: false,
           }));
         },
       });
+  }
+
+  updateChartData(): void {
+    if (!this.reports || this.reports.length === 0) {
+      this.chartData = {};
+      return;
+    }
+
+    const labels: string[] = this.reports.map((r: ReportResponse) => {
+      return formatDate(r.createdAt, 'dd/MM/yyyy hh:mm:ss a', 'en');
+    });
+    const temperature: number[] = this.reports.map((r: ReportResponse) => r.temperature);
+    const heartRate: number[] = this.reports.map((r: ReportResponse) => r.heartRate);
+    const systolic: number[] = this.reports.map((r: ReportResponse) => r.systolicBloodPressure);
+    const diastolic: number[] = this.reports.map((r: ReportResponse) => r.diastolicBloodPressure);
+
+    this.chartData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Temperatura (°C)',
+          data: temperature,
+          borderColor: '#42A5F5',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 5,
+          pointHoverRadius: 10,
+        },
+        {
+          label: 'Frecuencia cardiaca (ppm)',
+          data: heartRate,
+          borderColor: '#66BB6A',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 5,
+          pointHoverRadius: 10,
+        },
+        {
+          label: 'Presión arterial sistólica (mmHg)',
+          data: systolic,
+          borderColor: '#FFA726',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 5,
+          pointHoverRadius: 10,
+        },
+        {
+          label: 'Presión arterial diastólica (mmHg)',
+          data: diastolic,
+          borderColor: '#AB47BC',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 5,
+          pointHoverRadius: 10,
+        },
+      ],
+    };
+  }
+
+  initChartOptions(): void {
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue('--p-text-color');
+    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+    this.chartOptions = {
+      maintainAspectRatio: false,
+      aspectRatio: 0.6,
+      plugins: {
+        legend: {
+          labels: {
+            color: textColor,
+          },
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+        },
+      },
+      interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false,
+      },
+      scales: {
+        x: {
+          ticks: { color: textColorSecondary },
+          grid: { color: surfaceBorder, drawBorder: false },
+        },
+        y: {
+          ticks: { color: textColorSecondary },
+          grid: { color: surfaceBorder, drawBorder: false },
+        },
+      },
+    };
+  }
+
+  test(event: any): void {
+    console.log('event', event);
   }
 
   showToast(severity: 'success' | 'error' | 'warn' | 'info', summary: string, detail: string): void {
@@ -203,6 +318,7 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
         URL.revokeObjectURL(imageData.objectUrl);
       }
     });
+    this.reportSelectedImages = [];
   }
 
   private getToastIcon(severity: 'success' | 'error' | 'warn' | 'info'): string {
