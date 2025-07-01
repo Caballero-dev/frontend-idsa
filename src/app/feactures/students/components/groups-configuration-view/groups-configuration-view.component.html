@@ -1,23 +1,35 @@
-<div class="mb-4 flex items-center justify-between">
-  <span class="text-2xl font-bold sm:text-3xl">Lista de grupos</span>
-</div>
-
-<div class="mb-6 text-justify text-lg">
-  En esta sección se pueden visualizar los grupos registrados en el sistema, así como poder acceder a la lista de
-  alumnos pertenecientes a cada uno de ellos.
-</div>
+<p-toolbar styleClass="mb-6">
+  <ng-template #start>
+    <span class="text-2xl font-bold">Lista de grupos</span>
+  </ng-template>
+  <ng-template #end>
+    <div class="flex gap-2">
+      <p-button
+        label="Actualizar Datos"
+        icon="pi pi-refresh"
+        [outlined]="true"
+        (click)="refreshTableData()"
+      />
+    </div>
+  </ng-template>
+</p-toolbar>
 
 <p-table
   #dt
   [value]="groups"
-  [rows]="15"
+  [columns]="cols"
+  [lazy]="true"
+  [loading]="isLoading"
+  [rows]="rows"
+  [first]="first"
+  [totalRecords]="totalRecords"
+  [paginator]="true"
+  [rowsPerPageOptions]="[20, 40, 60]"
   [scrollable]="true"
-  scrollHeight="500px"
+  scrollHeight="600px"
   [resizableColumns]="true"
   [showGridlines]="true"
-  [loading]="isLoading"
-  [columns]="cols"
-  [paginator]="true"
+  [rowHover]="true"
   [globalFilterFields]="[
     'tutor',
     'campus',
@@ -30,11 +42,10 @@
     'students',
   ]"
   [tableStyle]="{ 'min-width': '50rem' }"
-  [rowHover]="true"
   dataKey="id"
   currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
   [showCurrentPageReport]="true"
-  [rowsPerPageOptions]="[15, 30, 45]"
+  (onLazyLoad)="loadGroupData($event)"
 >
   <ng-template #caption>
     <div class="flex flex-col items-center justify-between xs:flex-row">
@@ -66,8 +77,14 @@
   >
     <tr>
       @for (col of columns; track $index) {
-        <th pResizableColumn>
+        <th
+          [pSortableColumn]="col.sortable ? col.field : null"
+          pResizableColumn
+        >
           {{ col.header }}
+          @if (col.sortable) {
+            <p-sortIcon field="{{ col.field }}" />
+          }
         </th>
       }
       <th style="min-width: 5rem"></th>
@@ -96,7 +113,8 @@
               {{ groupdt.campus }}
               <br />
               <b>Generación:</b>
-              {{ groupdt.generation }}
+              {{ getGeneration(groupdt.generation).startDate | date: 'yyyy-MM-dd' }} /
+              {{ getGeneration(groupdt.generation).endDate | date: 'yyyy-MM-dd' }}
               <br />
               <b>Tutor:</b>
               {{ groupdt.tutor }}
@@ -112,10 +130,13 @@
       }
       <td style="text-align: center; min-width: 5rem">
         <p-button
+          [pTooltip]="'Ver alumnos'"
+          tooltipPosition="top"
           icon="pi pi-address-book"
           iconPos="top"
-          label="Ver grupo"
+          label="Ver alumnos"
           size="large"
+          [rounded]="true"
           [outlined]="true"
           [routerLink]="['./grupo/' + groupdt.id]"
         />
@@ -124,12 +145,17 @@
   </ng-template>
   <ng-template #emptymessage>
     <tr>
-      <td [attr.colspan]="cols.length + 2">No se encontraron registros</td>
+      <td [attr.colspan]="cols.length + 1">No se encontraron grupos</td>
     </tr>
   </ng-template>
-  <ng-template #loadingbody>
+  <ng-template
+    *ngIf="!groups"
+    #loadingbody
+  >
     <tr>
-      <td [attr.colspan]="cols.length + 2">Cargando datos. Por favor espere.</td>
+      <td [attr.colspan]="cols.length + 1">Cargando datos.</td>
     </tr>
   </ng-template>
 </p-table>
+
+<p-toast />

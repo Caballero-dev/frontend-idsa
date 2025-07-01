@@ -1,36 +1,47 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
-import { ToolbarModule } from 'primeng/toolbar';
-import { TableModule } from 'primeng/table';
-import { InputTextModule } from 'primeng/inputtext';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { DialogModule } from 'primeng/dialog';
-import { StudentsFormComponent } from '../students-form/students-form.component';
-import { Column, TableUtils } from '../../../utils/table.utils';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { InputGroupModule } from 'primeng/inputgroup';
 import { FormsModule } from '@angular/forms';
-import { StudentsTestService } from '../../tests/students-test.service';
-import { EmitterDialogStudent, Student } from '../../models/student.model';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputTextModule } from 'primeng/inputtext';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { ToolbarModule } from 'primeng/toolbar';
+import { TooltipModule } from 'primeng/tooltip';
+
+import { StudentService } from '../../services/student.service';
+
+import { ApiError } from '../../../../core/models/ApiError.model';
+import { ApiResponse } from '../../../../core/models/ApiResponse.model';
+
+import { DialogState } from '../../../../shared/types/dialog.types';
+import { Column } from '../../../../shared/types/table.types';
+import { TableUtils } from '../../../utils/table.utils';
+
+import { StudentResponse } from '../../models/student.model';
+import { StudentsFormComponent } from '../students-form/students-form.component';
 
 @Component({
   selector: 'app-students-list',
   standalone: true,
   imports: [
     CommonModule,
-    ToolbarModule,
-    ButtonModule,
-    TableModule,
-    InputGroupModule,
-    InputTextModule,
-    DialogModule,
-    ConfirmDialogModule,
-    ToastModule,
     FormsModule,
     RouterLink,
+    ButtonModule,
+    ConfirmDialogModule,
+    DialogModule,
+    InputGroupModule,
+    InputTextModule,
+    TableModule,
+    ToastModule,
+    ToolbarModule,
+    TooltipModule,
     StudentsFormComponent,
   ],
   templateUrl: './students-list.component.html',
@@ -38,57 +49,114 @@ import { EmitterDialogStudent, Student } from '../../models/student.model';
   providers: [ConfirmationService, MessageService],
 })
 export class StudentsListComponent implements OnInit {
-  searchStudentValue: string = '';
-  isLoading: boolean = true;
-  cols: Column[] = [
-    { field: 'studentCode', header: 'Matricula', sortable: true },
-    { field: 'name', header: 'Nombre', sortable: true },
-    { field: 'firstSurname', header: 'Apellido Paterno', sortable: true },
-    { field: 'secondSurname', header: 'Apellido Materno', sortable: true },
-    { field: 'phoneNumber', header: 'Telefono', sortable: true },
-    { field: 'email', header: 'Correo', sortable: true },
-    { field: 'predictionResult', header: 'Prob. consumo', sortable: true },
-  ];
-  students!: Student[];
-  selectedStudents!: Student[] | null;
-  isCreateStudent: boolean = true;
-  selectedStudent!: Student | null;
-  studentDialogVisible: boolean = false;
-  idGroupConfiguration: string | null = null;
-
-  tableUtils = TableUtils;
+  private studentService: StudentService = inject(StudentService);
   private confirmationService: ConfirmationService = inject(ConfirmationService);
   private messageService: MessageService = inject(MessageService);
   private activeRoute: ActivatedRoute = inject(ActivatedRoute);
-  private studentTestService = inject(StudentsTestService);
+  private router: Router = inject(Router);
+  private studentCache: Map<number, StudentResponse[]> = new Map<number, StudentResponse[]>();
+
+  isLoading: boolean = true;
+  isCreateStudent: boolean = true;
+  isStudentDialogVisible: boolean = false;
+
+  searchStudentValue: string = '';
+
+  cols: Column[] = [
+    { field: 'studentCode', header: 'Matrícula', sortable: true },
+    { field: 'name', header: 'Nombre', sortable: true },
+    { field: 'firstSurname', header: 'Apellido Paterno', sortable: true },
+    { field: 'secondSurname', header: 'Apellido Materno', sortable: true },
+    { field: 'phoneNumber', header: 'Teléfono', sortable: true },
+    { field: 'predictionResult', header: 'Prob. consumo', sortable: true },
+  ];
+  tableUtils = TableUtils;
+
+  students!: StudentResponse[];
+  selectedStudent!: StudentResponse | null;
+
+  rows: number = 20;
+  first: number = 0;
+  totalRecords: number = 0;
+  groupId: number | null = null;
 
   ngOnInit(): void {
-    this.idGroupConfiguration = this.activeRoute.snapshot.paramMap.get('grupoId');
-    this.loadStudentData();
+    this.getGroupIdFromRoute();
   }
 
-  loadStudentData(): void {
-    this.students = this.studentTestService.getData();
-    this.isLoading = false;
+  getGroupIdFromRoute(): void {
+    const groupIdParam: string | null = this.activeRoute.snapshot.paramMap.get('grupoId');
+    const groupId: number | null = groupIdParam ? Number(groupIdParam) : null;
+    if (groupId && !isNaN(groupId) && groupId > 0) {
+      this.groupId = groupId;
+    } else {
+      this.router.navigate(['/panel/alumnos']);
+    }
   }
 
-  createStudent() {
-    this.isCreateStudent = true;
+  openCreateStudentDialog(): void {
     this.selectedStudent = null;
-    this.studentDialogVisible = true;
+    this.isCreateStudent = true;
+    this.isStudentDialogVisible = true;
   }
 
-  editStudent(student: Student) {
-    this.isCreateStudent = false;
+  openEditStudentDialog(student: StudentResponse): void {
     this.selectedStudent = student;
-    this.studentDialogVisible = true;
+    this.isCreateStudent = false;
+    this.isStudentDialogVisible = true;
   }
 
-  deleteStudent(student: Student) {
+  refreshTableData(): void {
+    this.first = 0;
+    this.studentCache.clear();
+    this.loadStudents({ first: this.first, rows: this.rows });
+  }
+
+  loadStudents(event: TableLazyLoadEvent): void {
+    if (!this.groupId) return;
+
+    this.isLoading = true;
+    this.first = event.first ?? 0;
+    const currentRows: number = event.rows ?? this.rows;
+    if (this.rows !== currentRows) {
+      this.rows = currentRows;
+      this.studentCache.clear();
+    }
+
+    const page = this.getCurrentPageIndex();
+    if (this.studentCache.has(page)) {
+      this.students = this.studentCache.get(page)!;
+      this.isLoading = false;
+      return;
+    }
+
+    this.studentService.getStudentsByGroup(this.groupId, page, this.rows).subscribe({
+      next: (response: ApiResponse<StudentResponse[]>) => {
+        this.students = response.data;
+        this.totalRecords = response.pageInfo!.totalElements;
+        this.studentCache.set(page, this.students);
+        this.isLoading = false;
+      },
+      error: (error: ApiError) => {
+        if (error.statusCode === 404 && error.message.includes('group_configuration_not_found')) {
+          this.router.navigate(['/panel/alumnos']);
+          return;
+        }
+        if (error.status === 'Unknown Error' && error.statusCode === 0) {
+          this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
+        } else {
+          this.showToast('error', 'Error', 'Ha ocurrido un error inesperado, por favor intente más tarde');
+        }
+        this.isLoading = false;
+      },
+    });
+  }
+
+  deleteStudent(student: StudentResponse): void {
     this.confirmationService.confirm({
-      message: `¿Estás seguro de que quieres eliminar el estudiante seleccionado?<br>
+      message: `¿Está seguro que quieres eliminar el estudiante seleccionado?<br>
         <br><b>Nombre:</b> ${student.name} ${student.firstSurname} ${student.secondSurname}
-        <br><b>Correo:</b> ${student.email}`,
+        <br><b>Matrícula:</b> ${student.studentCode}`,
       header: 'Confirmar',
       closable: false,
       closeOnEscape: false,
@@ -102,9 +170,32 @@ export class StudentsListComponent implements OnInit {
         label: 'Aceptar',
       },
       accept: () => {
-        this.showToast('success', 'Estudiante eliminado', 'El estudiante ha sido eliminado correctamente');
-        this.students = this.students.filter((st: Student) => st.studentId !== student.studentId);
-        this.selectedStudents = null;
+        this.isLoading = true;
+        this.studentService.deleteStudent(student.studentId).subscribe({
+          next: () => {
+            this.showToast('success', 'Estudiante eliminado', 'El estudiante ha sido eliminado correctamente');
+            this.totalRecords--;
+            this.students = this.students.filter((s: StudentResponse) => s.studentId !== student.studentId);
+            this.studentCache.clear();
+            this.isLoading = false;
+          },
+          error: (error: ApiError) => {
+            if (error.statusCode === 404 && error.message.includes('student_not_found')) {
+              this.showToast(
+                'warn',
+                'Estudiante no encontrado',
+                'El estudiante que intentó eliminar ya no existe en el sistema'
+              );
+              this.refreshTableData();
+              return;
+            } else if (error.status === 'Unknown Error' && error.statusCode === 0) {
+              this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
+            } else {
+              this.showToast('error', 'Error', 'Ha ocurrido un error inesperado, por favor intente más tarde');
+            }
+            this.isLoading = false;
+          },
+        });
       },
       reject: () => {
         this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación del estudiante');
@@ -112,63 +203,68 @@ export class StudentsListComponent implements OnInit {
     });
   }
 
-  deleteSelectedStudents(): void {
-    this.confirmationService.confirm({
-      header: 'Confirmar',
-      message: `¿Estás seguro de que quieres eliminar los estudiantes seleccionados?
-        <br><br>${this.selectedStudents?.length} estudiantes serán eliminados.
-        <br><br>Correos:<br>- ${this.selectedStudents?.map((student) => student.email).join('<br>- ')}`,
-      closable: false,
-      closeOnEscape: false,
-      icon: 'pi pi-exclamation-triangle',
-      rejectButtonProps: {
-        label: 'Cancelar',
-        severity: 'secondary',
-        outlined: true,
-      },
-      acceptButtonProps: {
-        label: 'Aceptar',
-      },
-      accept: () => {
-        this.showToast('success', 'Estudiantes eliminados', 'Los estudiantes han sido eliminados correctamente');
-        this.students = this.students.filter((st: Student) => !this.selectedStudents?.includes(st));
-        this.selectedStudents = null;
-      },
-      reject: () => {
-        this.showToast('error', 'Eliminación cancelada', 'Has cancelado la eliminación de los estudiantes');
-      },
-    });
-  }
-
-  changeStudentDialog(event: EmitterDialogStudent) {
-    this.studentDialogVisible = event.isOpen;
-    if (event.message === 'save') {
-      this.showToast('success', 'Estudiante guardado', 'El estudiante ha sido guardado correctamente');
-      if (event.student) this.students = [...this.students, event.student];
-    } else if (event.message === 'edit') {
-      this.showToast('success', 'Estudiante editado', 'El estudiante ha sido editado correctamente');
-      if (event.student !== null) {
-        this.students = this.students.map((st: Student) =>
-          st.studentId === event.student?.studentId ? event.student : st
-        );
-      }
-    } else if (event.message === 'close') {
-      this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
+  onStudentDialogChange(event: DialogState<StudentResponse>): void {
+    this.isStudentDialogVisible = event.isOpen;
+    switch (event.message) {
+      case 'save':
+        this.handleStudentSaved(event.data!);
+        break;
+      case 'edit':
+        this.handleStudentUpdated(event.data!);
+        break;
+      case 'close':
+        this.handleDialogClose();
+        break;
     }
   }
 
-  showToast(severity: 'success' | 'error' | 'info', summary: string, detail: string): void {
+  getCurrentPageIndex(): number {
+    return this.first / this.rows;
+  }
+
+  showToast(severity: 'success' | 'error' | 'warn' | 'info', summary: string, detail: string): void {
     this.messageService.add({
       severity,
-      icon:
-        severity === 'success'
-          ? 'pi pi-check-circle'
-          : severity === 'error'
-            ? 'pi pi-times-circle'
-            : 'pi pi-info-circle',
+      icon: this.getToastIcon(severity),
       summary,
       detail,
-      life: 3000,
+      life: 5000,
     });
+  }
+
+  private handleStudentSaved(studentData: StudentResponse): void {
+    this.showToast('success', 'Estudiante guardado', 'El estudiante ha sido guardado correctamente');
+    this.totalRecords++;
+    if (this.students.length < this.rows) {
+      this.students = [...this.students, studentData];
+      this.studentCache.set(this.getCurrentPageIndex(), this.students);
+    } else {
+      this.studentCache.clear();
+    }
+  }
+
+  private handleStudentUpdated(studentData: StudentResponse): void {
+    this.showToast('success', 'Estudiante actualizado', 'El estudiante ha sido actualizado correctamente');
+    this.students = this.students.map((s: StudentResponse) =>
+      s.studentId === studentData.studentId ? studentData : s
+    );
+    this.studentCache.set(this.getCurrentPageIndex(), this.students);
+  }
+
+  private handleDialogClose(): void {
+    this.showToast('error', 'Operación cancelada', 'Has cancelado la operación');
+  }
+
+  private getToastIcon(severity: 'success' | 'error' | 'warn' | 'info'): string {
+    switch (severity) {
+      case 'success':
+        return 'pi pi-check-circle';
+      case 'error':
+        return 'pi pi-times-circle';
+      case 'warn':
+        return 'pi pi-exclamation-triangle';
+      default:
+        return 'pi pi-info-circle';
+    }
   }
 }
