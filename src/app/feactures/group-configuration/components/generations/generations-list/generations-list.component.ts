@@ -59,8 +59,8 @@ export class GenerationsListComponent implements OnInit {
   searchGenerationValue: string = '';
 
   cols: Column[] = [
-    { field: 'yearStart', header: 'Año de inicio', sortable: true },
-    { field: 'yearEnd', header: 'Año de fin', sortable: true },
+    { field: 'yearStart', header: 'Año de inicio', sortable: false },
+    { field: 'yearEnd', header: 'Año de fin', sortable: false },
   ];
   tableUtils = TableUtils;
 
