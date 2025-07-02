@@ -15,12 +15,6 @@ export const appConfig: ApplicationConfig = {
     providePrimeNGConfig(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(
-      withInterceptors([
-        authInterceptor, // Primero en request, tercero en response
-        errorInterceptor, // Segundo en request, segundo en response
-        errorFormatterInterceptor, // Tercero en request, primero en response
-      ])
-    ),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, errorFormatterInterceptor])),
   ],
 };
