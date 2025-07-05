@@ -21,6 +21,7 @@ import { ApiResponse } from '../../../../core/models/ApiResponse.model';
 import { DialogState } from '../../../../shared/types/dialog.types';
 import { Column } from '../../../../shared/types/table.types';
 import { TableUtils } from '../../../utils/table.utils';
+import { hasText } from '../../../../utils/string.utils';
 
 import { TutorResponse } from '../../models/tutor.model';
 import { TutorsFormComponent } from '../tutors-form/tutors-form.component';
@@ -56,7 +57,7 @@ export class TutorsListComponent implements OnInit {
   isCreateTutor: boolean = true;
   isTutorDialogVisible: boolean = false;
 
-  searchTutorValue: string = '';
+  searchTutorValue: string | null = null;
 
   cols: Column[] = [
     { field: 'employeeCode', header: 'Número de Empleado', sortable: false },
@@ -77,24 +78,6 @@ export class TutorsListComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  openCreateTutorDialog(): void {
-    this.selectedTutor = null;
-    this.isCreateTutor = true;
-    this.isTutorDialogVisible = true;
-  }
-
-  openEditTutorDialog(tutor: TutorResponse): void {
-    this.selectedTutor = tutor;
-    this.isCreateTutor = false;
-    this.isTutorDialogVisible = true;
-  }
-
-  refreshTableData(): void {
-    this.first = 0;
-    this.tutorCache.clear();
-    this.loadTutors({ first: this.first, rows: this.rows });
-  }
-
   loadTutors(event: TableLazyLoadEvent): void {
     this.isLoading = true;
     this.first = event.first ?? 0;
@@ -104,14 +87,14 @@ export class TutorsListComponent implements OnInit {
       this.tutorCache.clear();
     }
 
-    const page = this.getCurrentPageIndex();
+    const page: number = this.getCurrentPageIndex();
     if (this.tutorCache.has(page)) {
       this.tutors = this.tutorCache.get(page)!;
       this.isLoading = false;
       return;
     }
 
-    this.tutorService.getAllTutors(page, this.rows).subscribe({
+    this.tutorService.getAllTutors(page, this.rows, this.searchTutorValue).subscribe({
       next: (response: ApiResponse<TutorResponse[]>) => {
         this.tutors = response.data;
         this.totalRecords = response.pageInfo!.totalElements;
@@ -127,6 +110,53 @@ export class TutorsListComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  refreshTableData(): void {
+    this.first = 0;
+    this.tutorCache.clear();
+    this.loadTutors({ first: this.first, rows: this.rows });
+  }
+
+  search(): void {
+    if (this.hasTextValue(this.searchTutorValue)) {
+      this.first = 0;
+      this.tutorCache.clear();
+      this.loadTutors({ first: 0, rows: this.rows });
+    }
+  }
+
+  resetSearch(): void {
+    this.searchTutorValue = null;
+    this.tutorCache.clear();
+    this.loadTutors({ first: 0, rows: this.rows });
+  }
+
+  openCreateTutorDialog(): void {
+    this.selectedTutor = null;
+    this.isCreateTutor = true;
+    this.isTutorDialogVisible = true;
+  }
+
+  openEditTutorDialog(tutor: TutorResponse): void {
+    this.selectedTutor = tutor;
+    this.isCreateTutor = false;
+    this.isTutorDialogVisible = true;
+  }
+
+  onTutorDialogChange(event: DialogState<TutorResponse>): void {
+    this.isTutorDialogVisible = event.isOpen;
+    switch (event.message) {
+      case 'save':
+        this.handleTutorSaved(event.data!);
+        break;
+      case 'edit':
+        this.handleTutorUpdated(event.data!);
+        break;
+      case 'close':
+        this.handleDialogClose();
+        break;
+    }
   }
 
   deleteTutor(tutor: TutorResponse): void {
@@ -182,19 +212,8 @@ export class TutorsListComponent implements OnInit {
     });
   }
 
-  onTutorDialogChange(event: DialogState<TutorResponse>): void {
-    this.isTutorDialogVisible = event.isOpen;
-    switch (event.message) {
-      case 'save':
-        this.handleTutorSaved(event.data!);
-        break;
-      case 'edit':
-        this.handleTutorUpdated(event.data!);
-        break;
-      case 'close':
-        this.handleDialogClose();
-        break;
-    }
+  hasTextValue(value: string | null): boolean {
+    return hasText(value);
   }
 
   getCurrentPageIndex(): number {
