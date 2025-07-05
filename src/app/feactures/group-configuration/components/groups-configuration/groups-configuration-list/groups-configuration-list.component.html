@@ -42,7 +42,6 @@
   [resizableColumns]="true"
   [showGridlines]="true"
   [rowHover]="true"
-  [globalFilterFields]="tableUtils.getGlobalFilterFields(cols)"
   [tableStyle]="{ 'min-width': '75rem' }"
   dataKey="groupConfigurationId"
   currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} configuraciones de grupo"
@@ -55,7 +54,7 @@
         label="Limpiar"
         [outlined]="true"
         icon="pi pi-filter-slash"
-        (click)="dt.reset(); searchGroupConfigurationValue = ''"
+        (click)="resetSearch()"
       />
       <div class="mb-3 mt-3 xs:mb-0 xs:mt-0">
         <p-inputgroup>
@@ -67,7 +66,8 @@
           />
           <p-button
             icon="pi pi-search"
-            (click)="dt.filterGlobal(searchGroupConfigurationValue.trim(), 'contains')"
+            [disabled]="!hasTextValue(searchGroupConfigurationValue)"
+            (click)="search()"
           />
         </p-inputgroup>
       </div>
