@@ -38,4 +38,3 @@ export class SpecialtyService {
     return this.http.delete<ApiResponse<void>>(`${this.API_URL}/${specialtyId}`);
   }
 }
-

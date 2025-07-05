@@ -13,11 +13,7 @@ export class GroupService {
   private readonly API_URL = `${environment.URL_API}/admin/groups`;
   private http: HttpClient = inject(HttpClient);
 
-  getAllGroups(
-    page: number = 0,
-    size: number = 20,
-    search?: string | null
-  ): Observable<ApiResponse<GroupResponse[]>> {
+  getAllGroups(page: number = 0, size: number = 20, search?: string | null): Observable<ApiResponse<GroupResponse[]>> {
     const params: any = {
       page,
       size,
