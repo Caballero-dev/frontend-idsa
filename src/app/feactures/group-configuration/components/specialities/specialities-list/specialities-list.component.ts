@@ -21,6 +21,7 @@ import { ApiResponse } from '../../../../../core/models/ApiResponse.model';
 import { DialogState } from '../../../../../shared/types/dialog.types';
 import { Column } from '../../../../../shared/types/table.types';
 import { TableUtils } from '../../../../utils/table.utils';
+import { hasText } from '../../../../../utils/string.utils';
 
 import { SpecialtyResponse } from '../../../models/specialty.model';
 import { SpecialitiesFormComponent } from '../specialities-form/specialities-form.component';
@@ -56,7 +57,7 @@ export class SpecialitiesListComponent implements OnInit {
   isCreateSpecialty: boolean = true;
   isSpecialtyDialogVisible: boolean = false;
 
-  searchSpecialtyValue: string = '';
+  searchSpecialtyValue: string | null = null;
 
   cols: Column[] = [
     { field: 'name', header: 'Nombre', sortable: false },
@@ -73,24 +74,6 @@ export class SpecialitiesListComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  openCreateSpecialtyDialog(): void {
-    this.selectedSpecialty = null;
-    this.isCreateSpecialty = true;
-    this.isSpecialtyDialogVisible = true;
-  }
-
-  openEditSpecialtyDialog(specialty: SpecialtyResponse): void {
-    this.selectedSpecialty = specialty;
-    this.isCreateSpecialty = false;
-    this.isSpecialtyDialogVisible = true;
-  }
-
-  refreshTableData(): void {
-    this.first = 0;
-    this.specialtyCache.clear();
-    this.loadSpecialties({ first: this.first, rows: this.rows });
-  }
-
   loadSpecialties(event: TableLazyLoadEvent): void {
     this.isLoading = true;
     this.first = event.first ?? 0;
@@ -100,14 +83,14 @@ export class SpecialitiesListComponent implements OnInit {
       this.specialtyCache.clear();
     }
 
-    const page = this.getCurrentPageIndex();
+    const page: number = this.getCurrentPageIndex();
     if (this.specialtyCache.has(page)) {
       this.specialties = this.specialtyCache.get(page)!;
       this.isLoading = false;
       return;
     }
 
-    this.specialtyService.getAllSpecialties(page, this.rows).subscribe({
+    this.specialtyService.getAllSpecialties(page, this.rows, this.searchSpecialtyValue).subscribe({
       next: (response: ApiResponse<SpecialtyResponse[]>) => {
         this.specialties = response.data;
         this.totalRecords = response.pageInfo!.totalElements;
@@ -123,6 +106,53 @@ export class SpecialitiesListComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  refreshTableData(): void {
+    this.first = 0;
+    this.specialtyCache.clear();
+    this.loadSpecialties({ first: this.first, rows: this.rows });
+  }
+
+  search(): void {
+    if (this.hasTextValue(this.searchSpecialtyValue)) {
+      this.first = 0;
+      this.specialtyCache.clear();
+      this.loadSpecialties({ first: 0, rows: this.rows });
+    }
+  }
+
+  resetSearch(): void {
+    this.searchSpecialtyValue = null;
+    this.specialtyCache.clear();
+    this.loadSpecialties({ first: 0, rows: this.rows });
+  }
+
+  openCreateSpecialtyDialog(): void {
+    this.selectedSpecialty = null;
+    this.isCreateSpecialty = true;
+    this.isSpecialtyDialogVisible = true;
+  }
+
+  openEditSpecialtyDialog(specialty: SpecialtyResponse): void {
+    this.selectedSpecialty = specialty;
+    this.isCreateSpecialty = false;
+    this.isSpecialtyDialogVisible = true;
+  }
+
+  onSpecialtyDialogChange(event: DialogState<SpecialtyResponse>): void {
+    this.isSpecialtyDialogVisible = event.isOpen;
+    switch (event.message) {
+      case 'save':
+        this.handleSpecialtySaved(event.data!);
+        break;
+      case 'edit':
+        this.handleSpecialtyUpdated(event.data!);
+        break;
+      case 'close':
+        this.handleDialogClose();
+        break;
+    }
   }
 
   deleteSpecialty(specialty: SpecialtyResponse): void {
@@ -183,19 +213,8 @@ export class SpecialitiesListComponent implements OnInit {
     });
   }
 
-  onSpecialtyDialogChange(event: DialogState<SpecialtyResponse>): void {
-    this.isSpecialtyDialogVisible = event.isOpen;
-    switch (event.message) {
-      case 'save':
-        this.handleSpecialtySaved(event.data!);
-        break;
-      case 'edit':
-        this.handleSpecialtyUpdated(event.data!);
-        break;
-      case 'close':
-        this.handleDialogClose();
-        break;
-    }
+  hasTextValue(value: string | null): boolean {
+    return hasText(value);
   }
 
   getCurrentPageIndex(): number {
