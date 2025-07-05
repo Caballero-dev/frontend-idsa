@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../../core/models/ApiResponse.model';
 import { ModalityRequest, ModalityResponse } from '../models/modality.model';
+import { hasText } from '../../../utils/string.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -12,13 +13,17 @@ export class ModalityService {
   private readonly API_URL = `${environment.URL_API}/admin/modalities`;
   private http: HttpClient = inject(HttpClient);
 
-  getAllModalities(page: number = 0, size: number = 20): Observable<ApiResponse<ModalityResponse[]>> {
-    return this.http.get<ApiResponse<ModalityResponse[]>>(this.API_URL, {
-      params: {
-        page,
-        size,
-      },
-    });
+  getAllModalities(
+    page: number = 0,
+    size: number = 20,
+    search?: string | null
+  ): Observable<ApiResponse<ModalityResponse[]>> {
+    const params: any = {
+      page,
+      size,
+      ...(hasText(search) && { search }),
+    };
+    return this.http.get<ApiResponse<ModalityResponse[]>>(this.API_URL, { params });
   }
 
   createModality(modality: ModalityRequest): Observable<ApiResponse<ModalityResponse>> {

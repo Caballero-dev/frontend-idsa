@@ -21,6 +21,7 @@ import { ApiResponse } from '../../../../../core/models/ApiResponse.model';
 import { DialogState } from '../../../../../shared/types/dialog.types';
 import { Column } from '../../../../../shared/types/table.types';
 import { TableUtils } from '../../../../utils/table.utils';
+import { hasText } from '../../../../../utils/string.utils';
 
 import { ModalityResponse } from '../../../models/modality.model';
 import { ModalitiesFormComponent } from '../modalities-form/modalities-form.component';
@@ -56,7 +57,7 @@ export class ModalitiesListComponent implements OnInit {
   isCreateModality: boolean = true;
   isModalityDialogVisible: boolean = false;
 
-  searchModalityValue: string = '';
+  searchModalityValue: string | null = null;
 
   cols: Column[] = [{ field: 'name', header: 'Nombre', sortable: false }];
   tableUtils = TableUtils;
@@ -70,24 +71,6 @@ export class ModalitiesListComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  openCreateModalityDialog(): void {
-    this.selectedModality = null;
-    this.isCreateModality = true;
-    this.isModalityDialogVisible = true;
-  }
-
-  openEditModalityDialog(modality: ModalityResponse): void {
-    this.selectedModality = modality;
-    this.isCreateModality = false;
-    this.isModalityDialogVisible = true;
-  }
-
-  refreshTableData(): void {
-    this.first = 0;
-    this.modalityCache.clear();
-    this.loadModalities({ first: this.first, rows: this.rows });
-  }
-
   loadModalities(event: TableLazyLoadEvent): void {
     this.isLoading = true;
     this.first = event.first ?? 0;
@@ -97,14 +80,14 @@ export class ModalitiesListComponent implements OnInit {
       this.modalityCache.clear();
     }
 
-    const page = this.getCurrentPageIndex();
+    const page: number = this.getCurrentPageIndex();
     if (this.modalityCache.has(page)) {
       this.modalities = this.modalityCache.get(page)!;
       this.isLoading = false;
       return;
     }
 
-    this.modalityService.getAllModalities(page, this.rows).subscribe({
+    this.modalityService.getAllModalities(page, this.rows, this.searchModalityValue).subscribe({
       next: (response: ApiResponse<ModalityResponse[]>) => {
         this.modalities = response.data;
         this.totalRecords = response.pageInfo!.totalElements;
@@ -120,6 +103,53 @@ export class ModalitiesListComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  refreshTableData(): void {
+    this.first = 0;
+    this.modalityCache.clear();
+    this.loadModalities({ first: this.first, rows: this.rows });
+  }
+
+  search(): void {
+    if (this.hasTextValue(this.searchModalityValue)) {
+      this.first = 0;
+      this.modalityCache.clear();
+      this.loadModalities({ first: 0, rows: this.rows });
+    }
+  }
+
+  resetSearch(): void {
+    this.searchModalityValue = null;
+    this.modalityCache.clear();
+    this.loadModalities({ first: 0, rows: this.rows });
+  }
+
+  openCreateModalityDialog(): void {
+    this.selectedModality = null;
+    this.isCreateModality = true;
+    this.isModalityDialogVisible = true;
+  }
+
+  openEditModalityDialog(modality: ModalityResponse): void {
+    this.selectedModality = modality;
+    this.isCreateModality = false;
+    this.isModalityDialogVisible = true;
+  }
+
+  onModalityDialogChange(event: DialogState<ModalityResponse>): void {
+    this.isModalityDialogVisible = event.isOpen;
+    switch (event.message) {
+      case 'save':
+        this.handleModalitySaved(event.data!);
+        break;
+      case 'edit':
+        this.handleModalityUpdated(event.data!);
+        break;
+      case 'close':
+        this.handleDialogClose();
+        break;
+    }
   }
 
   deleteModality(modality: ModalityResponse): void {
@@ -178,19 +208,8 @@ export class ModalitiesListComponent implements OnInit {
     });
   }
 
-  onModalityDialogChange(event: DialogState<ModalityResponse>): void {
-    this.isModalityDialogVisible = event.isOpen;
-    switch (event.message) {
-      case 'save':
-        this.handleModalitySaved(event.data!);
-        break;
-      case 'edit':
-        this.handleModalityUpdated(event.data!);
-        break;
-      case 'close':
-        this.handleDialogClose();
-        break;
-    }
+  hasTextValue(value: string | null): boolean {
+    return hasText(value);
   }
 
   getCurrentPageIndex(): number {
