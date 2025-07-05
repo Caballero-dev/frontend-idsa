@@ -21,6 +21,7 @@ import { ApiResponse } from '../../../../../core/models/ApiResponse.model';
 import { DialogState } from '../../../../../shared/types/dialog.types';
 import { Column } from '../../../../../shared/types/table.types';
 import { TableUtils } from '../../../../utils/table.utils';
+import { hasText } from '../../../../../utils/string.utils';
 
 import { GroupResponse } from '../../../models/group.model';
 import { GroupsFormComponent } from '../groups-form/groups-form.component';
@@ -56,7 +57,7 @@ export class GroupsListComponent implements OnInit {
   isCreateGroup: boolean = true;
   isGroupDialogVisible: boolean = false;
 
-  searchGroupValue: string = '';
+  searchGroupValue: string | null = null;
 
   cols: Column[] = [{ field: 'name', header: 'Nombre', sortable: false }];
   tableUtils = TableUtils;
@@ -70,24 +71,6 @@ export class GroupsListComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  openCreateGroupDialog(): void {
-    this.selectedGroup = null;
-    this.isCreateGroup = true;
-    this.isGroupDialogVisible = true;
-  }
-
-  openEditGroupDialog(group: GroupResponse): void {
-    this.selectedGroup = group;
-    this.isCreateGroup = false;
-    this.isGroupDialogVisible = true;
-  }
-
-  refreshTableData(): void {
-    this.first = 0;
-    this.groupCache.clear();
-    this.loadGroups({ first: this.first, rows: this.rows });
-  }
-
   loadGroups(event: TableLazyLoadEvent): void {
     this.isLoading = true;
     this.first = event.first ?? 0;
@@ -97,14 +80,14 @@ export class GroupsListComponent implements OnInit {
       this.groupCache.clear();
     }
 
-    const page = this.getCurrentPageIndex();
+    const page: number = this.getCurrentPageIndex();
     if (this.groupCache.has(page)) {
       this.groups = this.groupCache.get(page)!;
       this.isLoading = false;
       return;
     }
 
-    this.groupService.getAllGroups(page, this.rows).subscribe({
+    this.groupService.getAllGroups(page, this.rows, this.searchGroupValue).subscribe({
       next: (response: ApiResponse<GroupResponse[]>) => {
         this.groups = response.data;
         this.totalRecords = response.pageInfo!.totalElements;
@@ -120,6 +103,53 @@ export class GroupsListComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  refreshTableData(): void {
+    this.first = 0;
+    this.groupCache.clear();
+    this.loadGroups({ first: this.first, rows: this.rows });
+  }
+
+  search(): void {
+    if (this.hasTextValue(this.searchGroupValue)) {
+      this.first = 0;
+      this.groupCache.clear();
+      this.loadGroups({ first: 0, rows: this.rows });
+    }
+  }
+
+  resetSearch(): void {
+    this.searchGroupValue = null;
+    this.groupCache.clear();
+    this.loadGroups({ first: 0, rows: this.rows });
+  }
+
+  openCreateGroupDialog(): void {
+    this.selectedGroup = null;
+    this.isCreateGroup = true;
+    this.isGroupDialogVisible = true;
+  }
+
+  openEditGroupDialog(group: GroupResponse): void {
+    this.selectedGroup = group;
+    this.isCreateGroup = false;
+    this.isGroupDialogVisible = true;
+  }
+
+  onGroupDialogChange(event: DialogState<GroupResponse>): void {
+    this.isGroupDialogVisible = event.isOpen;
+    switch (event.message) {
+      case 'save':
+        this.handleGroupSaved(event.data!);
+        break;
+      case 'edit':
+        this.handleGroupUpdated(event.data!);
+        break;
+      case 'close':
+        this.handleDialogClose();
+        break;
+    }
   }
 
   deleteGroup(group: GroupResponse): void {
@@ -174,19 +204,8 @@ export class GroupsListComponent implements OnInit {
     });
   }
 
-  onGroupDialogChange(event: DialogState<GroupResponse>): void {
-    this.isGroupDialogVisible = event.isOpen;
-    switch (event.message) {
-      case 'save':
-        this.handleGroupSaved(event.data!);
-        break;
-      case 'edit':
-        this.handleGroupUpdated(event.data!);
-        break;
-      case 'close':
-        this.handleDialogClose();
-        break;
-    }
+  hasTextValue(value: string | null): boolean {
+    return hasText(value);
   }
 
   getCurrentPageIndex(): number {
