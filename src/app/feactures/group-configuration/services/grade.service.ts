@@ -13,11 +13,7 @@ export class GradeService {
   private readonly API_URL = `${environment.URL_API}/admin/grades`;
   private http: HttpClient = inject(HttpClient);
 
-  getAllGrades(
-    page: number = 0,
-    size: number = 20,
-    search?: string | null
-  ): Observable<ApiResponse<GradeResponse[]>> {
+  getAllGrades(page: number = 0, size: number = 20, search?: string | null): Observable<ApiResponse<GradeResponse[]>> {
     const params: any = {
       page,
       size,
