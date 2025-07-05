@@ -21,6 +21,7 @@ import { ApiResponse } from '../../../../../core/models/ApiResponse.model';
 import { DialogState } from '../../../../../shared/types/dialog.types';
 import { Column } from '../../../../../shared/types/table.types';
 import { TableUtils } from '../../../../utils/table.utils';
+import { hasText } from '../../../../../utils/string.utils';
 
 import { GradeResponse } from '../../../models/grade.model';
 import { GradesFormComponent } from '../grades-form/grades-form.component';
@@ -56,7 +57,7 @@ export class GradesListComponent implements OnInit {
   isCreateGrade: boolean = true;
   isGradeDialogVisible: boolean = false;
 
-  searchGradeValue: string = '';
+  searchGradeValue: string | null = null;
 
   cols: Column[] = [{ field: 'name', header: 'Nombre', sortable: false }];
   tableUtils = TableUtils;
@@ -70,24 +71,6 @@ export class GradesListComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  openCreateGradeDialog(): void {
-    this.selectedGrade = null;
-    this.isCreateGrade = true;
-    this.isGradeDialogVisible = true;
-  }
-
-  openEditGradeDialog(grade: GradeResponse): void {
-    this.selectedGrade = grade;
-    this.isCreateGrade = false;
-    this.isGradeDialogVisible = true;
-  }
-
-  refreshTableData(): void {
-    this.first = 0;
-    this.gradeCache.clear();
-    this.loadGrades({ first: this.first, rows: this.rows });
-  }
-
   loadGrades(event: TableLazyLoadEvent): void {
     this.isLoading = true;
     this.first = event.first ?? 0;
@@ -97,14 +80,14 @@ export class GradesListComponent implements OnInit {
       this.gradeCache.clear();
     }
 
-    const page = this.getCurrentPageIndex();
+    const page: number = this.getCurrentPageIndex();
     if (this.gradeCache.has(page)) {
       this.grades = this.gradeCache.get(page)!;
       this.isLoading = false;
       return;
     }
 
-    this.gradeService.getAllGrades(page, this.rows).subscribe({
+    this.gradeService.getAllGrades(page, this.rows, this.searchGradeValue).subscribe({
       next: (response: ApiResponse<GradeResponse[]>) => {
         this.grades = response.data;
         this.totalRecords = response.pageInfo!.totalElements;
@@ -120,6 +103,53 @@ export class GradesListComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  refreshTableData(): void {
+    this.first = 0;
+    this.gradeCache.clear();
+    this.loadGrades({ first: this.first, rows: this.rows });
+  }
+
+  search(): void {
+    if (this.hasTextValue(this.searchGradeValue)) {
+      this.first = 0;
+      this.gradeCache.clear();
+      this.loadGrades({ first: 0, rows: this.rows });
+    }
+  }
+
+  resetSearch(): void {
+    this.searchGradeValue = null;
+    this.gradeCache.clear();
+    this.loadGrades({ first: 0, rows: this.rows });
+  }
+
+  openCreateGradeDialog(): void {
+    this.selectedGrade = null;
+    this.isCreateGrade = true;
+    this.isGradeDialogVisible = true;
+  }
+
+  openEditGradeDialog(grade: GradeResponse): void {
+    this.selectedGrade = grade;
+    this.isCreateGrade = false;
+    this.isGradeDialogVisible = true;
+  }
+
+  onGradeDialogChange(event: DialogState<GradeResponse>): void {
+    this.isGradeDialogVisible = event.isOpen;
+    switch (event.message) {
+      case 'save':
+        this.handleGradeSaved(event.data!);
+        break;
+      case 'edit':
+        this.handleGradeUpdated(event.data!);
+        break;
+      case 'close':
+        this.handleDialogClose();
+        break;
+    }
   }
 
   deleteGrade(grade: GradeResponse): void {
@@ -174,19 +204,8 @@ export class GradesListComponent implements OnInit {
     });
   }
 
-  onGradeDialogChange(event: DialogState<GradeResponse>): void {
-    this.isGradeDialogVisible = event.isOpen;
-    switch (event.message) {
-      case 'save':
-        this.handleGradeSaved(event.data!);
-        break;
-      case 'edit':
-        this.handleGradeUpdated(event.data!);
-        break;
-      case 'close':
-        this.handleDialogClose();
-        break;
-    }
+  hasTextValue(value: string | null): boolean {
+    return hasText(value);
   }
 
   getCurrentPageIndex(): number {
