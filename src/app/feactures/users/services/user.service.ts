@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '../../../core/models/ApiResponse.model';
 import { Observable } from 'rxjs';
 import { UserRequest, UserResponse } from '../models/user.model';
+import { hasText } from '../../../utils/string.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -12,13 +13,13 @@ export class UserService {
   private readonly API_URL = `${environment.URL_API}/admin/users`;
   private http: HttpClient = inject(HttpClient);
 
-  getAllUsers(page: number = 0, size: number = 20): Observable<ApiResponse<UserResponse[]>> {
-    return this.http.get<ApiResponse<UserResponse[]>>(`${this.API_URL}`, {
-      params: {
-        page,
-        size,
-      },
-    });
+  getAllUsers(page: number = 0, size: number = 20, search?: string | null): Observable<ApiResponse<UserResponse[]>> {
+    const params: any = {
+      page: page,
+      size: size,
+      ...(hasText(search) && { search: search }),
+    };
+    return this.http.get<ApiResponse<UserResponse[]>>(`${this.API_URL}`, { params });
   }
 
   createUser(user: UserRequest): Observable<ApiResponse<UserResponse>> {

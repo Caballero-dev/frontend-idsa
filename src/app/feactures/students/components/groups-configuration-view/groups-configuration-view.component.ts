@@ -13,14 +13,13 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { GroupConfigurationViewService } from '../../services/group-configuration-view.service';
-import { ProfileService } from '../../../profile/services/profile.service';
 
 import { ApiError } from '../../../../core/models/ApiError.model';
 import { ApiResponse } from '../../../../core/models/ApiResponse.model';
-import { Role } from '../../../../core/models/Role.enum';
 
 import { Column } from '../../../../shared/types/table.types';
 import { TableUtils } from '../../../utils/table.utils';
+import { hasText } from '../../../../utils/string.utils';
 
 import { GroupConfigurationView } from '../../models/group-configuration-view.model';
 
@@ -50,7 +49,7 @@ export class GroupsConfigurationViewComponent implements OnInit {
 
   isLoading: boolean = true;
 
-  searchGroupValue: string = '';
+  searchGroupValue: string | null = null;
 
   cols: Column[] = [
     { field: 'name', header: 'Nombre', sortable: false },
@@ -67,12 +66,6 @@ export class GroupsConfigurationViewComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  refreshTableData(): void {
-    this.first = 0;
-    this.groupCache.clear();
-    this.loadGroupData({ first: this.first, rows: this.rows });
-  }
-
   loadGroupData(event: TableLazyLoadEvent): void {
     this.isLoading = true;
     this.first = event.first ?? 0;
@@ -82,14 +75,14 @@ export class GroupsConfigurationViewComponent implements OnInit {
       this.groupCache.clear();
     }
 
-    const page = this.getCurrentPageIndex();
+    const page: number = this.getCurrentPageIndex();
     if (this.groupCache.has(page)) {
       this.groups = this.groupCache.get(page)!;
       this.isLoading = false;
       return;
     }
 
-    this.groupConfigurationViewService.getAllGroupConfigurationsView(page, this.rows).subscribe({
+    this.groupConfigurationViewService.getAllGroupConfigurationsView(page, this.rows, this.searchGroupValue).subscribe({
       next: (response: ApiResponse<GroupConfigurationView[]>) => {
         this.groups = response.data;
         this.totalRecords = response.pageInfo!.totalElements;
@@ -107,9 +100,37 @@ export class GroupsConfigurationViewComponent implements OnInit {
     });
   }
 
+  refreshTableData(): void {
+    this.first = 0;
+    this.groupCache.clear();
+    this.loadGroupData({ first: this.first, rows: this.rows });
+  }
+
+  search(): void {
+    if (this.hasTextValue(this.searchGroupValue)) {
+      this.first = 0;
+      this.groupCache.clear();
+      this.loadGroupData({ first: 0, rows: this.rows });
+    }
+  }
+
+  resetSearch(): void {
+    this.searchGroupValue = null;
+    this.groupCache.clear();
+    this.loadGroupData({ first: 0, rows: this.rows });
+  }
+
   getGeneration(generation: string): { startDate: string; endDate: string } {
     const [startDate, endDate] = generation.split('/');
     return { startDate, endDate };
+  }
+
+  hasTextValue(value: string | null): boolean {
+    return hasText(value);
+  }
+
+  getCurrentPageIndex(): number {
+    return this.first / this.rows;
   }
 
   showToast(severity: 'success' | 'error' | 'warn' | 'info', summary: string, detail: string): void {
@@ -120,10 +141,6 @@ export class GroupsConfigurationViewComponent implements OnInit {
       detail,
       life: 5000,
     });
-  }
-
-  private getCurrentPageIndex(): number {
-    return this.first / this.rows;
   }
 
   private getToastIcon(severity: 'success' | 'error' | 'warn' | 'info'): string {

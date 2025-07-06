@@ -45,7 +45,6 @@
   [resizableColumns]="true"
   [showGridlines]="true"
   [rowHover]="true"
-  [globalFilterFields]="tableUtils.getGlobalFilterFields(cols)"
   [tableStyle]="{ 'min-width': '75rem' }"
   dataKey="studentId"
   currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
@@ -58,7 +57,7 @@
         label="Limpiar"
         [outlined]="true"
         icon="pi pi-filter-slash"
-        (click)="dt.reset(); searchStudentValue = ''"
+        (click)="resetSearch()"
       />
       <div class="mb-3 mt-3 xs:mb-0 xs:mt-0">
         <p-inputgroup>
@@ -70,7 +69,8 @@
           />
           <p-button
             icon="pi pi-search"
-            (click)="dt.filterGlobal(searchStudentValue.trim(), 'contains')"
+            [disabled]="!hasTextValue(searchStudentValue)"
+            (click)="search()"
           />
         </p-inputgroup>
       </div>

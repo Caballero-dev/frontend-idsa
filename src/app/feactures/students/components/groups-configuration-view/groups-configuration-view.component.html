@@ -30,17 +30,6 @@
   [resizableColumns]="true"
   [showGridlines]="true"
   [rowHover]="true"
-  [globalFilterFields]="[
-    'tutor',
-    'campus',
-    'specialty',
-    'specialtyShortName',
-    'modality',
-    'grade',
-    'group',
-    'generation',
-    'students',
-  ]"
   [tableStyle]="{ 'min-width': '50rem' }"
   dataKey="id"
   currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
@@ -53,7 +42,7 @@
         label="Limpiar"
         [outlined]="true"
         icon="pi pi-filter-slash"
-        (click)="dt.reset(); searchGroupValue = ''"
+        (click)="resetSearch()"
       />
       <div class="mb-3 mt-3 xs:mb-0 xs:mt-0">
         <p-inputgroup>
@@ -65,7 +54,8 @@
           />
           <p-button
             icon="pi pi-search"
-            (click)="dt.filterGlobal(searchGroupValue.trim(), 'contains')"
+            [disabled]="!hasTextValue(searchGroupValue)"
+            (click)="search()"
           />
         </p-inputgroup>
       </div>
