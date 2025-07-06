@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "identifi-adicc": {
+    "idsa": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/identifi-adicc",
+            "outputPath": "dist/idsa",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -71,10 +71,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "identifi-adicc:build:production"
+              "buildTarget": "idsa:build:production"
             },
             "development": {
-              "buildTarget": "identifi-adicc:build:development"
+              "buildTarget": "idsa:build:development"
             }
           },
           "defaultConfiguration": "development"

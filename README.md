@@ -47,7 +47,7 @@ El panel es responsable de:
 ## 📁 Estructura del Proyecto
 
 ```
-identifi-adicc/
+idsa/
 ├── src/
 │   ├── app/
 │   │   ├── auth/                        # Autenticación y autorización
@@ -144,7 +144,7 @@ identifi-adicc/
 
 ```bash
 git clone <url-del-repositorio>
-cd identifi-adicc
+cd idsa
 npm install
 ```
 
@@ -173,7 +173,7 @@ Puedes modificar los endpoints y configuraciones según el entorno editando los 
 
 ## 🌐 Relación con el Back-End
 
-La aplicación web consume la API REST [(Identifi-Adicc)](https://github.com/Caballero-dev/backend-identifi-adicc) desarrollada en Spring Boot, que centraliza la lógica de negocio, almacenamiento y procesamiento de datos biométricos y fisiológicos. Toda la autenticación, consulta de datos y reportes se realiza a través de endpoints protegidos.
+La aplicación web consume la API REST [(backend-idsa)](https://github.com/Caballero-dev/backend-idsa) desarrollada en Spring Boot, que centraliza la lógica de negocio, almacenamiento y procesamiento de datos biométricos y fisiológicos. Toda la autenticación, consulta de datos y reportes se realiza a través de endpoints protegidos.
 
 ---
 
