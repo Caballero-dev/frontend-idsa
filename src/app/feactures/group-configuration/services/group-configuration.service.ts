@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../../core/models/ApiResponse.model';
 import { GroupConfigurationRequest, GroupConfigurationResponse } from '../models/group-configuration.model';
+import { hasText } from '../../../utils/string.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -14,14 +15,15 @@ export class GroupConfigurationService {
 
   getAllGroupConfigurations(
     page: number = 0,
-    size: number = 20
+    size: number = 20,
+    search?: string | null
   ): Observable<ApiResponse<GroupConfigurationResponse[]>> {
-    return this.http.get<ApiResponse<GroupConfigurationResponse[]>>(this.API_URL, {
-      params: {
-        page,
-        size,
-      },
-    });
+    const params: any = {
+      page: page,
+      size: size,
+      ...(hasText(search) && { search: search }),
+    };
+    return this.http.get<ApiResponse<GroupConfigurationResponse[]>>(this.API_URL, { params });
   }
 
   createGroupConfiguration(

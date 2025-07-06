@@ -21,6 +21,7 @@ import { ApiResponse } from '../../../../../core/models/ApiResponse.model';
 import { DialogState } from '../../../../../shared/types/dialog.types';
 import { Column } from '../../../../../shared/types/table.types';
 import { TableUtils } from '../../../../utils/table.utils';
+import { hasText } from '../../../../../utils/string.utils';
 
 import { GenerationResponse } from '../../../models/generation.model';
 import { GenerationsFormComponent } from '../generations-form/generations-form.component';
@@ -56,7 +57,7 @@ export class GenerationsListComponent implements OnInit {
   isCreateGeneration: boolean = true;
   isGenerationDialogVisible: boolean = false;
 
-  searchGenerationValue: string = '';
+  searchGenerationValue: string | null = null;
 
   cols: Column[] = [
     { field: 'yearStart', header: 'Año de inicio', sortable: false },
@@ -73,24 +74,6 @@ export class GenerationsListComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  openCreateGenerationDialog(): void {
-    this.selectedGeneration = null;
-    this.isCreateGeneration = true;
-    this.isGenerationDialogVisible = true;
-  }
-
-  openEditGenerationDialog(generation: GenerationResponse): void {
-    this.selectedGeneration = generation;
-    this.isCreateGeneration = false;
-    this.isGenerationDialogVisible = true;
-  }
-
-  refreshTableData(): void {
-    this.first = 0;
-    this.generationCache.clear();
-    this.loadGenerations({ first: this.first, rows: this.rows });
-  }
-
   loadGenerations(event: TableLazyLoadEvent): void {
     this.isLoading = true;
     this.first = event.first ?? 0;
@@ -100,14 +83,14 @@ export class GenerationsListComponent implements OnInit {
       this.generationCache.clear();
     }
 
-    const page = this.getCurrentPageIndex();
+    const page: number = this.getCurrentPageIndex();
     if (this.generationCache.has(page)) {
       this.generations = this.generationCache.get(page)!;
       this.isLoading = false;
       return;
     }
 
-    this.generationService.getAllGenerations(page, this.rows).subscribe({
+    this.generationService.getAllGenerations(page, this.rows, this.searchGenerationValue).subscribe({
       next: (response: ApiResponse<GenerationResponse[]>) => {
         this.generations = response.data;
         this.totalRecords = response.pageInfo!.totalElements;
@@ -123,6 +106,53 @@ export class GenerationsListComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  refreshTableData(): void {
+    this.first = 0;
+    this.generationCache.clear();
+    this.loadGenerations({ first: this.first, rows: this.rows });
+  }
+
+  search(): void {
+    if (this.hasTextValue(this.searchGenerationValue)) {
+      this.first = 0;
+      this.generationCache.clear();
+      this.loadGenerations({ first: 0, rows: this.rows });
+    }
+  }
+
+  resetSearch(): void {
+    this.searchGenerationValue = null;
+    this.generationCache.clear();
+    this.loadGenerations({ first: 0, rows: this.rows });
+  }
+
+  openCreateGenerationDialog(): void {
+    this.selectedGeneration = null;
+    this.isCreateGeneration = true;
+    this.isGenerationDialogVisible = true;
+  }
+
+  openEditGenerationDialog(generation: GenerationResponse): void {
+    this.selectedGeneration = generation;
+    this.isCreateGeneration = false;
+    this.isGenerationDialogVisible = true;
+  }
+
+  onGenerationDialogChange(event: DialogState<GenerationResponse>): void {
+    this.isGenerationDialogVisible = event.isOpen;
+    switch (event.message) {
+      case 'save':
+        this.handleGenerationSaved(event.data!);
+        break;
+      case 'edit':
+        this.handleGenerationUpdated(event.data!);
+        break;
+      case 'close':
+        this.handleDialogClose();
+        break;
+    }
   }
 
   deleteGeneration(generation: GenerationResponse): void {
@@ -183,19 +213,8 @@ export class GenerationsListComponent implements OnInit {
     });
   }
 
-  onGenerationDialogChange(event: DialogState<GenerationResponse>): void {
-    this.isGenerationDialogVisible = event.isOpen;
-    switch (event.message) {
-      case 'save':
-        this.handleGenerationSaved(event.data!);
-        break;
-      case 'edit':
-        this.handleGenerationUpdated(event.data!);
-        break;
-      case 'close':
-        this.handleDialogClose();
-        break;
-    }
+  hasTextValue(value: string | null): boolean {
+    return hasText(value);
   }
 
   getCurrentPageIndex(): number {

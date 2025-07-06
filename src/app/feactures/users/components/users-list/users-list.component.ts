@@ -24,6 +24,7 @@ import { ApiResponse } from '../../../../core/models/ApiResponse.model';
 import { DialogState } from '../../../../shared/types/dialog.types';
 import { Column } from '../../../../shared/types/table.types';
 import { TableUtils } from '../../../utils/table.utils';
+import { hasText } from '../../../../utils/string.utils';
 
 import { UserResponse } from '../../models/user.model';
 import { UsersFormComponent } from '../users-form/users-form.component';
@@ -62,7 +63,7 @@ export class UsersListComponent implements OnInit {
   isCreateUser: boolean = true;
   isUserDialogVisible: boolean = false;
 
-  searchUserValue: string = '';
+  searchUserValue: string | null = null;
 
   cols: Column[] = [
     { field: 'name', header: 'Nombre', sortable: false },
@@ -85,24 +86,6 @@ export class UsersListComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  openCreateUserDialog(): void {
-    this.selectedUser = null;
-    this.isCreateUser = true;
-    this.isUserDialogVisible = true;
-  }
-
-  openEditUserDialog(user: UserResponse): void {
-    this.selectedUser = user;
-    this.isCreateUser = false;
-    this.isUserDialogVisible = true;
-  }
-
-  refreshTableData(): void {
-    this.first = 0;
-    this.userCache.clear();
-    this.loadUsers({ first: this.first, rows: this.rows });
-  }
-
   loadUsers(event: TableLazyLoadEvent): void {
     this.isLoading = true;
     this.first = event.first ?? 0;
@@ -112,14 +95,14 @@ export class UsersListComponent implements OnInit {
       this.userCache.clear();
     }
 
-    const page = this.getCurrentPageIndex();
+    const page: number = this.getCurrentPageIndex();
     if (this.userCache.has(page)) {
       this.users = this.userCache.get(page)!;
       this.isLoading = false;
       return;
     }
 
-    this.userService.getAllUsers(page, this.rows).subscribe({
+    this.userService.getAllUsers(page, this.rows, this.searchUserValue).subscribe({
       next: (response: ApiResponse<UserResponse[]>) => {
         this.users = response.data;
         this.totalRecords = response.pageInfo!.totalElements;
@@ -135,6 +118,53 @@ export class UsersListComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  refreshTableData(): void {
+    this.first = 0;
+    this.userCache.clear();
+    this.loadUsers({ first: this.first, rows: this.rows });
+  }
+
+  search(): void {
+    if (this.hasTextValue(this.searchUserValue)) {
+      this.first = 0;
+      this.userCache.clear();
+      this.loadUsers({ first: 0, rows: this.rows });
+    }
+  }
+
+  resetSearch(): void {
+    this.searchUserValue = null;
+    this.userCache.clear();
+    this.loadUsers({ first: 0, rows: this.rows });
+  }
+
+  openCreateUserDialog(): void {
+    this.selectedUser = null;
+    this.isCreateUser = true;
+    this.isUserDialogVisible = true;
+  }
+
+  openEditUserDialog(user: UserResponse): void {
+    this.selectedUser = user;
+    this.isCreateUser = false;
+    this.isUserDialogVisible = true;
+  }
+
+  onUserDialogChange(event: DialogState<UserResponse>): void {
+    this.isUserDialogVisible = event.isOpen;
+    switch (event.message) {
+      case 'save':
+        this.handleUserSaved(event.data!);
+        break;
+      case 'edit':
+        this.handleUserUpdated(event.data!);
+        break;
+      case 'close':
+        this.handleDialogClose();
+        break;
+    }
   }
 
   updateStatus(userId: number, status: boolean): void {
@@ -242,19 +272,8 @@ export class UsersListComponent implements OnInit {
     });
   }
 
-  onUserDialogChange(event: DialogState<UserResponse>): void {
-    this.isUserDialogVisible = event.isOpen;
-    switch (event.message) {
-      case 'save':
-        this.handleUserSaved(event.data!);
-        break;
-      case 'edit':
-        this.handleUserUpdated(event.data!);
-        break;
-      case 'close':
-        this.handleDialogClose();
-        break;
-    }
+  hasTextValue(value: string | null): boolean {
+    return hasText(value);
   }
 
   getCurrentPageIndex(): number {
@@ -284,7 +303,7 @@ export class UsersListComponent implements OnInit {
 
   private handleUserUpdated(userData: UserResponse): void {
     this.showToast('success', 'Usuario actualizado', 'El usuario ha sido actualizado correctamente');
-    this.users = this.users.map((usr: UserResponse) => (usr.userId === userData.userId ? userData : usr));
+    this.users = this.users.map((u: UserResponse) => (u.userId === userData.userId ? userData : u));
     this.userCache.set(this.getCurrentPageIndex(), this.users);
   }
 

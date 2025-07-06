@@ -21,6 +21,7 @@ import { ApiResponse } from '../../../../../core/models/ApiResponse.model';
 import { DialogState } from '../../../../../shared/types/dialog.types';
 import { Column } from '../../../../../shared/types/table.types';
 import { TableUtils } from '../../../../utils/table.utils';
+import { hasText } from '../../../../../utils/string.utils';
 
 import { CampusResponse } from '../../../models/campus.model';
 import { CampusesFormComponent } from '../campuses-form/campuses-form.component';
@@ -56,7 +57,7 @@ export class CampusesListComponent implements OnInit {
   isCreateCampus: boolean = true;
   isCampusDialogVisible: boolean = false;
 
-  searchCampusValue: string = '';
+  searchCampusValue: string | null = null;
 
   cols: Column[] = [{ field: 'name', header: 'Nombre', sortable: false }];
   tableUtils = TableUtils;
@@ -70,24 +71,6 @@ export class CampusesListComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  openCreateCampusDialog(): void {
-    this.selectedCampus = null;
-    this.isCreateCampus = true;
-    this.isCampusDialogVisible = true;
-  }
-
-  openEditCampusDialog(campus: CampusResponse): void {
-    this.selectedCampus = campus;
-    this.isCreateCampus = false;
-    this.isCampusDialogVisible = true;
-  }
-
-  refreshTableData(): void {
-    this.first = 0;
-    this.campusCache.clear();
-    this.loadCampuses({ first: this.first, rows: this.rows });
-  }
-
   loadCampuses(event: TableLazyLoadEvent): void {
     this.isLoading = true;
     this.first = event.first ?? 0;
@@ -97,14 +80,14 @@ export class CampusesListComponent implements OnInit {
       this.campusCache.clear();
     }
 
-    const page = this.getCurrentPageIndex();
+    const page: number = this.getCurrentPageIndex();
     if (this.campusCache.has(page)) {
       this.campuses = this.campusCache.get(page)!;
       this.isLoading = false;
       return;
     }
 
-    this.campusService.getAllCampuses(page, this.rows).subscribe({
+    this.campusService.getAllCampuses(page, this.rows, this.searchCampusValue).subscribe({
       next: (response: ApiResponse<CampusResponse[]>) => {
         this.campuses = response.data;
         this.totalRecords = response.pageInfo!.totalElements;
@@ -120,6 +103,53 @@ export class CampusesListComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  refreshTableData(): void {
+    this.first = 0;
+    this.campusCache.clear();
+    this.loadCampuses({ first: this.first, rows: this.rows });
+  }
+
+  search(): void {
+    if (this.hasTextValue(this.searchCampusValue)) {
+      this.first = 0;
+      this.campusCache.clear();
+      this.loadCampuses({ first: 0, rows: this.rows });
+    }
+  }
+
+  resetSearch(): void {
+    this.searchCampusValue = null;
+    this.campusCache.clear();
+    this.loadCampuses({ first: 0, rows: this.rows });
+  }
+
+  openCreateCampusDialog(): void {
+    this.selectedCampus = null;
+    this.isCreateCampus = true;
+    this.isCampusDialogVisible = true;
+  }
+
+  openEditCampusDialog(campus: CampusResponse): void {
+    this.selectedCampus = campus;
+    this.isCreateCampus = false;
+    this.isCampusDialogVisible = true;
+  }
+
+  onCampusDialogChange(event: DialogState<CampusResponse>): void {
+    this.isCampusDialogVisible = event.isOpen;
+    switch (event.message) {
+      case 'save':
+        this.handleCampusSaved(event.data!);
+        break;
+      case 'edit':
+        this.handleCampusUpdated(event.data!);
+        break;
+      case 'close':
+        this.handleDialogClose();
+        break;
+    }
   }
 
   deleteCampus(campus: CampusResponse): void {
@@ -178,19 +208,8 @@ export class CampusesListComponent implements OnInit {
     });
   }
 
-  onCampusDialogChange(event: DialogState<CampusResponse>): void {
-    this.isCampusDialogVisible = event.isOpen;
-    switch (event.message) {
-      case 'save':
-        this.handleCampusSaved(event.data!);
-        break;
-      case 'edit':
-        this.handleCampusUpdated(event.data!);
-        break;
-      case 'close':
-        this.handleDialogClose();
-        break;
-    }
+  hasTextValue(value: string | null): boolean {
+    return hasText(value);
   }
 
   getCurrentPageIndex(): number {

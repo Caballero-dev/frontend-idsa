@@ -22,6 +22,7 @@ import { ApiResponse } from '../../../../../core/models/ApiResponse.model';
 import { DialogState } from '../../../../../shared/types/dialog.types';
 import { Column } from '../../../../../shared/types/table.types';
 import { TableUtils } from '../../../../utils/table.utils';
+import { hasText } from '../../../../../utils/string.utils';
 
 import { GroupConfigurationResponse } from '../../../models/group-configuration.model';
 import { GroupsConfigurationFormComponent } from '../groups-configuration-form/groups-configuration-form.component';
@@ -61,7 +62,7 @@ export class GroupsConfigurationListComponent implements OnInit {
   isCreateGroupConfiguration: boolean = true;
   isGroupConfigurationDialogVisible: boolean = false;
 
-  searchGroupConfigurationValue: string = '';
+  searchGroupConfigurationValue: string | null = null;
 
   cols: Column[] = [
     { field: 'tutor.fullName', header: 'Tutor', sortable: false },
@@ -84,6 +85,62 @@ export class GroupsConfigurationListComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  loadGroupConfigurations(event: TableLazyLoadEvent): void {
+    this.isLoading = true;
+    this.first = event.first ?? 0;
+    const currentRows: number = event.rows ?? this.rows;
+    if (this.rows !== currentRows) {
+      this.rows = currentRows;
+      this.groupConfigurationCache.clear();
+    }
+
+    const page: number = this.getCurrentPageIndex();
+    if (this.groupConfigurationCache.has(page)) {
+      this.groupConfigurations = this.groupConfigurationCache.get(page)!;
+      this.isLoading = false;
+      return;
+    }
+
+    this.groupConfigurationService
+      .getAllGroupConfigurations(page, this.rows, this.searchGroupConfigurationValue)
+      .subscribe({
+        next: (response: ApiResponse<GroupConfigurationResponse[]>) => {
+          this.groupConfigurations = response.data;
+          this.totalRecords = response.pageInfo!.totalElements;
+          this.groupConfigurationCache.set(page, this.groupConfigurations);
+          this.isLoading = false;
+        },
+        error: (error: ApiError) => {
+          if (error.status === 'Unknown Error' && error.statusCode === 0) {
+            this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
+          } else {
+            this.showToast('error', 'Error', 'Ha ocurrido un error inesperado, por favor intente más tarde');
+          }
+          this.isLoading = false;
+        },
+      });
+  }
+
+  refreshTableData(): void {
+    this.first = 0;
+    this.groupConfigurationCache.clear();
+    this.loadGroupConfigurations({ first: this.first, rows: this.rows });
+  }
+
+  search(): void {
+    if (this.hasTextValue(this.searchGroupConfigurationValue)) {
+      this.first = 0;
+      this.groupConfigurationCache.clear();
+      this.loadGroupConfigurations({ first: 0, rows: this.rows });
+    }
+  }
+
+  resetSearch(): void {
+    this.searchGroupConfigurationValue = null;
+    this.groupConfigurationCache.clear();
+    this.loadGroupConfigurations({ first: 0, rows: this.rows });
+  }
+
   openCreateGroupConfigurationDialog(): void {
     this.selectedGroupConfiguration = null;
     this.isCreateGroupConfiguration = true;
@@ -96,44 +153,19 @@ export class GroupsConfigurationListComponent implements OnInit {
     this.isGroupConfigurationDialogVisible = true;
   }
 
-  refreshTableData(): void {
-    this.first = 0;
-    this.groupConfigurationCache.clear();
-    this.loadGroupConfigurations({ first: this.first, rows: this.rows });
-  }
-
-  loadGroupConfigurations(event: TableLazyLoadEvent): void {
-    this.isLoading = true;
-    this.first = event.first ?? 0;
-    const currentRows: number = event.rows ?? this.rows;
-    if (this.rows !== currentRows) {
-      this.rows = currentRows;
-      this.groupConfigurationCache.clear();
+  onGroupConfigurationDialogChange(event: DialogState<GroupConfigurationResponse>): void {
+    this.isGroupConfigurationDialogVisible = event.isOpen;
+    switch (event.message) {
+      case 'save':
+        this.handleGroupConfigurationSaved(event.data!);
+        break;
+      case 'edit':
+        this.handleGroupConfigurationUpdated(event.data!);
+        break;
+      case 'close':
+        this.handleDialogClose();
+        break;
     }
-
-    const page = this.getCurrentPageIndex();
-    if (this.groupConfigurationCache.has(page)) {
-      this.groupConfigurations = this.groupConfigurationCache.get(page)!;
-      this.isLoading = false;
-      return;
-    }
-
-    this.groupConfigurationService.getAllGroupConfigurations(page, this.rows).subscribe({
-      next: (response: ApiResponse<GroupConfigurationResponse[]>) => {
-        this.groupConfigurations = response.data;
-        this.totalRecords = response.pageInfo!.totalElements;
-        this.groupConfigurationCache.set(page, this.groupConfigurations);
-        this.isLoading = false;
-      },
-      error: (error: ApiError) => {
-        if (error.status === 'Unknown Error' && error.statusCode === 0) {
-          this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
-        } else {
-          this.showToast('error', 'Error', 'Ha ocurrido un error inesperado, por favor intente más tarde');
-        }
-        this.isLoading = false;
-      },
-    });
   }
 
   deleteGroupConfiguration(groupConfiguration: GroupConfigurationResponse): void {
@@ -203,19 +235,8 @@ export class GroupsConfigurationListComponent implements OnInit {
     });
   }
 
-  onGroupConfigurationDialogChange(event: DialogState<GroupConfigurationResponse>): void {
-    this.isGroupConfigurationDialogVisible = event.isOpen;
-    switch (event.message) {
-      case 'save':
-        this.handleGroupConfigurationSaved(event.data!);
-        break;
-      case 'edit':
-        this.handleGroupConfigurationUpdated(event.data!);
-        break;
-      case 'close':
-        this.handleDialogClose();
-        break;
-    }
+  hasTextValue(value: string | null): boolean {
+    return hasText(value);
   }
 
   getCurrentPageIndex(): number {
