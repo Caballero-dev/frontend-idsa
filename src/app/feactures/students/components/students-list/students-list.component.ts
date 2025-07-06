@@ -22,6 +22,7 @@ import { ApiResponse } from '../../../../core/models/ApiResponse.model';
 import { DialogState } from '../../../../shared/types/dialog.types';
 import { Column } from '../../../../shared/types/table.types';
 import { TableUtils } from '../../../utils/table.utils';
+import { hasText } from '../../../../utils/string.utils';
 
 import { StudentResponse } from '../../models/student.model';
 import { StudentsFormComponent } from '../students-form/students-form.component';
@@ -60,7 +61,7 @@ export class StudentsListComponent implements OnInit {
   isCreateStudent: boolean = true;
   isStudentDialogVisible: boolean = false;
 
-  searchStudentValue: string = '';
+  searchStudentValue: string | null = null;
 
   cols: Column[] = [
     { field: 'studentCode', header: 'Matrícula', sortable: false },
@@ -94,24 +95,6 @@ export class StudentsListComponent implements OnInit {
     }
   }
 
-  openCreateStudentDialog(): void {
-    this.selectedStudent = null;
-    this.isCreateStudent = true;
-    this.isStudentDialogVisible = true;
-  }
-
-  openEditStudentDialog(student: StudentResponse): void {
-    this.selectedStudent = student;
-    this.isCreateStudent = false;
-    this.isStudentDialogVisible = true;
-  }
-
-  refreshTableData(): void {
-    this.first = 0;
-    this.studentCache.clear();
-    this.loadStudents({ first: this.first, rows: this.rows });
-  }
-
   loadStudents(event: TableLazyLoadEvent): void {
     if (!this.groupId) return;
 
@@ -123,14 +106,14 @@ export class StudentsListComponent implements OnInit {
       this.studentCache.clear();
     }
 
-    const page = this.getCurrentPageIndex();
+    const page: number = this.getCurrentPageIndex();
     if (this.studentCache.has(page)) {
       this.students = this.studentCache.get(page)!;
       this.isLoading = false;
       return;
     }
 
-    this.studentService.getStudentsByGroup(this.groupId, page, this.rows).subscribe({
+    this.studentService.getStudentsByGroup(this.groupId, page, this.rows, this.searchStudentValue).subscribe({
       next: (response: ApiResponse<StudentResponse[]>) => {
         this.students = response.data;
         this.totalRecords = response.pageInfo!.totalElements;
@@ -150,6 +133,53 @@ export class StudentsListComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  refreshTableData(): void {
+    this.first = 0;
+    this.studentCache.clear();
+    this.loadStudents({ first: this.first, rows: this.rows });
+  }
+
+  search(): void {
+    if (this.hasTextValue(this.searchStudentValue)) {
+      this.first = 0;
+      this.studentCache.clear();
+      this.loadStudents({ first: 0, rows: this.rows });
+    }
+  }
+
+  resetSearch(): void {
+    this.searchStudentValue = null;
+    this.studentCache.clear();
+    this.loadStudents({ first: 0, rows: this.rows });
+  }
+
+  openCreateStudentDialog(): void {
+    this.selectedStudent = null;
+    this.isCreateStudent = true;
+    this.isStudentDialogVisible = true;
+  }
+
+  openEditStudentDialog(student: StudentResponse): void {
+    this.selectedStudent = student;
+    this.isCreateStudent = false;
+    this.isStudentDialogVisible = true;
+  }
+
+  onStudentDialogChange(event: DialogState<StudentResponse>): void {
+    this.isStudentDialogVisible = event.isOpen;
+    switch (event.message) {
+      case 'save':
+        this.handleStudentSaved(event.data!);
+        break;
+      case 'edit':
+        this.handleStudentUpdated(event.data!);
+        break;
+      case 'close':
+        this.handleDialogClose();
+        break;
+    }
   }
 
   deleteStudent(student: StudentResponse): void {
@@ -203,19 +233,8 @@ export class StudentsListComponent implements OnInit {
     });
   }
 
-  onStudentDialogChange(event: DialogState<StudentResponse>): void {
-    this.isStudentDialogVisible = event.isOpen;
-    switch (event.message) {
-      case 'save':
-        this.handleStudentSaved(event.data!);
-        break;
-      case 'edit':
-        this.handleStudentUpdated(event.data!);
-        break;
-      case 'close':
-        this.handleDialogClose();
-        break;
-    }
+  hasTextValue(value: string | null): boolean {
+    return hasText(value);
   }
 
   getCurrentPageIndex(): number {
