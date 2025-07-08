@@ -100,7 +100,10 @@
           @if (col.field === 'predictionResult') {
             @if (student.predictionResult) {
               <div class="flex items-center justify-around">
-                {{ student.predictionResult + '%' }}
+                <p-tag
+                  [value]="student.predictionResult"
+                  [severity]="getSeverity(student.predictionResult)"
+                />
                 <p-button
                   icon="pi pi-eye"
                   severity="info"
