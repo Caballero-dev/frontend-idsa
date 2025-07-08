@@ -7,8 +7,6 @@ export interface ReportResponse {
   heartRate: number;
   systolicBloodPressure: number;
   diastolicBloodPressure: number;
-  pupilDilationRight: number;
-  pupilDilationLeft: number;
   images: string[];
   createdAt: string;
 }

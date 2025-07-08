@@ -113,8 +113,8 @@
         </div>
         <hr />
         <div class="mb-2 text-lg xs:text-xl">
-          <span class="font-semibold">Resultados del Análisis:</span>
-          {{ reportSelected.student.predictionResult + '%' }}
+          <span class="font-semibold">Probabilidad de consumo:</span>
+          {{ reportSelected.student.predictionResult }}
         </div>
         <div class="mb-2 text-lg xs:text-xl">
           <b>Fecha de análisis:</b>
@@ -131,14 +131,6 @@
         <div class="mb-2 text-lg xs:text-xl">
           <b>Presión arterial:</b>
           {{ reportSelected.systolicBloodPressure }}/{{ reportSelected.diastolicBloodPressure }} mmHg
-        </div>
-        <div class="mb-2 text-lg xs:text-xl">
-          <b>Dilatación de pupila izquierda:</b>
-          {{ reportSelected.pupilDilationLeft }} mm
-        </div>
-        <div class="mb-2 text-lg xs:text-xl">
-          <b>Dilatación de pupila derecha:</b>
-          {{ reportSelected.pupilDilationRight }} mm
         </div>
       </div>
     </div>

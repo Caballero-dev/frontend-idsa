@@ -5,7 +5,7 @@ export interface StudentResponse {
   firstSurname: string;
   secondSurname: string;
   phoneNumber: string;
-  predictionResult: number | null;
+  predictionResult: string | null;
 }
 
 export interface StudentRequest {
