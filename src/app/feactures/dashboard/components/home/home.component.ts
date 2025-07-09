@@ -73,7 +73,7 @@ export class HomeComponent implements OnInit {
 
     const documentStyle = getComputedStyle(document.documentElement);
     this.pieData = {
-      labels: ['Sin riesgo', 'Riesgo moderado', 'Alto riesgo', 'Sin evaluación'],
+      labels: ['Probabilidad Baja', 'Probabilidad Media', 'Probabilidad Alta', 'Sin evaluación'],
       datasets: [
         {
           data: [

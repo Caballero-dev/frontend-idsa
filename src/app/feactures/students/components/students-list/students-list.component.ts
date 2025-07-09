@@ -10,6 +10,7 @@ import { DialogModule } from 'primeng/dialog';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
@@ -40,6 +41,7 @@ import { StudentsFormComponent } from '../students-form/students-form.component'
     InputGroupModule,
     InputTextModule,
     TableModule,
+    TagModule,
     ToastModule,
     ToolbarModule,
     TooltipModule,
@@ -249,6 +251,19 @@ export class StudentsListComponent implements OnInit {
       detail,
       life: 5000,
     });
+  }
+
+  getSeverity(predictionResult: string): any {
+    switch (predictionResult) {
+      case 'BAJA':
+        return 'success';
+      case 'MEDIA':
+        return 'warn';
+      case 'ALTA':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
   }
 
   private handleStudentSaved(studentData: StudentResponse): void {
