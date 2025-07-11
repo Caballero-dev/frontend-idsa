@@ -48,7 +48,7 @@ export class StudentsFormComponent implements OnInit, AfterViewInit {
       '',
       [
         Validators.required,
-        Validators.minLength(5),
+        Validators.minLength(10),
         Validators.maxLength(20),
         Validators.pattern(this.formUtils.alphanumericPattern),
       ],
