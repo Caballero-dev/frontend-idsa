@@ -167,7 +167,7 @@ export class UsersListComponent implements OnInit {
     }
   }
 
-  updateStatus(userId: number, status: boolean): void {
+  updateStatus(userId: string, status: boolean): void {
     this.isLoading = true;
     this.showToast('info', 'Actualizando estado', 'Se está actualizando el estado del usuario');
     this.userService.updateUserStatus(userId, status).subscribe({

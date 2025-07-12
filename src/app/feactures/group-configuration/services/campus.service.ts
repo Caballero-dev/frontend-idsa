@@ -30,11 +30,11 @@ export class CampusService {
     return this.http.post<ApiResponse<CampusResponse>>(this.API_URL, campus);
   }
 
-  updateCampus(campusId: number, campus: CampusRequest): Observable<ApiResponse<CampusResponse>> {
+  updateCampus(campusId: string, campus: CampusRequest): Observable<ApiResponse<CampusResponse>> {
     return this.http.put<ApiResponse<CampusResponse>>(`${this.API_URL}/${campusId}`, campus);
   }
 
-  deleteCampus(campusId: number): Observable<void> {
+  deleteCampus(campusId: string): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${campusId}`);
   }
 }

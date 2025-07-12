@@ -1,7 +1,7 @@
 import { StudentResponse } from '../../../feactures/students/models/student.model';
 
 export interface ReportResponse {
-  reportId: number;
+  reportId: string;
   student: StudentResponse;
   temperature: number;
   heartRate: number;

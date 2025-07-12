@@ -30,11 +30,11 @@ export class GenerationService {
     return this.http.post<ApiResponse<GenerationResponse>>(this.API_URL, generation);
   }
 
-  updateGeneration(generationId: number, generation: GenerationRequest): Observable<ApiResponse<GenerationResponse>> {
+  updateGeneration(generationId: string, generation: GenerationRequest): Observable<ApiResponse<GenerationResponse>> {
     return this.http.put<ApiResponse<GenerationResponse>>(`${this.API_URL}/${generationId}`, generation);
   }
 
-  deleteGeneration(generationId: number): Observable<ApiResponse<void>> {
+  deleteGeneration(generationId: string): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`${this.API_URL}/${generationId}`);
   }
 }

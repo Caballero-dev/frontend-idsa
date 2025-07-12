@@ -1,5 +1,5 @@
 export interface ModalityResponse {
-  modalityId: number;
+  modalityId: string;
   name: string;
 }
 

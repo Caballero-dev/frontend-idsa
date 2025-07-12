@@ -23,7 +23,7 @@ export class ReportService {
   }
 
   getReportByStudentId(
-    studentId: number,
+    studentId: string,
     page: number = 0,
     size: number = 20
   ): Observable<ApiResponse<ReportResponse[]>> {

@@ -7,7 +7,7 @@ import { GroupResponse } from './group.model';
 import { GenerationResponse } from './generation.model';
 
 export interface GroupConfigurationResponse {
-  groupConfigurationId: number;
+  groupConfigurationId: string;
   tutor: TutorResponse;
   campus: CampusResponse;
   specialty: SpecialtyResponse;

@@ -1,5 +1,5 @@
 export interface TutorResponse {
-  tutorId: number;
+  tutorId: string;
   name: string;
   firstSurname: string;
   secondSurname: string;

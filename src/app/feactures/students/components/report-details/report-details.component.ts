@@ -42,8 +42,8 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private reportCache: Map<number, ReportResponse[]> = new Map<number, ReportResponse[]>();
 
-  groupId: number | null = null;
-  studentId: number | null = null;
+  groupId: string | null = null;
+  studentId: string | null = null;
 
   isLoading: boolean = false;
   isLoadingImage: boolean = false;
@@ -135,8 +135,10 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
         if (error.statusCode === 404 && error.message.includes('student_not_found')) {
           this.navigateToStudent();
           return;
-        }
-        if (error.status === 'Unknown Error' && error.statusCode === 0) {
+        } else if (error.statusCode === 400 && error.message.includes('UUID <<type_mismatch>>')) {
+          this.navigateToStudent();
+          return;
+        } else if (error.status === 'Unknown Error' && error.statusCode === 0) {
           this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
         } else {
           this.showToast('error', 'Error', 'Ha ocurrido un error inesperado, por favor intente más tarde');
@@ -312,9 +314,8 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
 
   private getGroupIdFromRoute(): void {
     const groupIdParam: string | null = this.activatedRoute.snapshot.paramMap.get('grupoId');
-    const groupId: number | null = groupIdParam ? Number(groupIdParam) : null;
-    if (groupId && !isNaN(groupId) && groupId > 0) {
-      this.groupId = groupId;
+    if (groupIdParam) {
+      this.groupId = groupIdParam;
     } else {
       this.router.navigate(['/panel/alumnos']);
     }
@@ -322,9 +323,8 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
 
   private getStudentIdFromRoute(): void {
     const studentIdParam: string | null = this.activatedRoute.snapshot.paramMap.get('alumnoId');
-    const studentId: number | null = studentIdParam ? Number(studentIdParam) : null;
-    if (studentId && !isNaN(studentId) && studentId > 0) {
-      this.studentId = studentId;
+    if (studentIdParam) {
+      this.studentId = studentIdParam;
     } else {
       this.router.navigate(['/panel/alumnos/grupo', this.groupId]);
     }
