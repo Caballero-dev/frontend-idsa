@@ -33,7 +33,7 @@ export class GroupConfigurationService {
   }
 
   updateGroupConfiguration(
-    groupConfigurationId: number,
+    groupConfigurationId: string,
     groupConfiguration: GroupConfigurationRequest
   ): Observable<ApiResponse<GroupConfigurationResponse>> {
     return this.http.put<ApiResponse<GroupConfigurationResponse>>(
@@ -42,7 +42,7 @@ export class GroupConfigurationService {
     );
   }
 
-  deleteGroupConfiguration(groupConfigurationId: number): Observable<ApiResponse<void>> {
+  deleteGroupConfiguration(groupConfigurationId: string): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`${this.API_URL}/${groupConfigurationId}`);
   }
 }

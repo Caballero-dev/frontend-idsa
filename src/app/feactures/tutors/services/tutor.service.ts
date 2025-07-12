@@ -26,11 +26,11 @@ export class TutorService {
     return this.http.post<ApiResponse<TutorResponse>>(`${this.API_URL}`, tutor);
   }
 
-  updateTutor(tutorId: number, tutor: TutorRequest): Observable<ApiResponse<TutorResponse>> {
+  updateTutor(tutorId: string, tutor: TutorRequest): Observable<ApiResponse<TutorResponse>> {
     return this.http.put<ApiResponse<TutorResponse>>(`${this.API_URL}/${tutorId}`, tutor);
   }
 
-  deleteTutor(tutorId: number): Observable<void> {
+  deleteTutor(tutorId: string): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${tutorId}`);
   }
 }

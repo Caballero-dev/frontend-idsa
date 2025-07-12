@@ -1,7 +1,7 @@
 import { RoleResponse } from './role.model';
 
 export interface UserResponse {
-  userId: number;
+  userId: string;
   email: string;
   role: RoleResponse;
   name: string;

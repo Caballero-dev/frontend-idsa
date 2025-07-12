@@ -26,11 +26,11 @@ export class GradeService {
     return this.http.post<ApiResponse<GradeResponse>>(this.API_URL, grade);
   }
 
-  updateGrade(gradeId: number, grade: GradeRequest): Observable<ApiResponse<GradeResponse>> {
+  updateGrade(gradeId: string, grade: GradeRequest): Observable<ApiResponse<GradeResponse>> {
     return this.http.put<ApiResponse<GradeResponse>>(`${this.API_URL}/${gradeId}`, grade);
   }
 
-  deleteGrade(gradeId: number): Observable<ApiResponse<void>> {
+  deleteGrade(gradeId: string): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`${this.API_URL}/${gradeId}`);
   }
 }

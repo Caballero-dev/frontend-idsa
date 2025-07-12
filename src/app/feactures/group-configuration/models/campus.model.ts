@@ -1,5 +1,5 @@
 export interface CampusResponse {
-  campusId: number;
+  campusId: string;
   name: string;
 }
 

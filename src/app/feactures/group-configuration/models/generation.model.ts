@@ -1,5 +1,5 @@
 export interface GenerationResponse {
-  generationId: number;
+  generationId: string;
   yearStart: string;
   yearEnd: string;
 }
