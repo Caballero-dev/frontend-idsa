@@ -81,7 +81,7 @@ export class StudentsListComponent implements OnInit {
   rows: number = 20;
   first: number = 0;
   totalRecords: number = 0;
-  groupId: number | null = null;
+  groupId: string | null = null;
 
   ngOnInit(): void {
     this.getGroupIdFromRoute();
@@ -89,9 +89,8 @@ export class StudentsListComponent implements OnInit {
 
   getGroupIdFromRoute(): void {
     const groupIdParam: string | null = this.activeRoute.snapshot.paramMap.get('grupoId');
-    const groupId: number | null = groupIdParam ? Number(groupIdParam) : null;
-    if (groupId && !isNaN(groupId) && groupId > 0) {
-      this.groupId = groupId;
+    if (groupIdParam) {
+      this.groupId = groupIdParam;
     } else {
       this.router.navigate(['/panel/alumnos']);
     }
@@ -126,8 +125,10 @@ export class StudentsListComponent implements OnInit {
         if (error.statusCode === 404 && error.message.includes('group_configuration_not_found')) {
           this.router.navigate(['/panel/alumnos']);
           return;
-        }
-        if (error.status === 'Unknown Error' && error.statusCode === 0) {
+        } else if (error.statusCode === 400 && error.message.includes('UUID <<type_mismatch>>')) {
+          this.router.navigate(['/panel/alumnos']);
+          return;
+        } else if (error.status === 'Unknown Error' && error.statusCode === 0) {
           this.showToast('error', 'Error', 'Error de conexión con el servidor, por favor intente más tarde');
         } else {
           this.showToast('error', 'Error', 'Ha ocurrido un error inesperado, por favor intente más tarde');

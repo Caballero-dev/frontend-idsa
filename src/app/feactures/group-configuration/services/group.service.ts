@@ -26,11 +26,11 @@ export class GroupService {
     return this.http.post<ApiResponse<GroupResponse>>(this.API_URL, group);
   }
 
-  updateGroup(groupId: number, group: GroupRequest): Observable<ApiResponse<GroupResponse>> {
+  updateGroup(groupId: string, group: GroupRequest): Observable<ApiResponse<GroupResponse>> {
     return this.http.put<ApiResponse<GroupResponse>>(`${this.API_URL}/${groupId}`, group);
   }
 
-  deleteGroup(groupId: number): Observable<ApiResponse<void>> {
+  deleteGroup(groupId: string): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`${this.API_URL}/${groupId}`);
   }
 }

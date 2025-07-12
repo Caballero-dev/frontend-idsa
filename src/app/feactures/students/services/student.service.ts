@@ -14,7 +14,7 @@ export class StudentService {
   private http: HttpClient = inject(HttpClient);
 
   getStudentsByGroup(
-    groupId: number,
+    groupId: string,
     page: number = 0,
     size: number = 20,
     search?: string | null
@@ -27,15 +27,15 @@ export class StudentService {
     return this.http.get<ApiResponse<StudentResponse[]>>(`${this.API_URL}/by-group/${groupId}`, { params });
   }
 
-  createStudent(groupId: number, student: StudentRequest): Observable<ApiResponse<StudentResponse>> {
+  createStudent(groupId: string, student: StudentRequest): Observable<ApiResponse<StudentResponse>> {
     return this.http.post<ApiResponse<StudentResponse>>(`${this.API_URL}/by-group/${groupId}`, student);
   }
 
-  updateStudent(studentId: number, student: StudentRequest): Observable<ApiResponse<StudentResponse>> {
+  updateStudent(studentId: string, student: StudentRequest): Observable<ApiResponse<StudentResponse>> {
     return this.http.put<ApiResponse<StudentResponse>>(`${this.API_URL}/${studentId}`, student);
   }
 
-  deleteStudent(studentId: number): Observable<void> {
+  deleteStudent(studentId: string): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${studentId}`);
   }
 }

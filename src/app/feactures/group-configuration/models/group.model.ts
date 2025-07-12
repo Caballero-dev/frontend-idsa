@@ -1,5 +1,5 @@
 export interface GroupResponse {
-  groupId: number;
+  groupId: string;
   name: string;
 }
 

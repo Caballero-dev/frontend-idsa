@@ -31,7 +31,7 @@ export class StudentsFormComponent implements OnInit, AfterViewInit {
   @Input() isStudentDialogVisible: boolean = false;
   @Input() isCreateStudent: boolean = true;
   @Input() selectedStudent: StudentResponse | null = null;
-  @Input() groupId: number | null = null;
+  @Input() groupId: string | null = null;
   @Output() studentDialogChange: EventEmitter<DialogState<StudentResponse>> = new EventEmitter<
     DialogState<StudentResponse>
   >();

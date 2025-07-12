@@ -1,5 +1,5 @@
 export interface GradeResponse {
-  gradeId: number;
+  gradeId: string;
   name: string;
 }
 

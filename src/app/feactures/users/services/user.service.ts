@@ -26,7 +26,7 @@ export class UserService {
     return this.http.post<ApiResponse<UserResponse>>(`${this.API_URL}`, user);
   }
 
-  updateUser(userId: number, isUpdatePassword: boolean, user: UserRequest): Observable<ApiResponse<UserResponse>> {
+  updateUser(userId: string, isUpdatePassword: boolean, user: UserRequest): Observable<ApiResponse<UserResponse>> {
     return this.http.put<ApiResponse<UserResponse>>(`${this.API_URL}/${userId}`, user, {
       params: {
         isUpdatePassword,
@@ -34,11 +34,11 @@ export class UserService {
     });
   }
 
-  updateUserStatus(userId: number, isActive: boolean): Observable<void> {
+  updateUserStatus(userId: string, isActive: boolean): Observable<void> {
     return this.http.put<void>(`${this.API_URL}/${userId}/status`, null, { params: { isActive } });
   }
 
-  deleteUser(userId: number): Observable<void> {
+  deleteUser(userId: string): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${userId}`);
   }
 }

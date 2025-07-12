@@ -1,5 +1,5 @@
 export interface GroupConfigurationView {
-  id: number;
+  id: string;
   tutor: string;
   campus: string;
   specialty: string;

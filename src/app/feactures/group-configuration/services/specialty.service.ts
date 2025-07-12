@@ -30,11 +30,11 @@ export class SpecialtyService {
     return this.http.post<ApiResponse<SpecialtyResponse>>(this.API_URL, specialty);
   }
 
-  updateSpecialty(specialtyId: number, specialty: SpecialtyRequest): Observable<ApiResponse<SpecialtyResponse>> {
+  updateSpecialty(specialtyId: string, specialty: SpecialtyRequest): Observable<ApiResponse<SpecialtyResponse>> {
     return this.http.put<ApiResponse<SpecialtyResponse>>(`${this.API_URL}/${specialtyId}`, specialty);
   }
 
-  deleteSpecialty(specialtyId: number): Observable<ApiResponse<void>> {
+  deleteSpecialty(specialtyId: string): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`${this.API_URL}/${specialtyId}`);
   }
 }

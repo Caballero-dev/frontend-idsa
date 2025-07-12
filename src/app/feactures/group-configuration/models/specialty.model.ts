@@ -1,5 +1,5 @@
 export interface SpecialtyResponse {
-  specialtyId: number;
+  specialtyId: string;
   name: string;
   shortName: string;
 }

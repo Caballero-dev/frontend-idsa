@@ -30,11 +30,11 @@ export class ModalityService {
     return this.http.post<ApiResponse<ModalityResponse>>(this.API_URL, modality);
   }
 
-  updateModality(modalityId: number, modality: ModalityRequest): Observable<ApiResponse<ModalityResponse>> {
+  updateModality(modalityId: string, modality: ModalityRequest): Observable<ApiResponse<ModalityResponse>> {
     return this.http.put<ApiResponse<ModalityResponse>>(`${this.API_URL}/${modalityId}`, modality);
   }
 
-  deleteModality(modalityId: number): Observable<void> {
+  deleteModality(modalityId: string): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${modalityId}`);
   }
 }
