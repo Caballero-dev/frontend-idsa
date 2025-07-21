@@ -8,5 +8,6 @@
     "wayou.vscode-todo-highlight",
     "esbenp.prettier-vscode",
     "yoavbls.pretty-ts-errors",
+    "ms-azuretools.vscode-docker",
   ]
 }
