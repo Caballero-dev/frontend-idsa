@@ -7,5 +7,5 @@ FROM nginx:alpine
 COPY --from=build /app/dist/idsa/browser /usr/share/nginx/html
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
-# docker build -f Dockerfile -t idsa-front .
+# docker build -t idsa-front .
 # docker run -d -p 80:80 --name idsa-app-web idsa-front
