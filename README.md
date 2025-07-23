@@ -47,7 +47,7 @@ El panel es responsable de:
 ## 📁 Estructura del Proyecto
 
 ```
-idsa/
+frontend-idsa/
 ├── src/
 │   ├── app/
 │   │   ├── auth/                        # Autenticación y autorización
@@ -118,11 +118,15 @@ idsa/
 │   ├── main.ts                          # Bootstrap de la app
 │   ├── styles.scss                      # Estilos globales
 │   └── tailwind.css                     # Estilos de TailwindCSS
+├── nginx/                               # Configuración de nginx
+├── .dockerignore                        # Archivos ignorados por Docker
 ├── .editorconfig                        # Configuración de editor
 ├── .gitignore                           # Configuración de git
 ├── .prettierignore                      # Configuración de prettier
 ├── .prettierrc.json                     # Configuración de prettier
 ├── angular.json                         # Configuración Angular
+├── docker-compose.yml                   # Configuración de docker compose
+├── Dockerfile                           # Configuración de la imagen de la aplicación web
 ├── package-lock.json                    # Dependencias y scripts
 ├── package.json                         # Dependencias y scripts
 ├── README.md                            # Este archivo
@@ -170,6 +174,32 @@ El proyecto utiliza una arquitectura de configuración modular con perfiles espe
 - **Producción:** Configuración optimizada, conexión a la API productiva. Es necesario modificar la URL de la API en `/src/environments/environment.ts` para que apunte al endpoint de producción correspondiente.
 
 Puedes modificar los endpoints y configuraciones según el entorno editando los archivos en `/src/environments/`.
+
+## 🐳 Despliegue con Docker
+
+El proyecto incluye configuración completa para Docker y Docker Compose, permitiendo un despliegue rápido y consistente en cualquier entorno.
+
+### Opciones de despliegue
+
+#### 🚀 Opción 1: Despliegue Completo con Docker Compose (Recomendado)
+Esta opción despliega la aplicación web.
+```bash
+# Construir y ejecutar todos los servicios
+docker-compose up -d
+
+```
+Acceder a la aplicación: http://localhost
+
+#### 🐳 Opción 2: Solo la aplicación web con Docker
+```bash
+# Construir y ejecutar el contenedor
+docker build -t idsa-front .
+
+# Ejecutar el contenedor
+docker run -d -p 80:80 --name idsa-app-web idsa-front
+```
+
+> Si necesitas cambiar la URL de la API backend, puedes modificar el archivo de entorno en `src/environments/environment.ts` antes de construir la imagen.
 
 ## 🌐 Relación con el Back-End
 
