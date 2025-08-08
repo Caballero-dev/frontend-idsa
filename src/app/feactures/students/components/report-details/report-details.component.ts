@@ -148,8 +148,8 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadImages(imageUrls: string[]): void {
-    if (!imageUrls || imageUrls.length === 0) {
+  loadImages(images: string[]): void {
+    if (!images || images.length === 0) {
       this.isLoadingImage = false;
       this.reportSelectedImages = [];
       return;
@@ -158,16 +158,16 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
     this.cleanupObjectUrls();
     this.isLoadingImage = true;
 
-    const imageObservables: Observable<ImageData>[] = imageUrls.map((url) =>
-      this.imageService.getImage(url).pipe(
+    const imageObservables: Observable<ImageData>[] = images.map((name: string) =>
+      this.imageService.getImageByName(name).pipe(
         map((blob: Blob) => ({
-          url,
+          url: name,
           objectUrl: URL.createObjectURL(blob),
           loaded: true,
         })),
         catchError(() => {
           return of({
-            url,
+            url: name,
             objectUrl: '',
             loaded: false,
           });
@@ -191,8 +191,8 @@ export class ReportDetailsComponent implements OnInit, OnDestroy {
           console.log(`Cargadas: ${loadedCount}/${totalCount} imágenes`);
         },
         error: () => {
-          this.reportSelectedImages = imageUrls.map((url: string) => ({
-            url,
+          this.reportSelectedImages = images.map((name: string) => ({
+            url: name,
             objectUrl: '',
             loaded: false,
           }));
